@@ -15,11 +15,7 @@ class Homepage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-<<<<<<< HEAD
     fetchCrypto(service);
-=======
-    //final productProvider = Provider.of<ProductProvider>(context).addProduct();
->>>>>>> parent of 431babd (feat(view): add test)
     return Scaffold(
       body: Container(
         child: Center(
