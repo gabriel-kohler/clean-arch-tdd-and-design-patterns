@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:faker/faker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -21,18 +23,27 @@ class HttpAdapter {
       'accept': 'application/json',
     };
 
-    await client.post(Uri.parse(url), headers: headers);
+    final jsonBody = body != null ? jsonEncode(body) : null;
+
+    await client.post(Uri.parse(url), headers: headers, body: jsonBody);
   }
 }
 
 void main() {
+  ClientSpy client;
+  HttpAdapter sut;
+  String url;
+
+  setUp(() {
+    client = ClientSpy();
+    sut = HttpAdapter(client);
+    url = faker.internet.httpUrl();
+  });
+
   group('post', () {
     test('Should call post with correct values', () async {
-      final client = ClientSpy();
-      final sut = HttpAdapter(client);
-      final url = faker.internet.httpUrl();
-
-      await sut.request(url: url, method: 'post');
+   
+      await sut.request(url: url, method: 'post', body: {'any_key': 'any_value'});
 
       verify(client.post(
         Uri.parse(url),
@@ -40,6 +51,16 @@ void main() {
           'content-type': 'application/json',
           'accept': 'application/json',
         },
+        body: jsonEncode({'any_key': 'any_value'}),
+      ));
+    });
+
+    test('Should call post with correct values', () async {
+      await sut.request(url: url, method: 'post');
+
+      verify(client.post(
+        any,
+        headers: anyNamed('headers'),
       ));
     });
   });
