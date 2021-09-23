@@ -8,9 +8,9 @@ class RemoteAccountModel {
 
   RemoteAccountModel(this.accessToken);
 
-  factory RemoteAccountModel.fromJson(Map? json) {
+  factory RemoteAccountModel.fromJson(Map json) {
 
-    if (!json!.containsKey('accessToken')) {
+    if (!json.containsKey('accessToken')) {
       throw HttpError.invalidData;
     }
 

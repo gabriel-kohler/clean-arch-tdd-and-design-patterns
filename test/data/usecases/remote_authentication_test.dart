@@ -11,14 +11,14 @@ import 'package:practice/data/http/http.dart';
 class HttpClientSpy extends Mock implements HttpClient {}
 
 void main() {
-  HttpClient? httpClient;
-  String? url;
-  RemoteAuthentication? sut;
-  AuthenticationParams? params;
+  HttpClient httpClient;
+  String url;
+  RemoteAuthentication sut;
+  AuthenticationParams params;
 
   Map mockValidData() => {'accessToken': faker.person.name(), 'name': faker.guid.guid()};
 
-  PostExpectation mockRequest() => when(httpClient!.request(url: anyNamed('url'), method: anyNamed('method'), body: anyNamed('body')));
+  PostExpectation mockRequest() => when(httpClient.request(url: anyNamed('url'), method: anyNamed('method'), body: anyNamed('body')));
   
 
   void mockHttpError(HttpError error) {
@@ -44,14 +44,14 @@ void main() {
 
   test('Should call httpClient with correct values', () async {
 
-    await sut!.auth(params!);
+    await sut.auth(params);
 
     final body = {
-      'email': params!.email,
-      'password': params!.password,
+      'email': params.email,
+      'password': params.password,
     };
 
-    verify(httpClient!.request(
+    verify(httpClient.request(
       url: url,
       method: 'post',
       body: body,
@@ -62,7 +62,7 @@ void main() {
 
     mockHttpError(HttpError.badRequest);
 
-    final future = sut!.auth(params!);
+    final future = sut.auth(params);
 
     expect(future, throwsA(DomainError.unexpected));
   });
@@ -71,7 +71,7 @@ void main() {
 
     mockHttpError(HttpError.notFound);
 
-    final future = sut!.auth(params!);
+    final future = sut.auth(params);
 
     expect(future, throwsA(DomainError.unexpected));
   });
@@ -80,7 +80,7 @@ void main() {
 
     mockHttpError(HttpError.serverError);
 
-    final future = sut!.auth(params!);
+    final future = sut.auth(params);
 
     expect(future, throwsA(DomainError.unexpected));
   });
@@ -89,7 +89,7 @@ void main() {
 
     mockHttpError(HttpError.unauthorized);
 
-    final future = sut!.auth(params!);
+    final future = sut.auth(params);
 
     expect(future, throwsA(DomainError.invalidCredentials));
 
@@ -101,7 +101,7 @@ void main() {
 
     mockHttpData(validData);
 
-    final account  = await sut!.auth(params!);
+    final account  = await sut.auth(params);
 
     expect(account.token, validData['accessToken']);
 
@@ -111,7 +111,7 @@ void main() {
 
     mockHttpData({'invalid_key': 'invalid_value'});
 
-    final future  = sut!.auth(params!);
+    final future  = sut.auth(params);
 
     expect(future, throwsA(DomainError.unexpected));
   });

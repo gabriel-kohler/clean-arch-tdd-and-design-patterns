@@ -1,4 +1,5 @@
 
+import 'package:flutter/foundation.dart';
 import 'package:practice/data/models/remote_account_model.dart';
 
 import '/domain/helpers/helpers.dart';
@@ -8,18 +9,18 @@ import '/domain/entities/entities.dart';
 import '/data/http/http.dart';
 
 class RemoteAuthentication {
-  final HttpClient? httpClient;
-  final String? url;
+  final HttpClient httpClient;
+  final String url;
 
   RemoteAuthentication({
-    required this.httpClient,
-    required this.url,
+    @required this.httpClient,
+    @required this.url,
   });
 
   Future<AccountEntity> auth(AuthenticationParams params) async {
     final body = RemoteAuthenticationParams.fromDomain(params).toJson();
     try {
-       final httpResponse = await httpClient!.request(url: url, method: 'post', body: body); //retorna um map com um name e um accessToken
+       final httpResponse = await httpClient.request(url: url, method: 'post', body: body); //retorna um map com um name e um accessToken
        return RemoteAccountModel.fromJson(httpResponse).toAccountEntity();
     } on HttpError catch (error) {
       throw error == HttpError.unauthorized
@@ -34,8 +35,8 @@ class RemoteAuthenticationParams {
   final String password;
 
   RemoteAuthenticationParams({
-    required this.email,
-    required this.password,
+    @required this.email,
+    @required this.password,
   });
 
   factory RemoteAuthenticationParams.fromDomain(AuthenticationParams params) =>
