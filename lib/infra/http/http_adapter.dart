@@ -16,16 +16,16 @@ class HttpAdapter implements HttpClient {
     @required String method,
     Map body,
   }) async {
-    final headers = {
-      'content-type': 'application/json',
-      'accept': 'application/json',
-    };
+      final headers = {
+        'content-type': 'application/json',
+        'accept': 'application/json',
+      };
 
-    final jsonBody = _jsonBody(body);
+      final jsonBody = _jsonBody(body);
 
-    final response = await client.post(Uri.parse(url), headers: headers, body: jsonBody);
+      final response = await client.post(Uri.parse(url), headers: headers, body: jsonBody);
 
-    return _handleResponse(response);
+      return _handleResponse(response);
   }
 
   String _jsonBody(Map body) {
@@ -39,8 +39,10 @@ class HttpAdapter implements HttpClient {
   Map _handleResponse(Response response) {
     if (response.statusCode == 200) {
       return response.body.isNotEmpty ? jsonDecode(response.body) : null;
-    } else {
+    } else if (response.statusCode == 204) {
       return null;
+    } else {
+      throw HttpError.badRequest;
     }
   }
   
