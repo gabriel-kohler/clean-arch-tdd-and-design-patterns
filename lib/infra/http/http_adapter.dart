@@ -16,19 +16,23 @@ class HttpAdapter implements HttpClient {
     @required String method,
     Map body,
   }) async {
-      final headers = {
-        'content-type': 'application/json',
-        'accept': 'application/json',
-      };
+    final headers = {
+      'content-type': 'application/json',
+      'accept': 'application/json',
+    };
 
-      final jsonBody = _jsonBody(body);
+    final jsonBody = _jsonBody(body);
 
-      var response = Response('', 500);
+    var response = Response('', 500);
 
-      if (method == 'post')
-       response = await client.post(Uri.parse(url), headers: headers, body: jsonBody);
+    if (method == 'post')
+      try {
+        response = await client.post(Uri.parse(url), headers: headers, body: jsonBody);
+      } catch (error) {
+        throw HttpError.serverError;
+      }
 
-      return _handleResponse(response);
+    return _handleResponse(response);
   }
 
   String _jsonBody(Map body) {
@@ -38,8 +42,6 @@ class HttpAdapter implements HttpClient {
       return null;
     }
   }
-
-
 
   Map _handleResponse(Response response) {
     if (response.statusCode == 200) {
@@ -58,5 +60,4 @@ class HttpAdapter implements HttpClient {
       throw HttpError.notFound;
     }
   }
-  
 }

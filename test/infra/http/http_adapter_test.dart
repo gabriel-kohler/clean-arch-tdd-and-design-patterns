@@ -155,5 +155,15 @@ void main() {
 
     });
 
+    test('Should return ServerError if post throws', () async {
+
+      when(client.post(any, headers: anyNamed('headers'), body: anyNamed('body'))).thenThrow(Exception());
+
+      final future = sut.request(url: url, method: 'post');
+
+      expect(future, throwsA(HttpError.serverError));
+
+    });
+
   });
 }
