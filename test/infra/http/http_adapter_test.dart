@@ -107,6 +107,16 @@ void main() {
 
     });
 
+    test('Should return UnauthorizedError if post returns 401', () async {
+
+      when(client.post(any, headers: anyNamed('headers'), body: anyNamed('body'))).thenAnswer((_) async => Response('', 401));
+
+      final future = sut.request(url: url, method: 'post');
+
+      expect(future, throwsA(HttpError.unauthorized));
+
+    });
+
     test('Should return ServerError if post returns 500', () async {
 
       mockResponse(500);
