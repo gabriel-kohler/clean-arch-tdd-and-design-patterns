@@ -1,0 +1,17 @@
+import 'package:flutter/material.dart';
+
+class Headline1 extends StatelessWidget {
+
+  final String text;
+
+  Headline1({this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text.toUpperCase(),
+      textAlign: TextAlign.center,
+      style: Theme.of(context).copyWith().textTheme.headline1,
+    );
+  }
+}
