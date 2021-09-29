@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '/ui/pages/pages.dart';
 
@@ -12,6 +13,9 @@ class App extends StatelessWidget {
         Colors.deepPurpleAccent; //Color.fromRGBO(188, 71, 123, 1);
     final primaryColorDark =
         Colors.deepPurple[800]; //Color.fromRGBO(96, 0, 39, 1);
+
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+    
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
