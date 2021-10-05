@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -8,19 +10,26 @@ import 'package:practice/ui/pages/pages.dart';
 class LoginPresenterSpy extends Mock implements LoginPresenter {}
 
 void main() {
-
-  LoginPresenterSpy presenter;
+  LoginPresenter loginPresenter;
+  StreamController<String> emailErrorController;
 
   Future<void> loadPage(WidgetTester tester) async {
 
-    presenter = LoginPresenterSpy();
+    loginPresenter = LoginPresenterSpy();
+
+    emailErrorController = StreamController<String>();
+    when(loginPresenter.emailErrorStream).thenAnswer((_) => emailErrorController.stream);
 
     final loginPage = MaterialApp(
-      home: LoginPage(presenter),
+      home: LoginPage(loginPresenter),
     );
 
     await tester.pumpWidget(loginPage);
   }
+
+  tearDown(() {
+    emailErrorController.close();
+  });
 
   testWidgets('Should load with correct initial state', (WidgetTester tester) async {
     await loadPage(tester);
@@ -52,13 +61,28 @@ void main() {
 
   testWidgets('Should call validate with correct values', (WidgetTester tester) async {
     await loadPage(tester);
-    
-    final email = faker.internet.email();
-    await tester.enterText(find.bySemanticsLabel('Email'), email);
-    verify(presenter.validateEmail(email));
 
+    final email = faker.internet.email();
     final password = faker.internet.password();
+
+    await tester.enterText(find.bySemanticsLabel('Email'), email);
+
+    verify(loginPresenter.validateEmail(email));
+
     await tester.enterText(find.bySemanticsLabel('Senha'), password);
-    verify(presenter.validatePassword(password));
+
+    verify(loginPresenter.validatePassword(password));
+  });
+
+  testWidgets('Should present error if email is invalid', (WidgetTester tester) async {
+
+    await loadPage(tester);
+
+    emailErrorController.add('any error');
+
+    await tester.pump();
+
+    expect(find.text('any error'), findsOneWidget);
+
   });
 }

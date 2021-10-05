@@ -4,9 +4,9 @@ import '/ui/components/components.dart';
 import '/ui/pages/pages.dart';
 
 class LoginPage extends StatelessWidget {
-  final LoginPresenter presenter;
+  final LoginPresenter loginPresenter;
 
-  LoginPage(this.presenter);
+  const LoginPage(this.loginPresenter);
 
   @override
   Widget build(BuildContext context) {
@@ -22,17 +22,22 @@ class LoginPage extends StatelessWidget {
               child: Form(
                 child: Column(
                   children: [
-                    TextFormField(
-                      decoration: InputDecoration(
-                        labelText: 'Email',
-                        icon: Icon(
-                          Icons.email,
-                          color: Theme.of(context).primaryColorLight,
-                        ),
-                      ),
-                      keyboardType: TextInputType.emailAddress,
-                      onChanged: presenter.validateEmail,
-                    ),
+                    StreamBuilder<String>(
+                        stream: loginPresenter.emailErrorStream,
+                        builder: (context, snapshot) {
+                          return TextFormField(
+                            decoration: InputDecoration(
+                              labelText: 'Email',
+                              errorText: snapshot.data,
+                              icon: Icon(
+                                Icons.email,
+                                color: Theme.of(context).primaryColorLight,
+                              ),
+                            ),
+                            keyboardType: TextInputType.emailAddress,
+                            onChanged: loginPresenter.validateEmail,
+                          );
+                        }),
                     Padding(
                       padding: EdgeInsets.only(
                         top: 8.0,
@@ -47,7 +52,7 @@ class LoginPage extends StatelessWidget {
                           ),
                         ),
                         obscureText: true,
-                        onChanged: presenter.validatePassword,
+                        onChanged: loginPresenter.validatePassword,
                       ),
                     ),
                     ElevatedButton(
