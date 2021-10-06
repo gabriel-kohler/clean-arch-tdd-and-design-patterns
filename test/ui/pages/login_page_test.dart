@@ -119,16 +119,32 @@ void main() {
 
   });
 
-  testWidgets('Should present error if password is invalid', (WidgetTester tester) async {
+  testWidgets('Should present no error if password is invalid', (WidgetTester tester) async {
 
     await loadPage(tester);
 
-    passwordErrorController.add("any error");
+    passwordErrorController.add(null);
 
     await tester.pump();
+
+    final passwordTextChildren = find.descendant(of: find.bySemanticsLabel('Email'), matching: find.byType(Text));
     
-    expect(find.text('any error'), findsOneWidget);
+    expect(passwordTextChildren, findsOneWidget);
 
   });
    
+  testWidgets('Should present no error if password is invalid', (WidgetTester tester) async {
+
+    await loadPage(tester);
+
+    passwordErrorController.add('');
+
+    await tester.pump();
+
+    final passwordTextChildren = find.descendant(of: find.bySemanticsLabel('Email'), matching: find.byType(Text));
+    
+    expect(passwordTextChildren, findsOneWidget);
+
+  });
+
 }
