@@ -12,6 +12,7 @@ class LoginPresenterSpy extends Mock implements LoginPresenter {}
 void main() {
   LoginPresenter loginPresenter;
   StreamController<String> emailErrorController;
+  StreamController<String> passwordErrorController;
 
   Future<void> loadPage(WidgetTester tester) async {
 
@@ -19,6 +20,9 @@ void main() {
 
     emailErrorController = StreamController<String>();
     when(loginPresenter.emailErrorStream).thenAnswer((_) => emailErrorController.stream);
+
+    passwordErrorController = StreamController<String>();
+    when(loginPresenter.passsowrdErrorStream).thenAnswer((_) => passwordErrorController.stream);
 
     final loginPage = MaterialApp(
       home: LoginPage(loginPresenter),
@@ -29,6 +33,7 @@ void main() {
 
   tearDown(() {
     emailErrorController.close();
+    passwordErrorController.close();
   });
 
   testWidgets('Should load with correct initial state', (WidgetTester tester) async {
@@ -78,11 +83,52 @@ void main() {
 
     await loadPage(tester);
 
-    emailErrorController.add('any error');
+    emailErrorController.add("any error");
 
     await tester.pump();
-
+    
     expect(find.text('any error'), findsOneWidget);
 
   });
+
+  testWidgets('Should present no error if email is valid', (WidgetTester tester) async {
+
+    await loadPage(tester);
+
+    emailErrorController.add(null);
+
+    await tester.pump();
+
+    final emailTextChildren = find.descendant(of: find.bySemanticsLabel('Email'), matching: find.byType(Text));
+
+    expect(emailTextChildren, findsOneWidget);
+
+  });
+
+  testWidgets('Should present no error if email is valid', (WidgetTester tester) async {
+
+    await loadPage(tester);
+
+    emailErrorController.add('');
+
+    await tester.pump();
+
+    final emailTextChildren = find.descendant(of: find.bySemanticsLabel('Email'), matching: find.byType(Text));
+
+    expect(emailTextChildren, findsOneWidget);
+
+  });
+
+  testWidgets('Should present error if password is invalid', (WidgetTester tester) async {
+
+    await loadPage(tester);
+
+    passwordErrorController.add("any error");
+
+    await tester.pump();
+    
+    expect(find.text('any error'), findsOneWidget);
+
+  });
+   
 }

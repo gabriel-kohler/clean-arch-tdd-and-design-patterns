@@ -28,7 +28,7 @@ class LoginPage extends StatelessWidget {
                           return TextFormField(
                             decoration: InputDecoration(
                               labelText: 'Email',
-                              errorText: snapshot.data,
+                              errorText: snapshot.data?.isEmpty == true ? null : snapshot.data,                                 
                               icon: Icon(
                                 Icons.email,
                                 color: Theme.of(context).primaryColorLight,
@@ -43,16 +43,22 @@ class LoginPage extends StatelessWidget {
                         top: 8.0,
                         bottom: 32,
                       ),
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                          labelText: 'Senha',
-                          icon: Icon(
-                            Icons.lock,
-                            color: Theme.of(context).primaryColorLight,
-                          ),
-                        ),
-                        obscureText: true,
-                        onChanged: loginPresenter.validatePassword,
+                      child: StreamBuilder<String>(
+                        stream: loginPresenter.passsowrdErrorStream,
+                        builder: (context, snapshot) {
+                          return TextFormField(
+                            decoration: InputDecoration(
+                              labelText: 'Senha',
+                              errorText: snapshot.data,
+                              icon: Icon(
+                                Icons.lock,
+                                color: Theme.of(context).primaryColorLight,
+                              ),
+                            ),
+                            obscureText: true,
+                            onChanged: loginPresenter.validatePassword,
+                          );
+                        }
                       ),
                     ),
                     ElevatedButton(
