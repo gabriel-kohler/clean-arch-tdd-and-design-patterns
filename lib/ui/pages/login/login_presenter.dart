@@ -2,8 +2,9 @@ abstract class LoginPresenter {
 
   Stream get emailErrorStream;
   Stream get passsowrdErrorStream;
-  Stream get isFormValid;
+  Stream get isFormValidStream;
 
   void validateEmail(String email);
   void validatePassword(String password);
+  void auth();
 }

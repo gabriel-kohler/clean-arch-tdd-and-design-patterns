@@ -26,7 +26,7 @@ void main() {
     when(loginPresenter.passsowrdErrorStream).thenAnswer((_) => passwordErrorController.stream);
 
     isFormValidController = StreamController<bool>();
-    when(loginPresenter.isFormValid).thenAnswer((_) => isFormValidController.stream);
+    when(loginPresenter.isFormValidStream).thenAnswer((_) => isFormValidController.stream);
 
     final loginPage = MaterialApp(
       home: LoginPage(loginPresenter),
@@ -164,6 +164,26 @@ void main() {
 
     expect(loginButton.onPressed, null);
 
-  }); 
+  });
+
+  testWidgets('Should call authentication on form submit', (WidgetTester tester) async {
+
+    await loadPage(tester);
+
+    isFormValidController.add(true);
+
+    await tester.pump();
+  
+    final loginButton = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+  
+    loginButton.onPressed();
+
+    expect(loginButton.onPressed, isNotNull);
+
+    await tester.pump();
+  
+    verify(loginPresenter.auth()).called(1);
+
+  });
 
 }
