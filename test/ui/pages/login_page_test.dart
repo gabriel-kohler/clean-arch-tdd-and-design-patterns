@@ -237,4 +237,15 @@ void main() {
 
   });
 
+  testWidgets('Should close streams on dispose', (WidgetTester tester) async { 
+    
+    await loadPage(tester);
+
+    addTearDown(() {
+      verify(loginPresenter.dispose()).called(1);
+    });
+
+  });
+
+  
 }
