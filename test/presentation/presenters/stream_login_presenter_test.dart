@@ -82,4 +82,14 @@ void main() {
     verify(validation.validate(field: 'password', value: password)).called(1);
   });
 
+  test('Should emit password error if validation fails', () {
+
+    mockValidation(field: 'password', value: 'error');
+
+    expectLater(sut.passwordErrorStream, emits('error'));
+
+    sut.validatePassword(password);
+
+  });
+
 }
