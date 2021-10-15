@@ -42,6 +42,12 @@ void main() {
       }),
     );
 
+    sut.isFormValidStream.listen(
+      expectAsync1((isValid) {
+        expect(isValid, false);
+      }),
+    );
+
     expectLater(sut.emailErrorStream, emits('error'));
 
     sut.validateEmail(email);
