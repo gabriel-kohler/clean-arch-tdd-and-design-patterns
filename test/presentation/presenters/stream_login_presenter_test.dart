@@ -86,10 +86,19 @@ void main() {
 
     mockValidation(field: 'password', value: 'error');
 
+    sut.passwordErrorStream.listen(
+      expectAsync1((error) {
+        expect(error, 'error');
+      }),
+    );
+
     expectLater(sut.passwordErrorStream, emits('error'));
 
     sut.validatePassword(password);
+    sut.validatePassword(password);
 
   });
+
+
 
 }
