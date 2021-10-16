@@ -4,10 +4,15 @@ import 'package:meta/meta.dart';
 import  '/presentation/dependencies/dependencies.dart';
 
 class LoginState {
+  String email;
+  String password;
   String emailError;
   String passwordError;
 
-  bool get isFormValid => false;
+  bool get isFormValid => emailError == null 
+    && passwordError == null 
+    && email != null 
+    && password != null ? true : false;
 }
 
 class StreamLoginPresenter {
@@ -25,11 +30,13 @@ class StreamLoginPresenter {
 
 
   validateEmail(String email) {
+    _state.email = email;
     _state.emailError = validation.validate(field: 'email', value: email);
     _controller.add(_state);
   }
 
   validatePassword(String password) {
+    _state.password = password;
     _state.passwordError = validation.validate(field: 'password', value: password);
     _controller.add(_state);
   }
