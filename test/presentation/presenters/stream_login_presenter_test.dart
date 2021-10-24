@@ -1,9 +1,10 @@
 import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
+import 'package:test/test.dart';
+
 import 'package:practice/domain/entities/account_entity.dart';
 import 'package:practice/domain/helpers/domain_error.dart';
 import 'package:practice/domain/usecases/usecases.dart';
-import 'package:test/test.dart';
 
 import 'package:practice/presentation/dependencies/dependencies.dart';
 import 'package:practice/presentation/presenters/presenters.dart';
@@ -248,6 +249,15 @@ void main() {
     );
 
     await sut.auth();
+    
+  });
+
+  test('Should not emit after dispose', () async {
+
+    expectLater(sut.emailErrorStream, neverEmits(null));
+
+    sut.dispose();
+    sut.validateEmail(email);
     
   });
 

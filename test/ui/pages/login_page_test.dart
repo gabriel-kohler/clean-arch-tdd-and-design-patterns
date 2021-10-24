@@ -27,7 +27,7 @@ void main() {
 
   void mockStreams() {
     when(loginPresenter.emailErrorStream).thenAnswer((_) => emailErrorController.stream);    
-    when(loginPresenter.passsowrdErrorStream).thenAnswer((_) => passwordErrorController.stream);    
+    when(loginPresenter.passwordErrorStream).thenAnswer((_) => passwordErrorController.stream);    
     when(loginPresenter.isFormValidStream).thenAnswer((_) => isFormValidController.stream);    
     when(loginPresenter.isLoadingStream).thenAnswer((_) => isLoadingController.stream);    
     when(loginPresenter.mainErrorStream).thenAnswer((_) => mainErrorController.stream);
