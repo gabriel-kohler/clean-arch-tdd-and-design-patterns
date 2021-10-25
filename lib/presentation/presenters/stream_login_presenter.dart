@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:meta/meta.dart';
+import 'package:practice/ui/pages/login/login_presenter.dart';
 
 import '/domain/usecases/usecases.dart';
 import '/domain/helpers/domain_error.dart';
@@ -20,7 +21,7 @@ class LoginState {
     && password != null ? true : false;
 }
 
-class StreamLoginPresenter {
+class StreamLoginPresenter implements LoginPresenter {
 
   final Authentication authentication;
   final Validation validation;
@@ -72,4 +73,5 @@ class StreamLoginPresenter {
     _controller.close();
     _controller = null;
   }
+
 } 
