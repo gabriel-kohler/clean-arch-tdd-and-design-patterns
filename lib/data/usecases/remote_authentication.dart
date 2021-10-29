@@ -8,7 +8,7 @@ import '/domain/entities/entities.dart';
 
 import '/data/http/http.dart';
 
-class RemoteAuthentication {
+class RemoteAuthentication implements Authentication {
   final HttpClient httpClient;
   final String url;
 
@@ -17,7 +17,7 @@ class RemoteAuthentication {
     @required this.url,
   });
 
-  Future<AccountEntity> auth(AuthenticationParams params) async {
+  Future<AccountEntity> auth({@required AuthenticationParams params}) async {
     final body = RemoteAuthenticationParams.fromDomain(params).toJson();
     try {
        final httpResponse = await httpClient.request(url: url, method: 'post', body: body); //retorna um map com um name e um accessToken

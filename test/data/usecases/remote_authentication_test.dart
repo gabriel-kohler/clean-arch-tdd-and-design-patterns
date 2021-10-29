@@ -44,7 +44,7 @@ void main() {
 
   test('Should call httpClient with correct values', () async {
 
-    await sut.auth(params);
+    await sut.auth(params: params);
 
     final body = {
       'email': params.email,
@@ -62,7 +62,7 @@ void main() {
 
     mockHttpError(HttpError.badRequest);
 
-    final future = sut.auth(params);
+    final future = sut.auth(params: params);
 
     expect(future, throwsA(DomainError.unexpected));
   });
@@ -71,7 +71,7 @@ void main() {
 
     mockHttpError(HttpError.notFound);
 
-    final future = sut.auth(params);
+    final future = sut.auth(params: params);
 
     expect(future, throwsA(DomainError.unexpected));
   });
@@ -80,7 +80,7 @@ void main() {
 
     mockHttpError(HttpError.serverError);
 
-    final future = sut.auth(params);
+    final future = sut.auth(params: params);
 
     expect(future, throwsA(DomainError.unexpected));
   });
@@ -89,7 +89,7 @@ void main() {
 
     mockHttpError(HttpError.unauthorized);
 
-    final future = sut.auth(params);
+    final future = sut.auth(params: params);
 
     expect(future, throwsA(DomainError.invalidCredentials));
 
@@ -101,7 +101,7 @@ void main() {
 
     mockHttpData(validData);
 
-    final account  = await sut.auth(params);
+    final account  = await sut.auth(params: params);
 
     expect(account.token, validData['accessToken']);
 
@@ -111,7 +111,7 @@ void main() {
 
     mockHttpData({'invalid_key': 'invalid_value'});
 
-    final future  = sut.auth(params);
+    final future  = sut.auth(params: params);
 
     expect(future, throwsA(DomainError.unexpected));
   });
