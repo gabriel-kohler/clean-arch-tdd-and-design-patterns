@@ -41,6 +41,12 @@ void main() {
 
   });
 
+  mockFetchSecureCall() => when(fetchSecureCurrentAccountSpy.fetchSecure(key: anyNamed('key')));
+
+  mockFetchSecure() => mockFetchSecureCall().thenAnswer((_) async => token);
+
+  mockFetchSecureError() => mockFetchSecureCall().thenThrow(Exception());
+
   test('Should call FetchSecureCurrentAccount with correct values', () async {
 
     await sut.fetch();
@@ -51,7 +57,7 @@ void main() {
 
   test('Should return AccountEntity if FetchSecure success', () async {
 
-    when(fetchSecureCurrentAccountSpy.fetchSecure(key: anyNamed('key'))).thenAnswer((_) async => token);
+    mockFetchSecure();
 
     final account = await sut.fetch();
 
@@ -60,7 +66,7 @@ void main() {
 
   test('Should LocalLoadCurrentAccount throw UnexpectedError if FetchSecure throws', () async {
 
-    when(fetchSecureCurrentAccountSpy.fetchSecure(key: anyNamed('key'))).thenThrow(Exception());
+    mockFetchSecureError();
 
     final future = sut.fetch ();
 
