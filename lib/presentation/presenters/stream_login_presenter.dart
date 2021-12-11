@@ -62,7 +62,7 @@ class StreamLoginPresenter implements LoginPresenter {
           password: _state.password
         ),
       );
-      localSaveCurrentAccount.save(account: account);
+      await localSaveCurrentAccount.save(account: account);
     } on DomainError catch (error) {
       _state.mainError = error.description;
     }
