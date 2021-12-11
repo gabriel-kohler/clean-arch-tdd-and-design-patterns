@@ -1,5 +1,6 @@
 import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
+import 'package:practice/domain/helpers/domain_error.dart';
 import 'package:test/test.dart';
 import 'package:meta/meta.dart';
 
@@ -18,8 +19,12 @@ class LocalLoadCurrentAccount implements LoadCurrentAccount {
   LocalLoadCurrentAccount({@required this.fetchSecureCurrentAccount});
 
   Future<AccountEntity> fetch() async {
-    final account = await fetchSecureCurrentAccount.fetchSecure(key: 'token');
-    return AccountEntity(account);
+    try {
+      final account = await fetchSecureCurrentAccount.fetchSecure(key: 'token');
+      return AccountEntity(account);
+    } catch (error) {
+      throw DomainError.unexpected;
+    }
   }
 
 }
@@ -51,6 +56,16 @@ void main() {
     final account = await sut.fetch();
 
     expect(account, AccountEntity(token));
+  });
+
+  test('Should LocalLoadCurrentAccount throw UnexpectedError if FetchSecure throws', () async {
+
+    when(fetchSecureCurrentAccountSpy.fetchSecure(key: anyNamed('key'))).thenThrow(Exception());
+
+    final future = sut.fetch ();
+
+    expect(future, throwsA(DomainError.unexpected));
+    
   });
 
 }
