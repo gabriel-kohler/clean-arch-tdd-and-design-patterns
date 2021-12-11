@@ -172,7 +172,7 @@ void main() {
 
   }); 
 
-  testWidgets('Should enable button if form is valid', (WidgetTester tester) async {
+  testWidgets('Should enable disable if form is valid', (WidgetTester tester) async {
 
     await loadPage(tester);
 
