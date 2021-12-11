@@ -11,13 +11,16 @@ import 'package:practice/presentation/presenters/presenters.dart';
 
 class ValidationSpy extends Mock implements Validation {}
 class AuthenticationSpy extends Mock implements Authentication {}
+class AddCurrentAccountSpy extends Mock implements AddCurrentAccount {}
 
 void main() {
   AuthenticationSpy authentication;
   ValidationSpy validation;
+  AddCurrentAccount localSaveCurrentAccountSpy;
   StreamLoginPresenter sut;
   String email;
   String password;
+  AccountEntity account;
 
   PostExpectation mockValidationCall(String field) => when(validation.validate(
       field: field == null ? anyNamed('field') : field,
@@ -40,9 +43,12 @@ void main() {
   setUp(() {
     authentication = AuthenticationSpy();
     validation = ValidationSpy();
-    sut = StreamLoginPresenter(validation: validation, authentication: authentication);
+    localSaveCurrentAccountSpy = AddCurrentAccountSpy();
+    sut = StreamLoginPresenter(validation: validation, authentication: authentication, localSaveCurrentAccount: localSaveCurrentAccountSpy);
     email = faker.internet.email();
     password = faker.internet.password();
+    account = AccountEntity(faker.guid.guid());
+
     mockValidation();
     mockAuthentication();
   });
@@ -259,6 +265,15 @@ void main() {
     sut.dispose();
     sut.validateEmail(email);
     
+  });
+
+  test('Should call LocalSaveCurrentAccount with correct values', () async {
+
+    when(authentication.auth(params: anyNamed('params'))).thenAnswer((_) async => account);
+
+    await sut.auth();
+
+    verify(localSaveCurrentAccountSpy.save(account: account)).called(1);
   });
 
 }

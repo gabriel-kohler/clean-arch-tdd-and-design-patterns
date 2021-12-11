@@ -10,8 +10,9 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
 
   final Authentication authentication;
   final Validation validation;
+  final AddCurrentAccount localSaveCurrentAccount;
 
-  GetxLoginPresenter({@required this.authentication, @required this.validation});
+  GetxLoginPresenter({@required this.authentication, @required this.validation, @required this.localSaveCurrentAccount});
 
   var _emailError = RxString(null);
   var _passwordError = RxString(null);
@@ -54,12 +55,13 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
   Future<void> auth() async {
     _isLoading.value = true;
     try {
-      await authentication.auth(
+      final account = await authentication.auth(
         params: AuthenticationParams(
           email: _email, 
           password: _password
         ),
       );
+      localSaveCurrentAccount.save(account: account);
     } on DomainError catch (error) {
       _mainError.value = error.description;
     }
