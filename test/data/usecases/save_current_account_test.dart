@@ -26,11 +26,18 @@ class SaveCurrentAccount implements AddCurrentAccount {
 
 void main() {
 
-  test('ensure SaveCurrentAccount call SaveSecureCurrentAccount with correct values', () async {
-    final saveSecureCurrentAccountSpy = SaveSecureCurrentAccountSpy();
-    final sut = SaveCurrentAccount(saveSecureCurrentAccount: saveSecureCurrentAccountSpy);
+  SaveSecureCurrentAccount saveSecureCurrentAccountSpy;
+  SaveCurrentAccount sut;
+  AccountEntity account;
 
-    final account = AccountEntity(faker.guid.guid());
+  setUp(() {
+    saveSecureCurrentAccountSpy = SaveSecureCurrentAccountSpy();
+    sut = SaveCurrentAccount(saveSecureCurrentAccount: saveSecureCurrentAccountSpy);
+
+    account = AccountEntity(faker.guid.guid());
+  });
+
+  test('ensure SaveCurrentAccount call SaveSecureCurrentAccount with correct values', () async {
 
     await sut.save(account: account);
 
