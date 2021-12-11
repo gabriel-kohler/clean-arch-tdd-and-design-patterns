@@ -1,33 +1,16 @@
 import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
-import 'package:practice/domain/helpers/domain_error.dart';
 import 'package:test/test.dart';
-import 'package:meta/meta.dart';
 
 import 'package:practice/domain/entities/account_entity.dart';
-import 'package:practice/domain/usecases/load_current_account.dart';
+import 'package:practice/domain/helpers/domain_error.dart';
 
-abstract class FetchSecureCurrentAccount {
-  Future<String> fetchSecure({@required String key});
-}
+import 'package:practice/data/cache/cache.dart';
+import 'package:practice/data/usecases/usecases.dart';
+
 
 class FetchSecureCurrentAccountSpy extends Mock implements FetchSecureCurrentAccount {}
 
-class LocalLoadCurrentAccount implements LoadCurrentAccount {
-  final FetchSecureCurrentAccount fetchSecureCurrentAccount;
-
-  LocalLoadCurrentAccount({@required this.fetchSecureCurrentAccount});
-
-  Future<AccountEntity> fetch() async {
-    try {
-      final account = await fetchSecureCurrentAccount.fetchSecure(key: 'token');
-      return AccountEntity(account);
-    } catch (error) {
-      throw DomainError.unexpected;
-    }
-  }
-
-}
 void main() {
 
   FetchSecureCurrentAccount fetchSecureCurrentAccountSpy;
