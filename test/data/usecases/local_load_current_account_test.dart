@@ -20,11 +20,16 @@ class LocalLoadCurrentAccount {
 }
 void main() {
 
+  FetchSecureCurrentAccount fetchSecureCurrentAccountSpy;
+  LocalLoadCurrentAccount sut;
+
+  setUp(() {
+    fetchSecureCurrentAccountSpy = FetchSecureCurrentAccountSpy();
+    sut = LocalLoadCurrentAccount(fetchSecureCurrentAccount: fetchSecureCurrentAccountSpy);
+  });
+
   test('Should call FetchSecureCurrentAccount with correct values', () async {
 
-    final fetchSecureCurrentAccountSpy = FetchSecureCurrentAccountSpy();
-    final sut = LocalLoadCurrentAccount(fetchSecureCurrentAccount: fetchSecureCurrentAccountSpy);
-    
     await sut.fetch();
 
     verify(fetchSecureCurrentAccountSpy.fetchSecure(key: 'token')).called(1);
