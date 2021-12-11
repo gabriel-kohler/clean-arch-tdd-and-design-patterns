@@ -24,11 +24,17 @@ class SecureStorageAdapter implements SaveSecureCurrentAccount {
 
 void main() {
 
-  test('Should SecureStorageAdapter calls saveSecure with correct values', () {
-    final flutterSecureStorageSpy = FlutterSecureStorageSpy();
-    final sut = SecureStorageAdapter(flutterSecureStorage: flutterSecureStorageSpy);
-    final account = AccountEntity(faker.guid.guid());
+  FlutterSecureStorageSpy flutterSecureStorageSpy;
+  SecureStorageAdapter sut;
+  AccountEntity account;
 
+  setUp(() {
+    flutterSecureStorageSpy = FlutterSecureStorageSpy();
+    sut = SecureStorageAdapter(flutterSecureStorage: flutterSecureStorageSpy);
+    account = AccountEntity(faker.guid.guid());
+  });
+
+  test('Should SecureStorageAdapter calls saveSecure with correct values', () {
     sut.saveSecure(key: 'token', value: account.token);
 
     verify(flutterSecureStorageSpy.write(key: 'token', value: account.token));
