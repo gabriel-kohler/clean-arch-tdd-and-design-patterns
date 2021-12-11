@@ -4,8 +4,15 @@ import '/ui/pages/login/login_presenter.dart';
 import '../../factories.dart';
 import 'login.dart';
 
-LoginPresenter makeLoginPresenter() {
+LoginPresenter makeStreamLoginPresenter() {
   return StreamLoginPresenter(
+    validation: makeValidationComposite(),
+    authentication: makeRemoteAuthentication(),
+  );
+}
+
+LoginPresenter makeGetxLoginPresenter() {
+  return GetxLoginPresenter(
     validation: makeValidationComposite(),
     authentication: makeRemoteAuthentication(),
   );
