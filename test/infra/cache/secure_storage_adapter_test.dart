@@ -1,5 +1,6 @@
 import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
+import 'package:practice/domain/helpers/domain_error.dart';
 import 'package:test/test.dart';
 import 'package:meta/meta.dart';
 
@@ -16,7 +17,7 @@ class SecureStorageAdapter implements SaveSecureCurrentAccount {
   SecureStorageAdapter({@required this.flutterSecureStorage});
 
   @override
-  void saveSecure({String key, String value}) {
+  Future<void> saveSecure({String key, String value}) async {
     flutterSecureStorage.write(key: key, value: value);
   }
 
@@ -38,5 +39,14 @@ void main() {
     sut.saveSecure(key: 'token', value: account.token);
 
     verify(flutterSecureStorageSpy.write(key: 'token', value: account.token));
+  });
+
+  test('Should SecureStorageAdapter throw if FlutterSecureStorage throws', () async {
+
+    when(flutterSecureStorageSpy.write(key: anyNamed('key'), value: anyNamed('value'))).thenThrow(Exception());
+
+    final future = sut.saveSecure(key: 'token', value: account.token);
+
+    expect(future, throwsA(TypeMatcher<Exception>()));
   });
 }
