@@ -20,7 +20,7 @@ class RemoteAuthentication implements Authentication {
   Future<AccountEntity> auth({@required AuthenticationParams params}) async {
     final body = RemoteAuthenticationParams.fromDomain(params).toJson();
     try {
-       final httpResponse = await httpClient.request(url: url, method: 'post', body: body); //retorna um map com um name e um accessToken
+       final httpResponse = await httpClient.request(url: url, method: 'post', body: body);
        return RemoteAccountModel.fromJson(httpResponse).toAccountEntity();
     } on HttpError catch (error) {
       throw error == HttpError.unauthorized
