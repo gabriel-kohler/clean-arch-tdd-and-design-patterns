@@ -50,13 +50,23 @@ void main() {
 
     });
 
-    test('Should SecureStorageAdapter return token if FetchSecure with correct values', () async {
+    test('Should SecureStorageAdapter return token if FetchSecure success', () async {
       
       when(flutterSecureStorageSpy.read(key: anyNamed('key'))).thenAnswer((_) async => 'any_token');
 
       final account = await sut.fetchSecure(key: key);
 
       expect(account, 'any_token');
+    });
+
+    test('Should SecureStorageAdapter throw if FetchSecure throws', () async {
+
+      when(flutterSecureStorageSpy.read(key: anyNamed('key'))).thenThrow(Exception());
+
+      final future = sut.fetchSecure(key: key);
+
+      expect(future, throwsA(TypeMatcher<Exception>()));
+
     });
 
   });
