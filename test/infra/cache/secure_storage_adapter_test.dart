@@ -50,6 +50,15 @@ void main() {
 
     });
 
+    test('Should SecureStorageAdapter return token if FetchSecure with correct values', () async {
+      
+      when(flutterSecureStorageSpy.read(key: anyNamed('key'))).thenAnswer((_) async => 'any_token');
+
+      final account = await sut.fetchSecure(key: key);
+
+      expect(account, 'any_token');
+    });
+
   });
 
   

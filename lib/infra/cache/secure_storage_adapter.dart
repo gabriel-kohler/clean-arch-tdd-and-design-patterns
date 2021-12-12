@@ -15,8 +15,8 @@ class SecureStorageAdapter implements SaveSecureCurrentAccount {
   }
 
   Future<String> fetchSecure({@required String key}) async {
-    await flutterSecureStorage.read(key: key);
-    return null;
+    final account = await flutterSecureStorage.read(key: key);
+    return account;
   }
 
 }
