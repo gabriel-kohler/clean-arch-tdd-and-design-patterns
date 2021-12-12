@@ -14,25 +14,43 @@ void main() {
   FlutterSecureStorageSpy flutterSecureStorageSpy;
   SecureStorageAdapter sut;
   AccountEntity account;
+  String key;
 
   setUp(() {
     flutterSecureStorageSpy = FlutterSecureStorageSpy();
     sut = SecureStorageAdapter(flutterSecureStorage: flutterSecureStorageSpy);
     account = AccountEntity(faker.guid.guid());
+    key = 'token';
   });
 
-  test('Should SecureStorageAdapter calls saveSecure with correct values', () {
-    sut.saveSecure(key: 'token', value: account.token);
+  group('Save Secure', () {
+    test('Should SecureStorageAdapter calls saveSecure with correct values', () async {
+      await sut.saveSecure(key: 'token', value: account.token);
 
-    verify(flutterSecureStorageSpy.write(key: 'token', value: account.token));
+      verify(flutterSecureStorageSpy.write(key: key, value: account.token));
+    });
+
+    test('Should SecureStorageAdapter throw if FlutterSecureStorage throws', () async {
+
+      when(flutterSecureStorageSpy.write(key: anyNamed('key'), value: anyNamed('value'))).thenThrow(Exception());
+
+      final future = sut.saveSecure(key: key, value: account.token);
+
+      expect(future, throwsA(TypeMatcher<Exception>()));
+    });
+
   });
 
-  test('Should SecureStorageAdapter throw if FlutterSecureStorage throws', () async {
+  group('Fetch Secure', () {
+    test('Should SecureStorageAdapter calls FetchSecure with correct values', () async {
+      
+      await sut.fetchSecure(key: key);
 
-    when(flutterSecureStorageSpy.write(key: anyNamed('key'), value: anyNamed('value'))).thenThrow(Exception());
+      verify(flutterSecureStorageSpy.read(key: key)).called(1);
 
-    final future = sut.saveSecure(key: 'token', value: account.token);
+    });
 
-    expect(future, throwsA(TypeMatcher<Exception>()));
   });
+
+  
 }

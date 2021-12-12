@@ -10,8 +10,13 @@ class SecureStorageAdapter implements SaveSecureCurrentAccount {
   SecureStorageAdapter({@required this.flutterSecureStorage});
 
   @override
-  Future<void> saveSecure({String key, String value}) async {
+  Future<void> saveSecure({@required String key, @required String value}) async {
     flutterSecureStorage.write(key: key, value: value);
+  }
+
+  Future<String> fetchSecure({@required String key}) async {
+    await flutterSecureStorage.read(key: key);
+    return null;
   }
 
 }
