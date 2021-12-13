@@ -85,4 +85,13 @@ void main() {
     verify(splashPresenterSpy.checkAccount()).called(1);
   });
 
+  testWidgets('Should change page', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    navigationToController.add('/any_route');
+    await tester.pumpAndSettle();
+
+    expect(Get.currentRoute, '/any_route');
+  });
+
 }
