@@ -4,42 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:mockito/mockito.dart';
+
+import 'package:practice/ui/pages/pages.dart';
 import 'package:practice/utils/app_routes.dart';
 
-abstract class SplashPresenter {
-
-  Stream<String> get navigateToStream;
-
-  Future<void> checkAccount();
-}
-
-class SplashPage extends StatelessWidget {
-
-  final SplashPresenter splashPresenter;
-
-  SplashPage({@required this.splashPresenter});
-
-  @override
-  Widget build(BuildContext context) {
-    splashPresenter.checkAccount();
-    return Scaffold(
-      body: Builder(
-        builder: (context) {
-          splashPresenter.navigateToStream.listen((page) {
-            if (page?.isNotEmpty == true) {
-              Get.offAllNamed(page);
-            }
-          });
-          return Container(
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        }
-      ),
-    );
-  }
-}
 
 class SplashPresenterSpy extends Mock implements SplashPresenter {}
 
