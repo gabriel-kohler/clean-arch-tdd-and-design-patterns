@@ -18,10 +18,16 @@ class GetxSplashPresenter {
 }
 void main() {
 
-  test('Should SplashPresenter calls LoadCurrentAccount with correct values', () async {
-    final loadCurrentAccountSpy = LoadCurrentAccountSpy();
-    final sut = GetxSplashPresenter(loadCurrentAccount: loadCurrentAccountSpy);
+  LoadCurrentAccountSpy loadCurrentAccountSpy;
+  GetxSplashPresenter sut;
 
+  setUp(() {
+    loadCurrentAccountSpy = LoadCurrentAccountSpy();
+    sut = GetxSplashPresenter(loadCurrentAccount: loadCurrentAccountSpy);
+  });
+
+  test('Should SplashPresenter calls LoadCurrentAccount with correct values', () async {
+    
     await sut.loadAccount();
 
     verify(loadCurrentAccountSpy.fetch()).called(1);
