@@ -94,4 +94,18 @@ void main() {
     expect(Get.currentRoute, '/any_route');
   });
 
+  testWidgets('Should not change page', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    navigationToController.add('');
+    await tester.pump();
+
+    expect(Get.currentRoute, AppRoute.SplashPage);
+
+    navigationToController.add(null);
+    await tester.pump();
+
+    expect(Get.currentRoute, AppRoute.SplashPage);
+  });
+
 }
