@@ -22,12 +22,17 @@ class GetxSplashPresenter extends GetxController implements SplashPresenter {
 
   Future<void> checkAccount() async {
 
-    final account = await loadCurrentAccount.fetch();
+    try {
+      final account = await loadCurrentAccount.fetch();
 
-    if (account.token == null) {
+      if (account.token == null) {
+        _navigateTo.value = AppRoute.LoginPage;
+      } else {
+        _navigateTo.value = AppRoute.HomePage;
+      }
+
+    } catch (error) {
       _navigateTo.value = AppRoute.LoginPage;
-    } else {
-      _navigateTo.value = AppRoute.HomePage;
     }
 
   }
@@ -78,6 +83,18 @@ void main() {
 
     await sut.checkAccount();
 
+  });
+
+  test('Should go to login page on error', () async {
+    when(loadCurrentAccountSpy.fetch()).thenThrow(Exception());
+
+    sut.navigateToStream.listen(
+      expectAsync1((page) {
+        expect(page, AppRoute.LoginPage);
+      })
+    );
+
+    await sut.checkAccount();
   });
 
 }
