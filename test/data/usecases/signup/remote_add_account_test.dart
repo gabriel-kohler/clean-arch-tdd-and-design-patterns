@@ -39,8 +39,12 @@ class RemoteAddAccount {
 
     try {
       await httpClient.request(url: url, method: 'post', body: body);
-    } on HttpError {
-      throw DomainError.unexpected;
+    } on HttpError catch (error) {
+      if (error == HttpError.forbidden) {
+        throw DomainError.emainInUse;
+      } else {
+        throw DomainError.unexpected;
+      }
     }
 
 
@@ -92,6 +96,15 @@ void main() {
     final future = sut.add(params: params);
 
     expect(future, throwsA(DomainError.unexpected));
+  });
+
+  test('Should throw EmailInUseError if HttpClient returns 403', () async {
+
+    mockHttpError(HttpError.forbidden);
+
+    final future = sut.add(params: params);
+
+    expect(future, throwsA(DomainError.emainInUse));
   });
 
   test('Should throw UnexpectedError if HttpClient returns 404', () {
