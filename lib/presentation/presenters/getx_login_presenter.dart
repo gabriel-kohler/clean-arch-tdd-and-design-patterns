@@ -1,8 +1,11 @@
 import 'package:get/get.dart';
 import 'package:meta/meta.dart';
-import 'package:practice/domain/helpers/helpers.dart';
 
+import '/utils/app_routes.dart';
+
+import '/domain/helpers/helpers.dart';
 import '/domain/usecases/usecases.dart';
+
 import '/presentation/dependencies/dependencies.dart';
 import '/ui/pages/login/login_presenter.dart';
 
@@ -46,33 +49,39 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
   void validateEmail(String email) {
     _email = email;
     _emailError.value = validation.validate(field: 'email', value: email);
+    _validateForm();
   }
 
   @override
   void validatePassword(String password) {
     _password = password;
     _passwordError.value = validation.validate(field: 'password', value: password);
+    _validateForm();
   }
+
+  void _validateForm() {
+   _isFormValid.value = _emailError.value == null 
+    && _passwordError.value == null 
+    && _email != null 
+    && _password != null ? true : false;
+}
 
   @override
   Future<void> auth() async {
-    _isLoading.value = true;
     try {
+      _isLoading.value = true;
       final account = await authentication.auth(
         params: AuthenticationParams(
           email: _email, 
           password: _password
         ),
       );
-      await localSaveCurrentAccount.save(account: account);
+        await localSaveCurrentAccount.save(account: account);
+        _navigateTo.value = AppRoute.HomePage;
     } on DomainError catch (error) {
       _mainError.value = error.description;
       _isLoading.value = false;
     }
-  }
-
-  @override
-  void dispose() {
   }
 
 }

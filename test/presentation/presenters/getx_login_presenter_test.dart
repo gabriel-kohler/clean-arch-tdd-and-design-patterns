@@ -1,5 +1,6 @@
 import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
+import 'package:practice/utils/app_routes.dart';
 import 'package:test/test.dart';
 
 import 'package:practice/domain/entities/account_entity.dart';
@@ -17,10 +18,10 @@ void main() {
   AuthenticationSpy authentication;
   ValidationSpy validation;
   AddCurrentAccount localSaveCurrentAccountSpy;
-  StreamLoginPresenter sut;
+  GetxLoginPresenter sut;
   String email;
   String password;
-  AccountEntity account;
+  String account;
 
   PostExpectation mockValidationCall(String field) => when(validation.validate(
       field: field == null ? anyNamed('field') : field,
@@ -33,7 +34,7 @@ void main() {
   PostExpectation mockAuthenticationCall() => when(authentication.auth(params: anyNamed('params')));
 
   void mockAuthentication() {
-    mockAuthenticationCall().thenAnswer((_) async => AccountEntity('any_value'));
+    mockAuthenticationCall().thenAnswer((_) async => AccountEntity(account));
   }
 
   void mockAuthenticationError(DomainError error) {
@@ -44,10 +45,10 @@ void main() {
     authentication = AuthenticationSpy();
     validation = ValidationSpy();
     localSaveCurrentAccountSpy = AddCurrentAccountSpy();
-    sut = StreamLoginPresenter(validation: validation, authentication: authentication, localSaveCurrentAccount: localSaveCurrentAccountSpy);
+    sut = GetxLoginPresenter(validation: validation, authentication: authentication, localSaveCurrentAccount: localSaveCurrentAccountSpy);
     email = faker.internet.email();
     password = faker.internet.password();
-    account = AccountEntity(faker.guid.guid());
+    account = faker.guid.guid();
 
     mockValidation();
     mockAuthentication();
@@ -214,7 +215,7 @@ void main() {
     sut.validateEmail(email);
     sut.validatePassword(password);
 
-    expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
+    expectLater(sut.isLoadingStream, emits(true));
 
     await sut.auth();
     
@@ -227,7 +228,7 @@ void main() {
     sut.validateEmail(email);
     sut.validatePassword(password);
 
-    expectLater(sut.isLoadingStream, emits(false));
+    expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
 
     sut.mainErrorStream.listen(
       expectAsync1((error) {
@@ -246,7 +247,7 @@ void main() {
     sut.validateEmail(email);
     sut.validatePassword(password);
 
-    expectLater(sut.isLoadingStream, emits(false));
+    expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
 
     sut.mainErrorStream.listen(
       expectAsync1((error) {
@@ -260,11 +261,24 @@ void main() {
 
   test('Should call LocalSaveCurrentAccount with correct values', () async {
 
-    when(authentication.auth(params: anyNamed('params'))).thenAnswer((_) async => account);
+    await sut.auth();
+
+    verify(localSaveCurrentAccountSpy.save(account: AccountEntity(account))).called(1);
+  });
+
+  test('Should LoginPage navigate to home page if authenticate success', () async {
+    
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+
+    sut.navigateToStream.listen(
+      expectAsync1((page) {
+        expect(page, AppRoute.HomePage);
+      }),
+    );
 
     await sut.auth();
 
-    verify(localSaveCurrentAccountSpy.save(account: account)).called(1);
   });
 
 }

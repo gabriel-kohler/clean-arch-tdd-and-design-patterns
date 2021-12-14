@@ -268,5 +268,4 @@ void main() {
     expect(find.text('navigation test'), findsOneWidget);
   });
 
-  
 }

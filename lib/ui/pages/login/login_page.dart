@@ -32,7 +32,7 @@ class LoginPage extends StatelessWidget {
           }
         });
         loginPresenter.navigateToStream.listen((page) {
-          if (page != null) {
+          if (page?.isNotEmpty == true) {
             Get.offAllNamed(page);
           }
         });

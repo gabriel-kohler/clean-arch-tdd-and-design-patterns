@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'package:meta/meta.dart';
-import 'package:practice/ui/pages/login/login_presenter.dart';
+
+import '/utils/app_routes.dart';
 
 import '/domain/usecases/usecases.dart';
 import '/domain/helpers/domain_error.dart';
 
-import  '/presentation/dependencies/dependencies.dart';
+import '/presentation/dependencies/dependencies.dart';
+import '/ui/pages/login/login_presenter.dart';
 
 class LoginState {
   String email;
@@ -65,6 +67,8 @@ class StreamLoginPresenter implements LoginPresenter {
         ),
       );
       await localSaveCurrentAccount.save(account: account);
+      _state.navigateTo = AppRoute.HomePage;
+      _updateStream();
     } on DomainError catch (error) {
       _state.mainError = error.description;
     }
