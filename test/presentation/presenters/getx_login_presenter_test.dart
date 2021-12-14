@@ -266,6 +266,22 @@ void main() {
     verify(localSaveCurrentAccountSpy.save(account: AccountEntity(account))).called(1);
   });
 
+  test('Should emit UnexpectedError if LocalSaveCurrentAccount fails', () async {
+
+    when(localSaveCurrentAccountSpy.save(account: anyNamed('account'))).thenThrow(DomainError.unexpected);
+
+    expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
+
+    sut.mainErrorStream.listen(
+      expectAsync1((error) {
+        expect(error, 'Ocorreu um erro. Tente novamente em breve');
+      }),
+    );
+
+    await sut.auth();
+
+  });
+
   test('Should LoginPage navigate to home page if authenticate success', () async {
     
     sut.validateEmail(email);

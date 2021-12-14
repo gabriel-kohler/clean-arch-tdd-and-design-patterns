@@ -268,4 +268,18 @@ void main() {
     expect(find.text('navigation test'), findsOneWidget);
   });
 
+  testWidgets('Should not change page', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    navigateToController.add('');
+    await tester.pumpAndSettle();
+
+    expect(Get.currentRoute, AppRoute.LoginPage);
+
+    navigateToController.add('');
+    await tester.pumpAndSettle();
+
+    expect(Get.currentRoute, AppRoute.LoginPage);
+  });
+
 }
