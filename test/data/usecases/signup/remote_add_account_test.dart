@@ -30,18 +30,27 @@ class RemoteAddAccount {
 }
 void main() {
 
-  test('Should RemoteAddAccount calls HttpClient with correct params', () async {
-    final httpClient = HttpClientSpy();
-    final url = faker.internet.httpUrl();
-    final sut = RemoteAddAccount(httpClient: httpClient, url: url);
+  String url;
+  HttpClient httpClient;
+  RemoteAddAccount sut;
+  AddAccountParams params;
 
-    final params = AddAccountParams(
+  setUp(() {
+    httpClient = HttpClientSpy();
+    url = faker.internet.httpUrl();
+    sut = RemoteAddAccount(httpClient: httpClient, url: url);
+
+    params = AddAccountParams(
       email: faker.internet.email(), 
       password: faker.internet.password(), 
       confirmPassowrd: faker.internet.password(), 
       name: faker.person.name(),
     );
 
+  });
+
+  test('Should RemoteAddAccount calls HttpClient with correct params', () async {
+    
     final body = {
       'name' : params.name,
       'email' : params.email,
