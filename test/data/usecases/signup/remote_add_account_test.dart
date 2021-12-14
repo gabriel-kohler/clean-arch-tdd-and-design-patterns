@@ -1,58 +1,17 @@
 import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
-import 'package:practice/data/models/models.dart';
-import 'package:practice/domain/entities/account_entity.dart';
-import 'package:practice/domain/helpers/domain_error.dart';
 import 'package:test/test.dart';
 import 'package:meta/meta.dart';
 
+import 'package:practice/data/usecases/usecases.dart';
 import 'package:practice/data/http/http.dart';
 
+import 'package:practice/domain/entities/entities.dart';
+import 'package:practice/domain/helpers/helpers.dart';
 import 'package:practice/domain/usecases/signup/add_account.dart';
 
 class HttpClientSpy extends Mock implements HttpClient {}
 
-class RemoteAddAccountParams {
-  final AddAccountParams params;
-
-  RemoteAddAccountParams({@required this.params});
-
-  factory RemoteAddAccountParams.fromDomain(AddAccountParams params) => RemoteAddAccountParams(params: params);
-
-  toJson() => {
-    'name' : params.name,
-    'email' : params.email,
-    'password' : params.password,
-    'confirmPassword' : params.confirmPassowrd,
-  };
-
-}
-
-class RemoteAddAccount {
-
-  final HttpClient httpClient;
-  final String url;
-
-  RemoteAddAccount({@required this.httpClient, @required this.url});
-
-  Future<AccountEntity> add({@required AddAccountParams params}) async {
-
-    final body = RemoteAddAccountParams.fromDomain(params).toJson();
-
-    try {
-      final account = await httpClient.request(url: url, method: 'post', body: body);
-      return RemoteAccountModel.fromJson(account).toAccountEntity();
-    } on HttpError catch (error) {
-      if (error == HttpError.forbidden) {
-        throw DomainError.emainInUse;
-      } else {
-        throw DomainError.unexpected;
-      }
-    }
-
-
-  }
-}
 void main() {
 
   String url;
