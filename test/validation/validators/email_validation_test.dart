@@ -1,5 +1,7 @@
-import 'package:practice/validation/validators/validators.dart';
 import 'package:test/test.dart';
+
+import 'package:practice/presentation/dependencies/validation.dart';
+import 'package:practice/validation/validators/validators.dart';
 
 void main() {
 
@@ -28,7 +30,7 @@ void main() {
   test('Should return error if email is invalid', () {
     final error = sut.validate('kohler2014outlookcom');
 
-    expect(error, 'Campo inválido');
+    expect(error, ValidationError.invalidField);
   });
 
 }

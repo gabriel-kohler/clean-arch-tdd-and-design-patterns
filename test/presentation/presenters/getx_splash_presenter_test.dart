@@ -20,7 +20,7 @@ void main() {
 
   PostExpectation mockLoadCurrentAccountCall() => when(loadCurrentAccountSpy.fetch());
 
-  void mockLoadCurrentAccount(String account) => mockLoadCurrentAccountCall().thenAnswer((_) => AccountEntity(account));
+  void mockLoadCurrentAccount(String account) => mockLoadCurrentAccountCall().thenAnswer((_)async => AccountEntity(account));
 
   void mockLoadCurrentAccountError() => mockLoadCurrentAccountCall().thenThrow(Exception());
 
@@ -39,7 +39,7 @@ void main() {
 
     sut.navigateToStream.listen(
       expectAsync1((page) {
-        expect(page, AppRoute.HomePage);
+        expect(page, AppRoute.HomePage); 
       })
     );
 

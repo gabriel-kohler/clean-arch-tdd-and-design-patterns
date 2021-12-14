@@ -1,14 +1,17 @@
 import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
-import 'package:practice/utils/app_routes.dart';
 import 'package:test/test.dart';
 
-import 'package:practice/domain/entities/account_entity.dart';
-import 'package:practice/domain/helpers/domain_error.dart';
+import 'package:practice/utils/app_routes.dart';
+
+import 'package:practice/domain/entities/entities.dart';
+import 'package:practice/domain/helpers/helpers.dart';
 import 'package:practice/domain/usecases/usecases.dart';
 
 import 'package:practice/presentation/dependencies/dependencies.dart';
 import 'package:practice/presentation/presenters/presenters.dart';
+
+import 'package:practice/ui/helpers/errors/errors.dart';
 
 class ValidationSpy extends Mock implements Validation {}
 class AuthenticationSpy extends Mock implements Authentication {}
@@ -27,7 +30,7 @@ void main() {
       field: field == null ? anyNamed('field') : field,
       value: anyNamed('value')));
 
-  void mockValidation({String field, String value}) {
+  void mockValidation({String field, ValidationError value}) {
     mockValidationCall(field).thenReturn(value);
   }
 
@@ -60,12 +63,12 @@ void main() {
     verify(validation.validate(field: 'email', value: email)).called(1);
   });
 
-  test('Should emit email error if validation fails', () {
-    mockValidation(value: 'error');
+  test('Should emit invalidFieldError if email is invalid', () {
+    mockValidation(value: ValidationError.invalidField);
 
     sut.emailErrorStream.listen(
       expectAsync1((error) {
-        expect(error, 'error');
+        expect(error, UIError.invalidField);
       }),
     );
 
@@ -75,7 +78,25 @@ void main() {
       }),
     );
 
-    expectLater(sut.emailErrorStream, emits('error'));
+    sut.validateEmail(email);
+    sut.validateEmail(email);
+
+  });
+
+  test('Should emit requiredFieldError if email is empty', () {
+    mockValidation(value: ValidationError.requiredField);
+
+    sut.emailErrorStream.listen(
+      expectAsync1((error) {
+        expect(error, UIError.requiredField);
+      }),
+    );
+
+    sut.isFormValidStream.listen(
+      expectAsync1((isValid) {
+        expect(isValid, false);
+      }),
+    );
 
     sut.validateEmail(email);
     sut.validateEmail(email);
@@ -107,17 +128,20 @@ void main() {
     verify(validation.validate(field: 'password', value: password)).called(1);
   });
 
-  test('Should emit password error if validation fails', () {
-
-    mockValidation(field: 'password', value: 'error');
+  test('Should emit requiredFieldError if password is empty', () {
+    mockValidation(value: ValidationError.requiredField);
 
     sut.passwordErrorStream.listen(
       expectAsync1((error) {
-        expect(error, 'error');
+        expect(error, UIError.requiredField);
       }),
     );
 
-    expectLater(sut.passwordErrorStream, emits('error'));
+    sut.isFormValidStream.listen(
+      expectAsync1((isValid) {
+        expect(isValid, false);
+      }),
+    );
 
     sut.validatePassword(password);
     sut.validatePassword(password);
@@ -144,13 +168,13 @@ void main() {
 
   test('Should emits form invalid event if any field is invalid', () {
 
-    mockValidation(field: 'email', value: 'error');
+    mockValidation(field: 'email', value: ValidationError.invalidField);
 
     //if password field is valid but email field is invalid, test must fail
 
     sut.emailErrorStream.listen(
       expectAsync1((error) {
-        expect(error, 'error');
+        expect(error, UIError.invalidField);
       }),
     );
 
@@ -232,7 +256,7 @@ void main() {
 
     sut.mainErrorStream.listen(
       expectAsync1((error) {
-        expect(error, 'Credenciais inválidas');
+        expect(error, UIError.invalidCredentials);
       }),
     );
 
@@ -251,7 +275,7 @@ void main() {
 
     sut.mainErrorStream.listen(
       expectAsync1((error) {
-        expect(error, 'Ocorreu um erro. Tente novamente em breve');
+        expect(error, UIError.unexpected);
       }),
     );
 
@@ -274,7 +298,7 @@ void main() {
 
     sut.mainErrorStream.listen(
       expectAsync1((error) {
-        expect(error, 'Ocorreu um erro. Tente novamente em breve');
+        expect(error, UIError.unexpected);
       }),
     );
 

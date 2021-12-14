@@ -5,27 +5,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:mockito/mockito.dart';
+
+import 'package:practice/utils/app_routes.dart';
+
+import 'package:practice/ui/helpers/errors/errors.dart';
 import 'package:practice/ui/pages/login/login_page.dart';
 import 'package:practice/ui/pages/pages.dart';
-import 'package:practice/utils/app_routes.dart';
 
 class LoginPresenterSpy extends Mock implements LoginPresenter {}
 
 void main() {
   LoginPresenter loginPresenter;
-  StreamController<String> emailErrorController;
+  StreamController<UIError> emailErrorController;
+  StreamController<UIError> passwordErrorController;
+  StreamController<UIError> mainErrorController;
+  StreamController<String> navigateToController;
   StreamController<bool> isFormValidController;
   StreamController<bool> isLoadingController;
-  StreamController<String> passwordErrorController;
-  StreamController<String> mainErrorController;
-  StreamController<String> navigateToController;
   
   void initStreams() {
-    emailErrorController = StreamController<String>();
-    passwordErrorController = StreamController<String>();
+    emailErrorController = StreamController<UIError>();
+    passwordErrorController = StreamController<UIError>();
+    mainErrorController = StreamController<UIError>();
     isFormValidController = StreamController<bool>();
     isLoadingController = StreamController<bool>();
-    mainErrorController = StreamController<String>();
     navigateToController = StreamController<String>();
   }
 
@@ -120,11 +123,23 @@ void main() {
 
     await loadPage(tester);
 
-    emailErrorController.add("any error");
+    emailErrorController.add(UIError.invalidField);
 
     await tester.pump();
     
-    expect(find.text('any error'), findsOneWidget);
+    expect(find.text('Campo inválido'), findsOneWidget);
+
+  });
+
+  testWidgets('Should present error if email is invalid', (WidgetTester tester) async {
+
+    await loadPage(tester);
+
+    emailErrorController.add(UIError.requiredField);
+
+    await tester.pump();
+    
+    expect(find.text('Campo obrigatório'), findsOneWidget);
 
   });
 
@@ -133,20 +148,6 @@ void main() {
     await loadPage(tester);
 
     emailErrorController.add(null);
-
-    await tester.pump();
-
-    final emailTextChildren = find.descendant(of: find.bySemanticsLabel('Email'), matching: find.byType(Text));
-
-    expect(emailTextChildren, findsOneWidget);
-
-  });
-
-  testWidgets('Should present no error if email is valid', (WidgetTester tester) async {
-
-    await loadPage(tester);
-
-    emailErrorController.add('');
 
     await tester.pump();
 
@@ -169,6 +170,18 @@ void main() {
     expect(passwordTextChildren, findsOneWidget);
 
   });
+
+  testWidgets('Should present error if password is empty', (WidgetTester tester) async {
+
+    await loadPage(tester);
+
+    passwordErrorController.add(UIError.requiredField);
+
+    await tester.pump();
+    
+    expect(find.text('Campo obrigatório'), findsOneWidget);
+
+  });
    
   testWidgets('Should enable button if form is valid', (WidgetTester tester) async {
 
@@ -184,7 +197,7 @@ void main() {
 
   }); 
 
-  testWidgets('Should enable disable if form is valid', (WidgetTester tester) async {
+  testWidgets('Should enable disable if form is invalid', (WidgetTester tester) async {
 
     await loadPage(tester);
 
@@ -250,11 +263,23 @@ void main() {
     
     await loadPage(tester);
     
-    mainErrorController.add('login error');
+    mainErrorController.add(UIError.invalidCredentials);
     
     await tester.pump();
 
-    expect(find.text('login error'), findsOneWidget);
+    expect(find.text('Credenciais inválidas'), findsOneWidget);
+
+  });
+
+  testWidgets('Should present error message if authentication throws', (WidgetTester tester) async { 
+    
+    await loadPage(tester);
+    
+    mainErrorController.add(UIError.unexpected);
+    
+    await tester.pump();
+
+    expect(find.text('Ocorreu um erro. Tente novamente em breve'), findsOneWidget);
 
   });
 

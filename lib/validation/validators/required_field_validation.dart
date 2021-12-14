@@ -1,3 +1,4 @@
+import '/presentation/dependencies/dependencies.dart';
 
 import '/validation/dependencies/dependencies.dart';
 
@@ -7,7 +8,7 @@ class RequiredFieldValidation implements FieldValidation {
   RequiredFieldValidation(this.field);
 
   @override
-  String validate(String value) {
-    return value?.isNotEmpty == true ? null : 'Campo obrigatório';
+  ValidationError validate(String value) {
+    return value?.isNotEmpty == true ? null : ValidationError.requiredField;
   }
 }
