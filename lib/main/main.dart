@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import 'package:get/get.dart';
 import 'package:practice/main/factories/pages/login/login_page_factory.dart';
+import 'package:practice/utils/app_routes.dart';
 
 import '/ui/components/components.dart';
 
@@ -21,9 +22,9 @@ class App extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       theme: makeAppTheme(),
-      initialRoute: '/login',
+      initialRoute: AppRoute.SplashPage,
       getPages: [
-        GetPage(name: '/login', page: makeLoginPage),
+        GetPage(name: AppRoute.SplashPage, page: makeLoginPage),
       ],
     );
   }

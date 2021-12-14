@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:practice/utils/app_routes.dart';
 
 import 'package:provider/provider.dart';
 
@@ -6,26 +8,16 @@ import '/ui/pages/login/components/components.dart';
 import '/ui/components/components.dart';
 import '/ui/pages/pages.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends StatelessWidget {
   final LoginPresenter loginPresenter;
 
   const LoginPage(this.loginPresenter);
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
-  @override
-  void dispose() {
-    super.dispose();
-    widget.loginPresenter.dispose();
-  }
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Builder(builder: (context) {
-        widget.loginPresenter.isLoadingStream.listen(
+        loginPresenter.isLoadingStream.listen(
           (isLoading) {
             if (isLoading) {
               showLoading(context);
@@ -34,9 +26,14 @@ class _LoginPageState extends State<LoginPage> {
             }
           },
         );
-        widget.loginPresenter.mainErrorStream.listen((mainError) {
+        loginPresenter.mainErrorStream.listen((mainError) {
           if (mainError != null) {
             showErrorMessage(context, mainError);
+          }
+        });
+        loginPresenter.navigateToStream.listen((page) {
+          if (page != null) {
+            Get.offAllNamed(page);
           }
         });
         return SingleChildScrollView(
@@ -48,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
               Padding(
                 padding: const EdgeInsets.all(32.0),
                 child: Provider(
-                  create: (_) => widget.loginPresenter,
+                  create: (_) => loginPresenter,
                   child: Form(
                     child: Column(
                       children: [
@@ -77,4 +74,4 @@ class _LoginPageState extends State<LoginPage> {
       }),
     );
   }
-} 
+}

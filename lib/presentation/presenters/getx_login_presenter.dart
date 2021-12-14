@@ -17,6 +17,7 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
   var _emailError = RxString(null);
   var _passwordError = RxString(null);
   var _mainError = RxString(null);
+  var _navigateTo = RxString(null);
   var _isLoading = false.obs;
   var _isFormValid = false.obs;
 
@@ -38,6 +39,8 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
   @override
   Stream<bool> get isLoadingStream => _isLoading.stream;
 
+   @override
+   Stream<String> get navigateToStream => _navigateTo.stream;
   
   @override
   void validateEmail(String email) {

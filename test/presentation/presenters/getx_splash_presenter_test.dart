@@ -48,9 +48,15 @@ void main() {
     sut = GetxSplashPresenter(loadCurrentAccount: loadCurrentAccountSpy);
   });
 
+  PostExpectation mockLoadCurrentAccountCall() => when(loadCurrentAccountSpy.fetch());
+
+  void mockLoadCurrentAccount(String account) => mockLoadCurrentAccountCall().thenAnswer((_) => AccountEntity(account));
+
+  void mockLoadCurrentAccountError() => mockLoadCurrentAccountCall().thenThrow(Exception());
+
   test('Should SplashPresenter calls LoadCurrentAccount with correct values', () async {
     
-    when(loadCurrentAccountSpy.fetch()).thenAnswer((_) async => AccountEntity('any_token'));
+    mockLoadCurrentAccount('any_token');
 
     await sut.checkAccount();
 
@@ -89,7 +95,7 @@ void main() {
     when(loadCurrentAccountSpy.fetch()).thenThrow(Exception());
 
     sut.navigateToStream.listen(
-      expectAsync1((page) {
+      expectAsync1((page) {   
         expect(page, AppRoute.LoginPage);
       })
     );
