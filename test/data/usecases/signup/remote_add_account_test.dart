@@ -80,11 +80,11 @@ void main() {
 
   void mockHttpError(HttpError error) => mockHttpCall().thenThrow(error);
 
-  void mockHttp({@required String token}) => mockHttpCall().thenAnswer((_) async => {'accessToken' : token});
+  void mockHttpRequest({@required Map responseBody}) => mockHttpCall().thenAnswer((_) async => responseBody);
 
   test('Should RemoteAddAccount calls HttpClient with correct params', () async {
 
-    mockHttp(token: token);
+    mockHttpRequest(responseBody: {'accessToken' : token});
     
     final body = {
       'name' : params.name,
@@ -136,11 +136,20 @@ void main() {
 
   test('Should return AccountEntity if HttpClient returns 200', () async {
 
-    mockHttp(token: token);
+    mockHttpRequest(responseBody: {'accessToken' : token});
     
     final account = await sut.add(params: params);
 
     expect(account, AccountEntity(token));
+  });
+
+  test('Should throw UnexpectedError if HttpClient returns 200 with invalid data', () async {
+
+    mockHttpRequest(responseBody: {'invalid_key' : 'invalid_value'});
+
+    final future = sut.add(params: params);
+
+    expect(future, throwsA(DomainError.unexpected));
   });
 
 }
