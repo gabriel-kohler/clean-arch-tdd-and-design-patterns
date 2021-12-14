@@ -67,6 +67,10 @@ void main() {
 
   });
 
+  PostExpectation mockHttpCall() => when(httpClient.request(url: anyNamed('url'), method: anyNamed('method'), body: anyNamed('body')));
+
+  void mockHttpError(HttpError error) => mockHttpCall().thenThrow(error);
+
   test('Should RemoteAddAccount calls HttpClient with correct params', () async {
     
     final body = {
@@ -83,7 +87,7 @@ void main() {
 
   test('Should throw UnexpetedError if HttpClient returns 400', () async {
 
-    when(httpClient.request(url: anyNamed('url'), method: anyNamed('method'), body: anyNamed('body'))).thenThrow(HttpError.badRequest);
+    mockHttpError(HttpError.badRequest);
 
     final future = sut.add(params: params);
 
