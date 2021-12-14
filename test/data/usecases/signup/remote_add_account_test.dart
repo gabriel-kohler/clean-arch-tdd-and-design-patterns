@@ -1,5 +1,7 @@
 import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
+import 'package:practice/data/models/models.dart';
+import 'package:practice/domain/entities/account_entity.dart';
 import 'package:practice/domain/helpers/domain_error.dart';
 import 'package:test/test.dart';
 import 'package:meta/meta.dart';
@@ -33,12 +35,13 @@ class RemoteAddAccount {
 
   RemoteAddAccount({@required this.httpClient, @required this.url});
 
-  Future<void> add({@required AddAccountParams params}) async {
+  Future<AccountEntity> add({@required AddAccountParams params}) async {
 
     final body = RemoteAddAccountParams.fromDomain(params).toJson();
 
     try {
-      await httpClient.request(url: url, method: 'post', body: body);
+      final account = await httpClient.request(url: url, method: 'post', body: body);
+      return RemoteAccountModel.fromJson(account).toAccountEntity();
     } on HttpError catch (error) {
       if (error == HttpError.forbidden) {
         throw DomainError.emainInUse;
@@ -76,6 +79,12 @@ void main() {
   void mockHttpError(HttpError error) => mockHttpCall().thenThrow(error);
 
   test('Should RemoteAddAccount calls HttpClient with correct params', () async {
+
+    final token = faker.guid.guid();
+
+    mockHttpCall().thenAnswer((_) async => {
+      'accessToken' : token, 
+    });
     
     final body = {
       'name' : params.name,
@@ -123,6 +132,19 @@ void main() {
     final future = sut.add(params: params);
 
     expect(future, throwsA(DomainError.unexpected));
+  });
+
+  test('Should return AccountEntity if HttpClient returns 200', () async {
+
+    final token = faker.guid.guid();
+
+    mockHttpCall().thenAnswer((_) async => {
+      'accessToken' : token, 
+    });
+    
+    final account = await sut.add(params: params);
+
+    expect(account, AccountEntity(token));
   });
 
 }
