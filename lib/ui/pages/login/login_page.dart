@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:practice/utils/app_routes.dart';
 
 import 'package:provider/provider.dart';
 

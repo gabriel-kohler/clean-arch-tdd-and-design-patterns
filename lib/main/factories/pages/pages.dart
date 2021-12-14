@@ -1,1 +1,2 @@
-export './login/login_page_factory.dart';
+export './login/login.dart';
+export './splash/splash.dart';
