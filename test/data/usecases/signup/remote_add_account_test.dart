@@ -59,11 +59,13 @@ void main() {
   HttpClient httpClient;
   RemoteAddAccount sut;
   AddAccountParams params;
+  String token;
 
   setUp(() {
     httpClient = HttpClientSpy();
     url = faker.internet.httpUrl();
     sut = RemoteAddAccount(httpClient: httpClient, url: url);
+    token = faker.guid.guid();
 
     params = AddAccountParams(
       email: faker.internet.email(), 
@@ -78,13 +80,11 @@ void main() {
 
   void mockHttpError(HttpError error) => mockHttpCall().thenThrow(error);
 
+  void mockHttp({@required String token}) => mockHttpCall().thenAnswer((_) async => {'accessToken' : token});
+
   test('Should RemoteAddAccount calls HttpClient with correct params', () async {
 
-    final token = faker.guid.guid();
-
-    mockHttpCall().thenAnswer((_) async => {
-      'accessToken' : token, 
-    });
+    mockHttp(token: token);
     
     final body = {
       'name' : params.name,
@@ -136,11 +136,7 @@ void main() {
 
   test('Should return AccountEntity if HttpClient returns 200', () async {
 
-    final token = faker.guid.guid();
-
-    mockHttpCall().thenAnswer((_) async => {
-      'accessToken' : token, 
-    });
+    mockHttp(token: token);
     
     final account = await sut.add(params: params);
 
