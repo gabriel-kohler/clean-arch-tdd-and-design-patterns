@@ -10,6 +10,6 @@ class AddAccountParams {
   final String password;
   final String confirmPassowrd;
 
-  AddAccountParams({@required this.email, @required this.password, @required this.confirmPassowrd, @required this.name});
+  AddAccountParams({@required this.name, @required this.email, @required this.password, @required this.confirmPassowrd});
 
 }
