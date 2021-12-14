@@ -1,12 +1,29 @@
 import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
-import 'package:practice/data/http/http.dart';
 import 'package:test/test.dart';
 import 'package:meta/meta.dart';
+
+import 'package:practice/data/http/http.dart';
 
 import 'package:practice/domain/usecases/signup/add_account.dart';
 
 class HttpClientSpy extends Mock implements HttpClient {}
+
+class RemoteAddAccountParams {
+  final AddAccountParams params;
+
+  RemoteAddAccountParams({@required this.params});
+
+  factory RemoteAddAccountParams.fromDomain(AddAccountParams params) => RemoteAddAccountParams(params: params);
+
+  toJson() => {
+    'name' : params.name,
+    'email' : params.email,
+    'password' : params.password,
+    'confirmPassword' : params.confirmPassowrd,
+  };
+
+}
 
 class RemoteAddAccount {
 
@@ -17,12 +34,7 @@ class RemoteAddAccount {
 
   Future<void> add({@required AddAccountParams params}) async {
 
-    final body = {
-      'name' : params.name,
-      'email' : params.email,
-      'password' : params.password,
-      'confirmPassword' : params.confirmPassowrd,
-    };
+    final body = RemoteAddAccountParams.fromDomain(params).toJson();
 
     await httpClient.request(url: url, method: 'post', body: body);
 
@@ -62,4 +74,5 @@ void main() {
 
     verify(httpClient.request(url: url, method: 'post', body: body)).called(1);
   });
+
 }
