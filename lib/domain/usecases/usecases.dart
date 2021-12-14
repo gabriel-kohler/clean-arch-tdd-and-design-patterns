@@ -1,3 +1,2 @@
-export './authentication.dart';
-export './add_current_account.dart';
-export './load_current_account.dart';
+export './auth/auth.dart';
+export './local_storage/local_storage.dart';
