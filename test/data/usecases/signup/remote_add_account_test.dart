@@ -1,5 +1,6 @@
 import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
+import 'package:practice/domain/helpers/domain_error.dart';
 import 'package:test/test.dart';
 import 'package:meta/meta.dart';
 
@@ -36,7 +37,12 @@ class RemoteAddAccount {
 
     final body = RemoteAddAccountParams.fromDomain(params).toJson();
 
-    await httpClient.request(url: url, method: 'post', body: body);
+    try {
+      await httpClient.request(url: url, method: 'post', body: body);
+    } on HttpError {
+      throw DomainError.unexpected;
+    }
+
 
   }
 }
@@ -73,6 +79,15 @@ void main() {
     await sut.add(params: params);
 
     verify(httpClient.request(url: url, method: 'post', body: body)).called(1);
+  });
+
+  test('Should throw UnexpetedError if HttpClient returns 400', () async {
+
+    when(httpClient.request(url: anyNamed('url'), method: anyNamed('method'), body: anyNamed('body'))).thenThrow(HttpError.badRequest);
+
+    final future = sut.add(params: params);
+
+    expect(future, throwsA(DomainError.unexpected));
   });
 
 }
