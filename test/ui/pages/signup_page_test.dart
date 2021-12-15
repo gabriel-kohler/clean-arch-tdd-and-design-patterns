@@ -158,6 +158,20 @@ void main() {
 
   });
 
+  testWidgets('Should present no error if name is valid', (WidgetTester tester) async {
+
+    await loadPage(tester);
+
+    emailErrorController.add(null);
+
+    await tester.pump();
+
+    final nameTextChildren = find.descendant(of: find.bySemanticsLabel('Nome'), matching: find.byType(Text));
+
+    expect(nameTextChildren, findsOneWidget);
+
+  });
+
   testWidgets('Should present error if email is invalid', (WidgetTester tester) async {
 
     await loadPage(tester);
