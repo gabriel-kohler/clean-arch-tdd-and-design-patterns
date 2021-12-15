@@ -135,4 +135,24 @@ void main() {
 
   });
   
+  test('Should emit null if name is valid', () {
+    
+    when(validationSpy.validate(field: anyNamed('field'), value: anyNamed('value'))).thenReturn(null);
+
+    sut.nameErrorStream.listen(
+      expectAsync1((error) {
+        expect(error, null);
+      }),
+    );
+
+    sut.isFormValidStream.listen(
+      expectAsync1((isValid) {
+        expect(isValid, false);
+      }),
+    );
+
+    sut.validateName(name);
+
+  });
+
 }
