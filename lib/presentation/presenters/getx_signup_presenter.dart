@@ -47,7 +47,7 @@ class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
    _isFormValid.value = _emailError.value == null 
     && _passwordError.value == null 
     && _nameError.value == null
-    && _confirmPasswordError == null
+    && _confirmPasswordError.value == null
     && _email != null 
     && _name != null
     && _confirmPassword != null
