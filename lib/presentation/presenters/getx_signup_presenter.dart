@@ -98,7 +98,9 @@ class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
   }
 
   @override
-  Future<void> signUp() {
+  Future<void> signUp() async {
+
+    _isLoading.value = true;
 
     final params = AddAccountParams(
       name: _name,
@@ -107,7 +109,10 @@ class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
       confirmPassowrd: _confirmPassword,
     );
 
-    addAccount.add(params: params);
+    await addAccount.add(params: params);
+    
+    _isLoading.value = false;
+    
   }
 
 }

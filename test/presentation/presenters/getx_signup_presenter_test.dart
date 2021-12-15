@@ -2,6 +2,7 @@ import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
+import 'package:practice/domain/entities/entities.dart';
 import 'package:practice/domain/usecases/signup/add_account.dart';
 import 'package:practice/presentation/dependencies/dependencies.dart';
 import 'package:practice/presentation/presenters/presenters.dart';
@@ -18,6 +19,7 @@ void main() {
   String email;
   String name;
   String password;
+  String token;
 
   setUp(() {
     validationSpy = ValidationSpy();
@@ -27,6 +29,7 @@ void main() {
     email = faker.internet.email();
     name = faker.person.name();
     password = faker.internet.password();
+    token = faker.guid.guid();
   });
 
   PostExpectation mockValidationCall() => when(validationSpy.validate(field: anyNamed('field'), value: anyNamed('value')));
@@ -378,6 +381,20 @@ void main() {
     await sut.signUp();
 
     verify(addAccountSpy.add(params: params));
+  });
+
+  test('Should emit correct events on SignUp success', () async {
+
+    sut.validateEmail(email);
+    sut.validateName(name);
+    sut.validatePassword(password);
+    sut.validateConfirmPassword(password);
+
+
+    expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
+
+    await sut.signUp();
+
   });
 
 }
