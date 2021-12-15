@@ -1,19 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:practice/utils/i18n/i18n.dart';
+import 'package:provider/provider.dart';
+
+import '/ui/pages/pages.dart';
+import '/ui/helpers/errors/errors.dart';
+
+import '/utils/i18n/i18n.dart';
 
 class EmailInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-          decoration: InputDecoration(
-            labelText: R.strings.email,
-            icon: Icon(
-              Icons.email,
-              color: Theme.of(context).primaryColorLight,
-            ),
-          ),
-          keyboardType: TextInputType.emailAddress,
-        );
+    final signUpPresenter = Provider.of<SignUpPresenter>(context);
+    return StreamBuilder<UIError>(
+      stream: signUpPresenter.emailErrorStream,
+      builder: (context, snapshot) {
+        return TextFormField(
+              decoration: InputDecoration(
+                labelText: R.strings.email,
+                icon: Icon(
+                  Icons.email,
+                  color: Theme.of(context).primaryColorLight,
+                ),
+              ),
+              keyboardType: TextInputType.emailAddress,
+              onChanged: signUpPresenter.validateEmail,
+            );
+      }
+    );
   }
 }
