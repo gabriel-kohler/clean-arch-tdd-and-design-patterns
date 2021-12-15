@@ -84,7 +84,8 @@ class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
   @override
   void validatePassword(String password) {
     _password = password;
-    _validateField(field: 'password', value: password);
+    _passwordError.value = _validateField(field: 'password', value: password);
+    _validateForm();
   }
 
    @override

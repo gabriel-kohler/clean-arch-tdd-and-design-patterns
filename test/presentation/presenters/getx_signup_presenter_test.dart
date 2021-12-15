@@ -165,4 +165,25 @@ void main() {
     verify(validationSpy.validate(field: 'password', value: password)).called(1);
   });
 
+  test('Should emit invalidFieldError if password is invalid', () {
+    
+    when(validationSpy.validate(field: anyNamed('field'), value: anyNamed('value'))).thenReturn(ValidationError.invalidField);
+
+    sut.passwordErrorStream.listen(
+      expectAsync1((error) {
+        expect(error, UIError.invalidField);
+      }),
+    );
+
+    sut.isFormValidStream.listen(
+      expectAsync1((isValid) {
+        expect(isValid, false);
+      }),
+    );
+
+    sut.validatePassword(password);
+    sut.validatePassword(password);
+
+  });
+
 }
