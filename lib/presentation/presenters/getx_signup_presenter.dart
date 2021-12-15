@@ -12,6 +12,11 @@ class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
 
   GetxSignUpPresenter({@required this.validation});
 
+  String _name;
+  String _email;
+  String _password;
+  String _confirmPassword;
+
   var _nameError = Rx<UIError>(null);
   var _emailError = Rx<UIError>(null);
   var _passwordError = Rx<UIError>(null);
@@ -38,20 +43,35 @@ class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
   @override
   Stream<String> get navigateToStream => _navigateTo.stream;
   
+  void _validateForm() {
+   _isFormValid.value = _emailError.value == null 
+    && _passwordError.value == null 
+    && _email != null 
+    && _password != null ? true : false;
+}
 
   @override
   Future<void> signUp() {
     
   }
 
-  @override
-  void validateConfirmPassword(String confirmPassword) {
-    
+  UIError _validateField({String field, String value}) {
+    final error = validation.validate(field: field, value: value);
+    switch (error) {
+      case ValidationError.invalidField:
+        return UIError.invalidField;
+      case ValidationError.requiredField:
+        return UIError.requiredField;  
+      default: 
+        return null;
+    }
   }
 
   @override
   void validateEmail(String email) {
-    validation.validate(field: 'email', value: email);
+    _email = email;
+    _emailError.value = _validateField(field: 'email', value: email);
+    _validateForm();
   }
 
   @override
@@ -61,6 +81,11 @@ class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
 
   @override
   void validatePassword(String password) {
+    
+  }
+
+   @override
+  void validateConfirmPassword(String confirmPassword) {
     
   }
 
