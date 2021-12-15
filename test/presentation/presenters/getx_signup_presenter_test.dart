@@ -389,7 +389,7 @@ void main() {
 
     await sut.signUp();
 
-    verify(addAccountSpy.add(params: params));
+    verify(addAccountSpy.add(params: params)).called(1);
   });
 
   test('Should emit correct events on SignUp success', () async {
@@ -455,6 +455,16 @@ void main() {
     verify(saveCurrentAccountSpy.save(account: AccountEntity(token))).called(1);
   });
 
+  test('Should emit UnexpectedError if LocalSaveCurrentAccount fails', () async {
 
+    when(saveCurrentAccountSpy.save(account: anyNamed('account'))).thenThrow(DomainError.unexpected);
+
+    sut.mainErrorStream.listen(
+      expectAsync1((mainError) { 
+        expect(mainError, UIError.unexpected);
+      }));
+
+    await sut.signUp();
+  });
 
 }
