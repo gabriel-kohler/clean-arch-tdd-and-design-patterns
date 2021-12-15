@@ -270,10 +270,24 @@ void main() {
 
     await tester.pump();
 
-    final loginButton = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+    final createAccountButton = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
 
-    expect(loginButton.onPressed, isNotNull);
+    expect(createAccountButton.onPressed, isNotNull);
 
   }); 
+
+  testWidgets('Should enable disable if form is invalid', (WidgetTester tester) async {
+
+    await loadPage(tester);
+
+    isFormValidController.add(false);
+
+    await tester.pump();
+
+    final createAccountButton = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+
+    expect(createAccountButton.onPressed, null);
+
+  });
 
 }
