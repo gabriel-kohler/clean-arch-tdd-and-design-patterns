@@ -11,14 +11,18 @@ void main() {
 
   Validation validationSpy;
   GetxSignUpPresenter sut;
+
   String email;
   String name;
+  String password;
 
   setUp(() {
     validationSpy = ValidationSpy();
     sut = GetxSignUpPresenter(validation: validationSpy);
+
     email = faker.internet.email();
     name = faker.person.name();
+    password = faker.internet.password();
   });
 
   test('Should SignUpPresenter call Validation in email changed', ()  {
@@ -153,6 +157,12 @@ void main() {
 
     sut.validateName(name);
 
+  });
+
+  test('Should call validation with correct password', () {
+    sut.validatePassword(password);
+
+    verify(validationSpy.validate(field: 'password', value: password)).called(1);
   });
 
 }
