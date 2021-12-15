@@ -12,17 +12,19 @@ void main() {
   Validation validationSpy;
   GetxSignUpPresenter sut;
   String email;
+  String name;
 
   setUp(() {
     validationSpy = ValidationSpy();
     sut = GetxSignUpPresenter(validation: validationSpy);
     email = faker.internet.email();
+    name = faker.person.name();
   });
 
   test('Should SignUpPresenter call Validation in email changed', ()  {
     sut.validateEmail(email);
 
-    verify(validationSpy.validate(field: 'email', value: email));
+    verify(validationSpy.validate(field: 'email', value: email)).called(1);
   });
 
   test('Should emit invalidFieldError if email is invalid', () {
@@ -84,6 +86,12 @@ void main() {
 
     sut.validateEmail(email);
 
+  });
+
+  test('Should SignUpPresenter call Validation in name changed', ()  {
+    sut.validateName(name);
+
+    verify(validationSpy.validate(field: 'name', value: name)).called(1);
   });
 
 }
