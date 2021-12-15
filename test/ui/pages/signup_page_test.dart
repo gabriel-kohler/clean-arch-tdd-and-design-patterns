@@ -290,7 +290,7 @@ void main() {
 
   });
 
-  testWidgets('Should call add account on form submit', (WidgetTester tester) async {
+  testWidgets('Should call signup on form submit', (WidgetTester tester) async {
 
     await loadPage(tester);
 
@@ -298,15 +298,13 @@ void main() {
 
     await tester.pump();
   
-    final createAccountButton = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+    final createAccountButton = find.byType(ElevatedButton);
   
-    createAccountButton.onPressed();
-
-    expect(createAccountButton.onPressed, isNotNull);
-
+    await tester.ensureVisible(createAccountButton);
+    await tester.tap(createAccountButton);
     await tester.pump();
   
-    verify(signUpPresenterSpy.add()).called(1);
+    verify(signUpPresenterSpy.signUp()).called(1);
 
   });
 
@@ -338,7 +336,7 @@ void main() {
 
   });
 
-  testWidgets('Should present error message if add account fails', (WidgetTester tester) async { 
+  testWidgets('Should present error message if signup fails', (WidgetTester tester) async { 
     
     await loadPage(tester);
     
@@ -347,6 +345,18 @@ void main() {
     await tester.pump();
 
     expect(find.text('Email já cadastrado'), findsOneWidget);
+
+  });
+
+  testWidgets('Should present error message if signup throws', (WidgetTester tester) async { 
+    
+    await loadPage(tester);
+    
+    mainErrorController.add(UIError.unexpected);
+    
+    await tester.pump();
+
+    expect(find.text('Ocorreu um erro. Tente novamente em breve'), findsOneWidget);
 
   });
 

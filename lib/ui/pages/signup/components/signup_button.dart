@@ -14,7 +14,7 @@ class SignUpButton extends StatelessWidget {
       builder: (context, snapshot) {
         return ElevatedButton(
           onPressed: snapshot.data == true
-                ? signUpPresenter.add
+                ? signUpPresenter.signUp
                 : null,
           child: Text(R.strings.addAccount.toUpperCase()),
         );

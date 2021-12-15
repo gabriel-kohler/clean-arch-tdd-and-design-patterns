@@ -12,7 +12,7 @@ class PtBr implements Translations {
   String get msgRequiredField => 'Campo obrigatório';
 
   @override
-  String get msgUnexpectedError => 'Algo errado aconteceu. Tente novamente em breve';
+  String get msgUnexpectedError => 'Ocorreu um erro. Tente novamente em breve';
 
   @override
   String get msgEmailInUse => 'Email já cadastrado';
