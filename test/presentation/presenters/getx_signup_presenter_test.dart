@@ -1,8 +1,9 @@
 import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
-import 'package:practice/domain/helpers/domain_error.dart';
 import 'package:test/test.dart';
 
+import 'package:practice/data/usecases/local_storage/local_storage.dart';
+import 'package:practice/domain/helpers/domain_error.dart';
 import 'package:practice/domain/entities/entities.dart';
 import 'package:practice/domain/usecases/signup/add_account.dart';
 import 'package:practice/presentation/dependencies/dependencies.dart';
@@ -11,10 +12,12 @@ import 'package:practice/ui/helpers/errors/errors.dart';
 
 class ValidationSpy extends Mock implements Validation {}
 class AddAccountSpy extends Mock implements AddAccount {}
+class SaveCurrentAccountSpy extends Mock implements SaveCurrentAccount {}
 void main() {
 
   Validation validationSpy;
   AddAccount addAccountSpy;
+  SaveCurrentAccount saveCurrentAccountSpy;
   GetxSignUpPresenter sut;
 
   String email;
@@ -25,7 +28,8 @@ void main() {
   setUp(() {
     validationSpy = ValidationSpy();
     addAccountSpy = AddAccountSpy();
-    sut = GetxSignUpPresenter(validation: validationSpy, addAccount: addAccountSpy);
+    saveCurrentAccountSpy = SaveCurrentAccountSpy();
+    sut = GetxSignUpPresenter(validation: validationSpy, addAccount: addAccountSpy, saveCurrentAccount: saveCurrentAccountSpy);
 
     email = faker.internet.email();
     name = faker.person.name();
@@ -36,6 +40,10 @@ void main() {
   PostExpectation mockValidationCall() => when(validationSpy.validate(field: anyNamed('field'), value: anyNamed('value')));
   mockValidation() => mockValidationCall().thenReturn(null);
   mockValidationError({ValidationError errorReturn}) => mockValidationCall().thenReturn(errorReturn);
+
+  PostExpectation mockAddAccountCall() => when(addAccountSpy.add(params: anyNamed('params')));
+  void mockAddAccount({String account}) => mockAddAccountCall().thenAnswer((_) async => AccountEntity(account));
+  void mockAddAccountError(DomainError error) => mockAddAccountCall().thenThrow(error);
 
   test('Should SignUpPresenter call Validation in email changed', ()  {
     sut.validateEmail(email);
@@ -400,7 +408,7 @@ void main() {
 
   test('Should emit correct events on EmailInUseError', () async {
 
-    when(addAccountSpy.add(params: anyNamed('params'))).thenThrow(DomainError.emainInUse);
+    mockAddAccountError(DomainError.emainInUse);
 
     sut.validateEmail(email);
     sut.validateName(name);
@@ -420,7 +428,7 @@ void main() {
 
   test('Should emit correct events on UnexpectedError', () async {
 
-    when(addAccountSpy.add(params: anyNamed('params'))).thenThrow(DomainError.unexpected);
+    mockAddAccountError(DomainError.unexpected);
 
     sut.validateEmail(email);
     sut.validateName(name);
@@ -437,5 +445,16 @@ void main() {
     await sut.signUp();
 
   });
+
+  test('Should call LocalSaveCurrentAccount with correct values', () async {
+
+    mockAddAccount(account: token);
+
+    await sut.signUp();
+
+    verify(saveCurrentAccountSpy.save(account: AccountEntity(token))).called(1);
+  });
+
+
 
 }

@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:meta/meta.dart';
 import 'package:practice/domain/helpers/helpers.dart';
 
+import '/data/usecases/local_storage/local_storage.dart';
 import '/domain/usecases/usecases.dart';
 
 import '/presentation/dependencies/dependencies.dart';
@@ -13,8 +14,9 @@ class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
 
   final Validation validation;
   final AddAccount addAccount;
+  final SaveCurrentAccount saveCurrentAccount;
 
-  GetxSignUpPresenter({@required this.validation, @required this.addAccount});
+  GetxSignUpPresenter({@required this.validation, @required this.addAccount, @required this.saveCurrentAccount});
 
   String _name;
   String _email;
@@ -110,7 +112,8 @@ class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
 
     try {
       _isLoading.value = true;
-      await addAccount.add(params: params);
+      final account = await addAccount.add(params: params);
+      await saveCurrentAccount.save(account: account);
     } on DomainError catch (error) {
       _isLoading.value = false;
       switch (error) {
