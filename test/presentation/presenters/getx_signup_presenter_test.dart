@@ -418,4 +418,24 @@ void main() {
 
   });
 
+  test('Should emit correct events on UnexpectedError', () async {
+
+    when(addAccountSpy.add(params: anyNamed('params'))).thenThrow(DomainError.unexpected);
+
+    sut.validateEmail(email);
+    sut.validateName(name);
+    sut.validatePassword(password);
+    sut.validateConfirmPassword(password);
+
+    expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
+
+    sut.mainErrorStream.listen(
+      expectAsync1((mainError) { 
+        expect(mainError, UIError.unexpected);
+      }));
+
+    await sut.signUp();
+
+  });
+
 }

@@ -111,9 +111,15 @@ class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
     try {
       _isLoading.value = true;
       await addAccount.add(params: params);
-    } on DomainError {
+    } on DomainError catch (error) {
       _isLoading.value = false;
-      _mainError.value = UIError.emailInUse;
+      switch (error) {
+        case DomainError.emainInUse:
+          return _mainError.value = UIError.emailInUse;
+          break;
+        default:
+          return _mainError.value = UIError.unexpected;
+      }
     }
 
   }
