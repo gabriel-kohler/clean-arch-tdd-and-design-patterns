@@ -310,4 +310,16 @@ void main() {
 
   });
 
+  testWidgets('Should present loading', (WidgetTester tester) async {
+
+    await loadPage(tester);
+
+    isLoadingController.add(true);
+
+    await tester.pump();
+
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+  });
+
 }
