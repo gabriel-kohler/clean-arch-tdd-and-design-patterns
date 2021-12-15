@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:practice/ui/components/components.dart';
 import 'package:provider/provider.dart';
 
 import '/utils/i18n/resources.dart';
 
+import '/ui/components/components.dart';
 import '/ui/pages/pages.dart';
 import '/ui/pages/signup/components/components.dart';
 
@@ -20,6 +20,8 @@ class SignUpPage extends StatelessWidget {
         signUpPresenter.isLoadingStream.listen((isLoading) {
           if (isLoading) {
             showLoading(context);
+          } else {
+            hideLoading(context);
           }
         });
         return SingleChildScrollView(
