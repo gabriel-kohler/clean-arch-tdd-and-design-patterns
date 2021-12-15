@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '/utils/i18n/resources.dart';
 
+import '/ui/helpers/errors/errors.dart';
 import '/ui/components/components.dart';
 import '/ui/pages/pages.dart';
 import '/ui/pages/signup/components/components.dart';
@@ -22,6 +23,11 @@ class SignUpPage extends StatelessWidget {
             showLoading(context);
           } else {
             hideLoading(context);
+          }
+        });
+        signUpPresenter.mainErrorStream.listen((UIError mainError) {
+          if (mainError != null) {
+            showErrorMessage(context, mainError.description);
           }
         });
         return SingleChildScrollView(

@@ -14,6 +14,8 @@ class EnUs implements Translations {
   @override
   String get msgUnexpectedError => 'Unexpected error';
 
+  @override
+  String get msgEmailInUse => 'This email has already been registered';
 
 
   
@@ -40,6 +42,5 @@ class EnUs implements Translations {
 
   @override
   String get wait => 'Aguarde...';
-
 
 }

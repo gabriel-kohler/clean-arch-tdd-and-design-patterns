@@ -338,4 +338,16 @@ void main() {
 
   });
 
+  testWidgets('Should present error message if add account fails', (WidgetTester tester) async { 
+    
+    await loadPage(tester);
+    
+    mainErrorController.add(UIError.emailInUse);
+    
+    await tester.pump();
+
+    expect(find.text('Email já cadastrado'), findsOneWidget);
+
+  });
+
 }
