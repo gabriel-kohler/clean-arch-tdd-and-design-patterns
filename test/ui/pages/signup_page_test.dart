@@ -210,4 +210,16 @@ void main() {
 
   });
 
+  testWidgets('Should present error if password is empty', (WidgetTester tester) async {
+
+    await loadPage(tester);
+
+    passwordErrorController.add(UIError.requiredField);
+
+    await tester.pump();
+    
+    expect(find.text('Campo obrigatório'), findsOneWidget);
+
+  });
+
 }
