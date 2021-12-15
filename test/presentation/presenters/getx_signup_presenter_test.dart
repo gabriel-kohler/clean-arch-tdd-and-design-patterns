@@ -25,6 +25,10 @@ void main() {
     password = faker.internet.password();
   });
 
+  PostExpectation mockValidationCall() => when(validationSpy.validate(field: anyNamed('field'), value: anyNamed('value')));
+  mockValidation() => mockValidationCall().thenReturn(null);
+  mockValidationError({ValidationError errorReturn}) => mockValidationCall().thenReturn(errorReturn);
+
   test('Should SignUpPresenter call Validation in email changed', ()  {
     sut.validateEmail(email);
 
@@ -32,9 +36,9 @@ void main() {
   });
 
   test('Should emit invalidFieldError if email is invalid', () {
-    
-    when(validationSpy.validate(field: anyNamed('field'), value: anyNamed('value'))).thenReturn(ValidationError.invalidField);
 
+    mockValidationError(errorReturn: ValidationError.invalidField);
+    
     sut.emailErrorStream.listen(
       expectAsync1((error) {
         expect(error, UIError.invalidField);
@@ -53,9 +57,9 @@ void main() {
   });
 
   test('Should emit requiredFieldError if email is empty', () {
-    
-    when(validationSpy.validate(field: anyNamed('field'), value: anyNamed('value'))).thenReturn(ValidationError.requiredField);
 
+    mockValidationError(errorReturn: ValidationError.requiredField);
+    
     sut.emailErrorStream.listen(
       expectAsync1((error) {
         expect(error, UIError.requiredField);
@@ -74,7 +78,7 @@ void main() {
 
   test('Should emit null if email is valid', () {
     
-    when(validationSpy.validate(field: anyNamed('field'), value: anyNamed('value'))).thenReturn(null);
+    mockValidation();
 
     sut.emailErrorStream.listen(
       expectAsync1((error) {
@@ -99,8 +103,8 @@ void main() {
   });
 
   test('Should emit invalidFieldError if name is invalid', () {
-    
-    when(validationSpy.validate(field: anyNamed('field'), value: anyNamed('value'))).thenReturn(ValidationError.invalidField);
+
+    mockValidationError(errorReturn: ValidationError.invalidField);
 
     sut.nameErrorStream.listen(
       expectAsync1((error) {
@@ -121,7 +125,7 @@ void main() {
 
   test('Should emit requiredFieldError if name is empty', () {
     
-    when(validationSpy.validate(field: anyNamed('field'), value: anyNamed('value'))).thenReturn(ValidationError.requiredField);
+    mockValidationError(errorReturn: ValidationError.requiredField);
 
     sut.nameErrorStream.listen(
       expectAsync1((error) {
@@ -140,8 +144,8 @@ void main() {
   });
   
   test('Should emit null if name is valid', () {
-    
-    when(validationSpy.validate(field: anyNamed('field'), value: anyNamed('value'))).thenReturn(null);
+
+    mockValidation();
 
     sut.nameErrorStream.listen(
       expectAsync1((error) {
@@ -166,9 +170,9 @@ void main() {
   });
 
   test('Should emit invalidFieldError if password is invalid', () {
-    
-    when(validationSpy.validate(field: anyNamed('field'), value: anyNamed('value'))).thenReturn(ValidationError.invalidField);
 
+    mockValidationError(errorReturn: ValidationError.invalidField);
+    
     sut.passwordErrorStream.listen(
       expectAsync1((error) {
         expect(error, UIError.invalidField);
@@ -188,7 +192,7 @@ void main() {
 
   test('Should emit requiredFieldError if password is empty', () {
     
-    when(validationSpy.validate(field: anyNamed('field'), value: anyNamed('value'))).thenReturn(ValidationError.requiredField);
+    mockValidationError(errorReturn: ValidationError.requiredField);
 
     sut.passwordErrorStream.listen(
       expectAsync1((error) {
@@ -208,7 +212,7 @@ void main() {
 
   test('Should emit null if password is valid', () {
     
-    when(validationSpy.validate(field: anyNamed('field'), value: anyNamed('value'))).thenReturn(null);
+    mockValidation();
 
     sut.passwordErrorStream.listen(
       expectAsync1((error) {
@@ -234,7 +238,7 @@ void main() {
 
   test('Should emit invalidFieldError if confirmPassword is invalid', () {
     
-    when(validationSpy.validate(field: anyNamed('field'), value: anyNamed('value'))).thenReturn(ValidationError.invalidField);
+    mockValidationError(errorReturn: ValidationError.invalidField);
 
     sut.confirmPasswordErrorStream.listen(
       expectAsync1((error) {
@@ -255,7 +259,7 @@ void main() {
 
   test('Should emit requiredFieldError if confirmPassword is empty', () {
     
-    when(validationSpy.validate(field: anyNamed('field'), value: anyNamed('value'))).thenReturn(ValidationError.requiredField);
+    mockValidationError(errorReturn: ValidationError.requiredField);
 
     sut.confirmPasswordErrorStream.listen(
       expectAsync1((error) {
@@ -273,9 +277,10 @@ void main() {
 
   });
 
+  
   test('Should emit null if confirmPassword is valid', () {
     
-    when(validationSpy.validate(field: anyNamed('field'), value: anyNamed('value'))).thenReturn(null);
+    mockValidation();
 
     sut.confirmPasswordErrorStream.listen(
       expectAsync1((error) {
@@ -289,6 +294,50 @@ void main() {
       }),
     );
 
+    sut.validateConfirmPassword(password);
+
+  });
+
+  test('Should emits form invalid event if any field is invalid', () {
+
+    when(validationSpy.validate(field: 'email', value: anyNamed('value'))).thenReturn(ValidationError.invalidField);
+    when(validationSpy.validate(field: 'name', value: anyNamed('value'))).thenReturn(ValidationError.invalidField);
+    when(validationSpy.validate(field: 'password', value: anyNamed('value'))).thenReturn(ValidationError.invalidField);
+    when(validationSpy.validate(field: 'confirmPassword', value: anyNamed('value'))).thenReturn(ValidationError.invalidField);
+
+    sut.emailErrorStream.listen(
+      expectAsync1((error) {
+        expect(error, UIError.invalidField);
+      }),
+    );
+
+    sut.nameErrorStream.listen(
+      expectAsync1((error) {
+        expect(error, UIError.invalidField);
+      }),
+    );
+
+    sut.passwordErrorStream.listen(
+      expectAsync1((error) {
+        expect(error, UIError.invalidField);
+      }),
+    );
+
+    sut.confirmPasswordErrorStream.listen(
+      expectAsync1((error) {
+        expect(error, UIError.invalidField);
+      }),
+    );
+
+     sut.isFormValidStream.listen(
+      expectAsync1((isValid) {
+        expect(isValid, false);
+      }),
+    );
+
+    sut.validateEmail(email);
+    sut.validateName(name);
+    sut.validatePassword(password);
     sut.validateConfirmPassword(password);
 
   });
