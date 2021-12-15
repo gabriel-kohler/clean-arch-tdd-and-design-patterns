@@ -165,7 +165,7 @@ void main() {
 
     await tester.pump();
 
-    final passwordTextChildren = find.descendant(of: find.bySemanticsLabel('Email'), matching: find.byType(Text));
+    final passwordTextChildren = find.descendant(of: find.bySemanticsLabel('Senha'), matching: find.byType(Text));
     
     expect(passwordTextChildren, findsOneWidget);
 

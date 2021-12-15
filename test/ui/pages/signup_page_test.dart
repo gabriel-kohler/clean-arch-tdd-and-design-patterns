@@ -162,7 +162,7 @@ void main() {
 
     await loadPage(tester);
 
-    emailErrorController.add(null);
+    nameErrorController.add(null);
 
     await tester.pump();
 
@@ -230,7 +230,7 @@ void main() {
 
     await tester.pump();
 
-    final passwordTextChildren = find.descendant(of: find.bySemanticsLabel('Email'), matching: find.byType(Text));
+    final passwordTextChildren = find.descendant(of: find.bySemanticsLabel('Senha'), matching: find.byType(Text));
     
     expect(passwordTextChildren, findsOneWidget);
 
@@ -245,6 +245,20 @@ void main() {
     await tester.pump();
     
     expect(find.text('Campo obrigatório'), findsOneWidget);
+
+  });
+
+  testWidgets('Should present no error if confirmPassword is valid', (WidgetTester tester) async {
+
+    await loadPage(tester);
+
+    confirmPasswordErrorController.add(null);
+
+    await tester.pump();
+
+    final confirmPasswordTextChildren = find.descendant(of: find.bySemanticsLabel('Confirmar senha'), matching: find.byType(Text));
+    
+    expect(confirmPasswordTextChildren, findsOneWidget);
 
   });
 
