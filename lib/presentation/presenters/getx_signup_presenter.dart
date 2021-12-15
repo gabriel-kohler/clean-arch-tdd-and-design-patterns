@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:meta/meta.dart';
+import 'package:practice/domain/helpers/helpers.dart';
 
 import '/domain/usecases/usecases.dart';
 
@@ -100,8 +101,6 @@ class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
   @override
   Future<void> signUp() async {
 
-    _isLoading.value = true;
-
     final params = AddAccountParams(
       name: _name,
       email: _email,
@@ -109,10 +108,14 @@ class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
       confirmPassowrd: _confirmPassword,
     );
 
-    await addAccount.add(params: params);
-    
-    _isLoading.value = false;
-    
+    try {
+      _isLoading.value = true;
+      await addAccount.add(params: params);
+    } on DomainError {
+      _isLoading.value = false;
+      _mainError.value = UIError.emailInUse;
+    }
+
   }
 
 }

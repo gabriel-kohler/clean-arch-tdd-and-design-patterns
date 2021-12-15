@@ -1,5 +1,6 @@
 import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
+import 'package:practice/domain/helpers/domain_error.dart';
 import 'package:test/test.dart';
 
 import 'package:practice/domain/entities/entities.dart';
@@ -392,6 +393,26 @@ void main() {
 
 
     expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
+
+    await sut.signUp();
+
+  });
+
+  test('Should emit correct events on EmailInUseError', () async {
+
+    when(addAccountSpy.add(params: anyNamed('params'))).thenThrow(DomainError.emainInUse);
+
+    sut.validateEmail(email);
+    sut.validateName(name);
+    sut.validatePassword(password);
+    sut.validateConfirmPassword(password);
+
+    expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
+
+    sut.mainErrorStream.listen(
+      expectAsync1((mainError) { 
+        expect(mainError, UIError.emailInUse);
+      }));
 
     await sut.signUp();
 
