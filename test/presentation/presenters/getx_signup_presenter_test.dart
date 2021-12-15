@@ -253,4 +253,24 @@ void main() {
 
   });
 
+  test('Should emit requiredFieldError if confirmPassword is empty', () {
+    
+    when(validationSpy.validate(field: anyNamed('field'), value: anyNamed('value'))).thenReturn(ValidationError.requiredField);
+
+    sut.confirmPasswordErrorStream.listen(
+      expectAsync1((error) {
+        expect(error, UIError.requiredField);
+      }),
+    );
+
+    sut.isFormValidStream.listen(
+      expectAsync1((isValid) {
+        expect(isValid, false);
+      }),
+    );
+
+    sut.validateConfirmPassword(password);
+
+  });
+
 }
