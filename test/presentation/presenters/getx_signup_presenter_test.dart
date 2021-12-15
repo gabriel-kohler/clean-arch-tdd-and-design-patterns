@@ -273,4 +273,24 @@ void main() {
 
   });
 
+  test('Should emit null if confirmPassword is valid', () {
+    
+    when(validationSpy.validate(field: anyNamed('field'), value: anyNamed('value'))).thenReturn(null);
+
+    sut.confirmPasswordErrorStream.listen(
+      expectAsync1((error) {
+        expect(error, null);
+      }),
+    );
+
+    sut.isFormValidStream.listen(
+      expectAsync1((isValid) {
+        expect(isValid, false);
+      }),
+    );
+
+    sut.validateConfirmPassword(password);
+
+  });
+
 }
