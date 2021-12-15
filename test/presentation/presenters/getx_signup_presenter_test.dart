@@ -94,4 +94,25 @@ void main() {
     verify(validationSpy.validate(field: 'name', value: name)).called(1);
   });
 
+  test('Should emit invalidFieldError if name is invalid', () {
+    
+    when(validationSpy.validate(field: anyNamed('field'), value: anyNamed('value'))).thenReturn(ValidationError.invalidField);
+
+    sut.nameErrorStream.listen(
+      expectAsync1((error) {
+        expect(error, UIError.invalidField);
+      }),
+    );
+
+    sut.isFormValidStream.listen(
+      expectAsync1((isValid) {
+        expect(isValid, false);
+      }),
+    );
+
+    sut.validateName(name);
+    sut.validateName(name);
+
+  });
+
 }
