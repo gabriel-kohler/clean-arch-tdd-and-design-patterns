@@ -262,4 +262,18 @@ void main() {
 
   });
 
+  testWidgets('Should enable button if form is valid', (WidgetTester tester) async {
+
+    await loadPage(tester);
+
+    isFormValidController.add(true);
+
+    await tester.pump();
+
+    final loginButton = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+
+    expect(loginButton.onPressed, isNotNull);
+
+  }); 
+
 }
