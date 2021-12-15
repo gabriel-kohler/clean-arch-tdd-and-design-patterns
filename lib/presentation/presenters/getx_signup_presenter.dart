@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 import 'package:meta/meta.dart';
 import 'package:practice/domain/helpers/helpers.dart';
 
+import 'package:practice/utils/utils.dart';
+
 import '/data/usecases/local_storage/local_storage.dart';
 import '/domain/usecases/usecases.dart';
 
@@ -114,16 +116,17 @@ class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
       _isLoading.value = true;
       final account = await addAccount.add(params: params);
       await saveCurrentAccount.save(account: account);
+      _navigateTo.value = AppRoute.HomePage;
     } on DomainError catch (error) {
       switch (error) {
         case DomainError.emainInUse:
-          return _mainError.value = UIError.emailInUse;
+          _mainError.value = UIError.emailInUse;
           break;
         default:
-          return _mainError.value = UIError.unexpected;
+          _mainError.value = UIError.unexpected;
       }
+      _isLoading.value = false;
     }
-    _isLoading.value = false;
   }
 
 }

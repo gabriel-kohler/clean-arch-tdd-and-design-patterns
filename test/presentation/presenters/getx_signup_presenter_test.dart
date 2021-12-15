@@ -1,5 +1,6 @@
 import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
+import 'package:practice/utils/app_routes.dart';
 import 'package:test/test.dart';
 
 import 'package:practice/data/usecases/local_storage/local_storage.dart';
@@ -400,7 +401,7 @@ void main() {
     sut.validateConfirmPassword(password);
 
 
-    expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
+    expectLater(sut.isLoadingStream, emits(true));
 
     await sut.signUp();
 
@@ -465,6 +466,23 @@ void main() {
       }));
 
     await sut.signUp();
+  });
+
+  test('Should SignUpPage navigate to HomePage if SignUp success', () async {
+    
+    sut.validateEmail(email);
+    sut.validateName(name);
+    sut.validatePassword(password);
+    sut.validateConfirmPassword(password);
+
+    sut.navigateToStream.listen(
+      expectAsync1((page) {
+        expect(page, AppRoute.HomePage);
+      }),
+    );
+
+    await sut.signUp();
+
   });
 
 }
