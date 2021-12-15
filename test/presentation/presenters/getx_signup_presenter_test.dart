@@ -232,4 +232,25 @@ void main() {
     verify(validationSpy.validate(field: 'confirmPassword', value: password)).called(1);
   });
 
+  test('Should emit invalidFieldError if confirmPassword is invalid', () {
+    
+    when(validationSpy.validate(field: anyNamed('field'), value: anyNamed('value'))).thenReturn(ValidationError.invalidField);
+
+    sut.confirmPasswordErrorStream.listen(
+      expectAsync1((error) {
+        expect(error, UIError.invalidField);
+      }),
+    );
+
+    sut.isFormValidStream.listen(
+      expectAsync1((isValid) {
+        expect(isValid, false);
+      }),
+    );
+
+    sut.validateConfirmPassword(password);
+    sut.validateConfirmPassword(password);
+
+  });
+
 }
