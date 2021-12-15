@@ -290,4 +290,24 @@ void main() {
 
   });
 
+  testWidgets('Should call add account on form submit', (WidgetTester tester) async {
+
+    await loadPage(tester);
+
+    isFormValidController.add(true);
+
+    await tester.pump();
+  
+    final createAccountButton = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+  
+    createAccountButton.onPressed();
+
+    expect(createAccountButton.onPressed, isNotNull);
+
+    await tester.pump();
+  
+    verify(signUpPresenterSpy.add()).called(1);
+
+  });
+
 }
