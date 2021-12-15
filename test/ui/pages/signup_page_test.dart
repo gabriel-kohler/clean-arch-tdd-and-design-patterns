@@ -158,4 +158,16 @@ void main() {
 
   });
 
+  testWidgets('Should present error if email is invalid', (WidgetTester tester) async {
+
+    await loadPage(tester);
+
+    emailErrorController.add(UIError.invalidField);
+
+    await tester.pump();
+    
+    expect(find.text('Campo inválido'), findsOneWidget);
+
+  });
+
 }
