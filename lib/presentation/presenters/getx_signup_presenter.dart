@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 import 'package:meta/meta.dart';
 
+import '/domain/usecases/usecases.dart';
+
 import '/presentation/dependencies/dependencies.dart';
 
 import '/ui/helpers/errors/ui_error.dart';
@@ -9,8 +11,9 @@ import '/ui/pages/pages.dart';
 class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
 
   final Validation validation;
+  final AddAccount addAccount;
 
-  GetxSignUpPresenter({@required this.validation});
+  GetxSignUpPresenter({@required this.validation, @required this.addAccount});
 
   String _name;
   String _email;
@@ -54,11 +57,6 @@ class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
     && _password != null ? true : false;
 }
 
-  @override
-  Future<void> signUp() {
-    
-  }
-
   UIError _validateField({String field, String value}) {
     final error = validation.validate(field: field, value: value);
     switch (error) {
@@ -97,6 +95,19 @@ class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
     _confirmPassword = confirmPassword;
     _confirmPasswordError.value = _validateField(field: 'confirmPassword', value: confirmPassword);
     _validateForm();
+  }
+
+  @override
+  Future<void> signUp() {
+
+    final params = AddAccountParams(
+      name: _name,
+      email: _email,
+      password: _password,
+      confirmPassowrd: _confirmPassword,
+    );
+
+    addAccount.add(params: params);
   }
 
 }
