@@ -226,4 +226,10 @@ void main() {
 
   });
 
+  test('Should call validation with correct confirmPassword', () {
+    sut.validateConfirmPassword(password);
+
+    verify(validationSpy.validate(field: 'confirmPassword', value: password)).called(1);
+  });
+
 }
