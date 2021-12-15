@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '/utils/i18n/resources.dart';
@@ -28,6 +29,11 @@ class SignUpPage extends StatelessWidget {
         signUpPresenter.mainErrorStream.listen((UIError mainError) {
           if (mainError != null) {
             showErrorMessage(context, mainError.description);
+          }
+        });
+        signUpPresenter.navigateToStream.listen((page) {
+          if (page?.isNotEmpty == true) {
+            Get.offAllNamed(page);
           }
         });
         return SingleChildScrollView(

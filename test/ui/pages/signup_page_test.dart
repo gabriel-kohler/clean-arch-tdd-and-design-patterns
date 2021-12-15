@@ -68,6 +68,9 @@ void main() {
       initialRoute: AppRoute.SignUpPage,
       getPages: [
         GetPage(name: AppRoute.SignUpPage, page: () => SignUpPage(signUpPresenter: signUpPresenterSpy)),
+        GetPage(name: '/any_route', page: () => Scaffold(
+          body: Text('navigation test'),
+        )),  
       ],
     );
 
@@ -358,6 +361,16 @@ void main() {
 
     expect(find.text('Ocorreu um erro. Tente novamente em breve'), findsOneWidget);
 
+  });
+
+  testWidgets('Should change page', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    navigateToController.add('/any_route');
+    await tester.pumpAndSettle();
+
+    expect(Get.currentRoute, '/any_route');
+    expect(find.text('navigation test'), findsOneWidget);
   });
 
 }
