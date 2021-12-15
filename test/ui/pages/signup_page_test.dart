@@ -222,4 +222,18 @@ void main() {
 
   });
 
+  testWidgets('Should present no error if password is valid', (WidgetTester tester) async {
+
+    await loadPage(tester);
+
+    passwordErrorController.add(null);
+
+    await tester.pump();
+
+    final passwordTextChildren = find.descendant(of: find.bySemanticsLabel('Email'), matching: find.byType(Text));
+    
+    expect(passwordTextChildren, findsOneWidget);
+
+  });
+
 }
