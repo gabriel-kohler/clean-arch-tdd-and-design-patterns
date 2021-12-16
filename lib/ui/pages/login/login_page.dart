@@ -15,8 +15,15 @@ class LoginPage extends StatelessWidget {
 
   const LoginPage(this.loginPresenter);
 
+  
+
   @override
   Widget build(BuildContext context) {
+
+    void _hideKeyboard() {
+    FocusScope.of(context).requestFocus(FocusNode());
+    }
+
     return Scaffold(
       body: Builder(builder: (context) {
         loginPresenter.isLoadingStream.listen(
@@ -38,39 +45,42 @@ class LoginPage extends StatelessWidget {
             Get.offAllNamed(page);
           }
         });
-        return SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              LoginHeader(),
-              Headline1(text: 'login'),
-              Padding(
-                padding: const EdgeInsets.all(32.0),
-                child: Provider(
-                  create: (_) => loginPresenter,
-                  child: Form(
-                    child: Column(
-                      children: [
-                        EmailInput(),
-                        Padding(
-                          padding: EdgeInsets.only(
-                            top: 8.0,
-                            bottom: 32,
+        return GestureDetector(
+          onTap: _hideKeyboard,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                LoginHeader(),
+                Headline1(text: 'login'),
+                Padding(
+                  padding: const EdgeInsets.all(32.0),
+                  child: Provider(
+                    create: (_) => loginPresenter,
+                    child: Form(
+                      child: Column(
+                        children: [
+                          EmailInput(),
+                          Padding(
+                            padding: EdgeInsets.only(
+                              top: 8.0,
+                              bottom: 32,
+                            ),
+                            child: PasswordInput(),
                           ),
-                          child: PasswordInput(),
-                        ),
-                        LoginButton(),
-                        TextButton.icon(
-                          onPressed: () {},
-                          icon: Icon(Icons.person),
-                          label: Text(R.strings.addAccount), //Text('Adicionar Conta')
-                        ),
-                      ],
+                          LoginButton(),
+                          TextButton.icon(
+                            onPressed: () {},
+                            icon: Icon(Icons.person),
+                            label: Text(R.strings.addAccount), //Text('Adicionar Conta')
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       }),
