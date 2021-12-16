@@ -14,7 +14,7 @@ class MinLengthValidation implements FieldValidation {
 
   bool validLengthCaracter(String value) {
     if (value != null) {
-      return value.length == 5;
+      return value.length >= 5;
     } else {
       return false;
     }
