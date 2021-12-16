@@ -12,10 +12,10 @@ class MinLengthValidation implements FieldValidation {
 
   @override
   ValidationError validate({@required String value}) {
-    if (value.isEmpty){
-      return ValidationError.invalidField;
-    } else {
+    if (value?.isNotEmpty == true){
       return null;
+    } else {
+      return ValidationError.invalidField;
     }
   }
 
