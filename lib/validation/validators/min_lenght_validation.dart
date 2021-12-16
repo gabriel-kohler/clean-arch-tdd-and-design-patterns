@@ -3,19 +3,19 @@ import 'package:meta/meta.dart';
 import 'package:practice/validation/dependencies/dependencies.dart';
 import 'package:practice/presentation/dependencies/validation.dart';
 
-class CompareFieldValidation implements FieldValidation {
+class MinLengthValidation implements FieldValidation {
 
   final String field;
-  final String valueToCompare;
+  final int minLengthValidation;
 
-  CompareFieldValidation({@required this.field, @required this.valueToCompare});
+  MinLengthValidation({@required this.field, @required this.minLengthValidation});
 
   @override
   ValidationError validate({@required String value}) {
-    if (value == valueToCompare) {
-      return null;
-    } else {
+    if (value.isEmpty){
       return ValidationError.invalidField;
+    } else {
+      return null;
     }
   }
 
