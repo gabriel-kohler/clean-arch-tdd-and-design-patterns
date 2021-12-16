@@ -4,5 +4,5 @@ import '/presentation/dependencies/dependencies.dart';
 
 abstract class FieldValidation {
   String get field;
-  ValidationError validate({@required String value});
+  ValidationError validate({@required Map inputFormData});
 }

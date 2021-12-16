@@ -11,8 +11,8 @@ class RequiredFieldValidation extends Equatable implements FieldValidation {
   RequiredFieldValidation(this.field);
 
   @override
-  ValidationError validate({@required String value}) {
-    return value?.isNotEmpty == true ? null : ValidationError.requiredField;
+  ValidationError validate({@required Map inputFormData}) {
+    return inputFormData[field]?.isNotEmpty == true ? null : ValidationError.requiredField;
   }
 
   @override

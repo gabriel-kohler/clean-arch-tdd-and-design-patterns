@@ -38,7 +38,7 @@ void main() {
     token = faker.guid.guid();
   });
 
-  PostExpectation mockValidationCall() => when(validationSpy.validate(field: anyNamed('field'), value: anyNamed('value')));
+  PostExpectation mockValidationCall() => when(validationSpy.validate(field: anyNamed('field'), inputFormData: anyNamed('inputFormData')));
   mockValidation() => mockValidationCall().thenReturn(null);
   mockValidationError({ValidationError errorReturn}) => mockValidationCall().thenReturn(errorReturn);
 
@@ -47,9 +47,17 @@ void main() {
   void mockAddAccountError(DomainError error) => mockAddAccountCall().thenThrow(error);
 
   test('Should SignUpPresenter call Validation in email changed', ()  {
+
+    final formData = {
+      'name' : null,
+      'email' : email,
+      'password' : null,
+      'confirmPassword' : null,
+    };
+
     sut.validateEmail(email);
 
-    verify(validationSpy.validate(field: 'email', value: email)).called(1);
+    verify(validationSpy.validate(field: 'email', inputFormData: formData)).called(1);
   });
 
   test('Should emit invalidFieldError if email is invalid', () {
@@ -114,9 +122,17 @@ void main() {
   });
 
   test('Should SignUpPresenter call Validation in name changed', ()  {
+
+    final formData = {
+      'name' : name,
+      'email' : null,
+      'password' : null,
+      'confirmPassword' : null,
+    };
+
     sut.validateName(name);
 
-    verify(validationSpy.validate(field: 'name', value: name)).called(1);
+    verify(validationSpy.validate(field: 'name', inputFormData: formData)).called(1);
   });
 
   test('Should emit invalidFieldError if name is invalid', () {
@@ -181,9 +197,17 @@ void main() {
   });
 
   test('Should call validation with correct password', () {
+
+    final formData = {
+      'name' : null,
+      'email' : null,
+      'password' : password,
+      'confirmPassword' : null,
+    };
+
     sut.validatePassword(password);
 
-    verify(validationSpy.validate(field: 'password', value: password)).called(1);
+    verify(validationSpy.validate(field: 'password', inputFormData: formData)).called(1);
   });
 
   test('Should emit invalidFieldError if password is invalid', () {
@@ -248,9 +272,17 @@ void main() {
   });
 
   test('Should call validation with correct confirmPassword', () {
+
+    final formData = {
+      'name' : null,
+      'email' : null,
+      'password' : null,
+      'confirmPassword' : password,
+    };
+
     sut.validateConfirmPassword(password);
 
-    verify(validationSpy.validate(field: 'confirmPassword', value: password)).called(1);
+    verify(validationSpy.validate(field: 'confirmPassword', inputFormData: formData)).called(1);
   });
 
   test('Should emit invalidFieldError if confirmPassword is invalid', () {
@@ -317,10 +349,10 @@ void main() {
 
   test('Should emits form invalid event if any field is invalid', () {
 
-    when(validationSpy.validate(field: 'email', value: anyNamed('value'))).thenReturn(ValidationError.invalidField);
-    when(validationSpy.validate(field: 'name', value: anyNamed('value'))).thenReturn(ValidationError.invalidField);
-    when(validationSpy.validate(field: 'password', value: anyNamed('value'))).thenReturn(ValidationError.invalidField);
-    when(validationSpy.validate(field: 'confirmPassword', value: anyNamed('value'))).thenReturn(ValidationError.invalidField);
+    when(validationSpy.validate(field: 'email', inputFormData: anyNamed('inputFormData'))).thenReturn(ValidationError.invalidField);
+    when(validationSpy.validate(field: 'name', inputFormData: anyNamed('inputFormData'))).thenReturn(ValidationError.invalidField);
+    when(validationSpy.validate(field: 'password', inputFormData: anyNamed('inputFormData'))).thenReturn(ValidationError.invalidField);
+    when(validationSpy.validate(field: 'confirmPassword', inputFormData: anyNamed('inputFormData'))).thenReturn(ValidationError.invalidField);
 
     sut.emailErrorStream.listen(
       expectAsync1((error) {

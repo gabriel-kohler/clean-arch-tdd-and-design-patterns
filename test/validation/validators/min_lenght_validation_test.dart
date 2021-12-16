@@ -12,31 +12,31 @@ void main() {
   });
 
   test('Should return error if value is empty', () {
-    final error = sut.validate(value: '');
+    final error = sut.validate(inputFormData: {'any_field' : ''});
 
     expect(error, ValidationError.invalidField);
   });
 
   test('Should return error if value is null', () {
-    final error = sut.validate(value: null);
+    final error = sut.validate(inputFormData: {'any_field' : null});
 
     expect(error, ValidationError.invalidField);
   });
 
   test('Should return error if value is smaller than minLengthCaracters', () {
-    final error = sut.validate(value: '1234');
+    final error = sut.validate(inputFormData: {'any_field' : '1234'});
 
     expect(error, ValidationError.invalidField);
   });
 
   test('Should return null if value is equals than minLengthCaracters', () {
-    final error = sut.validate(value: '12345');
+    final error = sut.validate(inputFormData: {'any_field' : '12345'});
 
     expect(error, null);
   });
 
   test('Should return null if value is larger than minLengthCaracters', () {
-    final error = sut.validate(value: '123456');
+    final error = sut.validate(inputFormData: {'any_field' : '123456'});
 
     expect(error, null);
   });

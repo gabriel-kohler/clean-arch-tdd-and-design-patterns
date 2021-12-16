@@ -9,26 +9,13 @@ class MinLengthValidation extends Equatable implements FieldValidation {
   final String field;
   final int minLengthCaracters;
 
-  bool isValid = false;
-
   MinLengthValidation({@required this.field, @required this.minLengthCaracters});
 
-  bool validLengthCaracter(String value) {
-    if (value != null) {
-      return value.length >= 5;
-    } else {
-      return false;
-    }
-  }
 
   @override
-  ValidationError validate({@required String value}) {
-    isValid = validLengthCaracter(value);
-    if (value?.isNotEmpty == true && isValid) {
-      return null;
-    } else {
-      return ValidationError.invalidField;
-    }
+  ValidationError validate({@required Map inputFormData}) {
+    final String value = inputFormData[field];
+    return value != null && value.length >= minLengthCaracters ? null : ValidationError.invalidField;
   }
 
   @override
