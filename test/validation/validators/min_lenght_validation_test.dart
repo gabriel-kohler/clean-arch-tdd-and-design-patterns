@@ -8,7 +8,7 @@ void main() {
   MinLengthValidation sut;
 
   setUp((){
-    sut = MinLengthValidation(field: 'any_field', minLengthValidation: 5);
+    sut = MinLengthValidation(field: 'any_field', minLengthCaracters: 5);
   });
 
   test('Should return error if value is empty', () {
@@ -21,6 +21,12 @@ void main() {
     final error = sut.validate(value: null);
 
     expect(error, ValidationError.invalidField);
+  });
+
+  test('Should return null if value is equals minLengthCaracters', () {
+    final error = sut.validate(value: '12345');
+
+    expect(error, null);
   });
 
 }
