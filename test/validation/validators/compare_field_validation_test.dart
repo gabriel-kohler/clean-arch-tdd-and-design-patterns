@@ -12,6 +12,14 @@ void main() {
 
   });
 
+  test('Should return null on invalid cases', () {   
+
+
+    expect(sut.validate(inputFormData: {'any_field' : 'any_value'}), null);
+    expect(sut.validate(inputFormData: {'other_field' : 'any_value'}), null);
+    expect(sut.validate(inputFormData: {}), null);
+  });
+
   test('Should return null if fieldToCompare is valid', () {
 
     final formData = {

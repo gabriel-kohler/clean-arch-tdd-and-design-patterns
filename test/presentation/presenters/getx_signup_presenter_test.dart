@@ -453,7 +453,7 @@ void main() {
     sut.mainErrorStream.listen(
       expectAsync1((mainError) { 
         expect(mainError, UIError.emailInUse);
-      }));
+      })); 
 
     await sut.signUp();
 
