@@ -13,7 +13,7 @@ void main() {
   });
 
   test('Should return null if value is not empty', () {
-    final error = sut.validate(value: anyNamed('value'));
+    final error = sut.validate(value: 'any_value');
 
     expect(error, null);
 

@@ -1,5 +1,6 @@
-import 'package:practice/validation/dependencies/dependencies.dart';
+import '/main/builders/builders.dart';
 
+import '/validation/dependencies/dependencies.dart';
 import '/validation/validators/validation_composite.dart';
 import '/validation/validators/validators.dart';
 
@@ -9,8 +10,9 @@ ValidationComposite makeValidationComposite() {
 
 List<FieldValidation> makeLoginValidations() {
   return [
-    RequiredFieldValidation('email'),
-    EmailValidation('email'),
-    RequiredFieldValidation('password'),
+    ... ValidationBuilder.field('email').required().email().build(),
+    ... ValidationBuilder.field('password').required().build(),
   ];
 }
+
+
