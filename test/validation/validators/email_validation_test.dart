@@ -12,23 +12,23 @@ void main() {
   });
 
   test('Should return null if email is empty', () {
-    final error = sut.validate('');
+    final error = sut.validate(value: '');
 
     expect(error, null);
   });
   test('Should return null if email is null', () {
-    final error = sut.validate(null);
+    final error = sut.validate(value: null);
 
     expect(error, null);
   });
   test('Should return null if email is valid', () {
-    final error = sut.validate('kohler2014@outlook.com');
+    final error = sut.validate(value: 'kohler2014@outlook.com');
 
     expect(error, null);
   });
 
   test('Should return error if email is invalid', () {
-    final error = sut.validate('kohler2014outlookcom');
+    final error = sut.validate(value: 'kohler2014outlookcom');
 
     expect(error, ValidationError.invalidField);
   });

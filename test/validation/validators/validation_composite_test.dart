@@ -15,15 +15,15 @@ void main() {
   FieldValidationSpy validation3;
 
   void mockValidation1(ValidationError error){
-    when(validation1.validate(any)).thenReturn(error);
+    when(validation1.validate(value: anyNamed('value'))).thenReturn(error);
   }
 
   void mockValidation2(ValidationError error){
-    when(validation2.validate(any)).thenReturn(error);
+    when(validation2.validate(value: anyNamed('value'))).thenReturn(error);
   }
 
   void mockValidation3(ValidationError error){
-    when(validation3.validate(any)).thenReturn(error);
+    when(validation3.validate(value: anyNamed('value'))).thenReturn(error);
   }
 
   setUp(() {
