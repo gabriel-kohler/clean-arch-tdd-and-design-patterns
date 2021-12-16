@@ -13,7 +13,11 @@ class CompareFieldValidation implements FieldValidation {
 
   @override
   ValidationError validate({@required String value}) {
-    return null;
+    if (value == valueToCompare) {
+      return null;
+    } else {
+      return ValidationError.invalidField;
+    }
   }
 
 }
@@ -30,6 +34,12 @@ void main() {
     final error = sut.validate(value: 'any_password_value');
 
     expect(error, null);
+  });
+
+  test('Should return error if valueToCompare is invalid', () {
+    final error = sut.validate(value: 'other_password_value');
+
+    expect(error, ValidationError.invalidField);
   });
 
 }
