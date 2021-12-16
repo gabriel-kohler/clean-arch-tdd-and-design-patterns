@@ -27,6 +27,11 @@ static ValidationBuilder field(String fieldName) {
    return this;
  }
 
+ ValidationBuilder minLength(int minLengthCaracters) {
+   validations.add(MinLengthValidation(field: fieldName, minLengthCaracters: minLengthCaracters));
+   return this;
+ }
+
   List<FieldValidation> build() => validations;
 
 }

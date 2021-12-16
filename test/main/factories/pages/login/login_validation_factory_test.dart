@@ -10,6 +10,7 @@ void main() {
     expect(validations, [
       RequiredFieldValidation('email'),
       EmailValidation('email'),
+      MinLengthValidation(field: 'password', minLengthCaracters: 5),
       RequiredFieldValidation('password'),
     ]);
   });

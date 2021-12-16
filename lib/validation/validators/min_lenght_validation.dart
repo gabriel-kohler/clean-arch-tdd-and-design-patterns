@@ -1,9 +1,10 @@
+import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
 import 'package:practice/validation/dependencies/dependencies.dart';
 import 'package:practice/presentation/dependencies/validation.dart';
 
-class MinLengthValidation implements FieldValidation {
+class MinLengthValidation extends Equatable implements FieldValidation {
 
   final String field;
   final int minLengthCaracters;
@@ -29,5 +30,8 @@ class MinLengthValidation implements FieldValidation {
       return ValidationError.invalidField;
     }
   }
+
+  @override
+  List<Object> get props => [field, minLengthCaracters];
 
 }
