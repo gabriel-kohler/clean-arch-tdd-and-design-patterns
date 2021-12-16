@@ -307,4 +307,20 @@ void main() {
     expect(Get.currentRoute, AppRoute.LoginPage);
   });
 
+  testWidgets('Should call goToSignUp on link click', (WidgetTester tester) async {
+
+    await loadPage(tester);
+
+    final goToSignUpButton = tester.widget<TextButton>(find.byKey(ValueKey('goToSignUpButton')));
+  
+    goToSignUpButton.onPressed();
+
+    expect(goToSignUpButton.onPressed, isNotNull);
+
+    await tester.pump();
+  
+    verify(loginPresenter.goToSignUp()).called(1);
+
+  });
+
 }

@@ -321,4 +321,16 @@ void main() {
 
   });
 
+  test('Should go to SignUpPage on link click', () async {
+    
+    sut.navigateToStream.listen(
+      expectAsync1((page) {
+        expect(page, AppRoute.SignUpPage);
+      }),
+    );
+
+    sut.goToSignUp();
+
+  });
+
 }
