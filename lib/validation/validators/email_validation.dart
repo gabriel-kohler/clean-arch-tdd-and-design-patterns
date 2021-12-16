@@ -1,10 +1,11 @@
+import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
 import '/presentation/dependencies/dependencies.dart';
 
 import '/validation/dependencies/dependencies.dart';
 
-class EmailValidation implements FieldValidation {
+class EmailValidation extends Equatable implements FieldValidation {
   final String field;
 
   EmailValidation(this.field);
@@ -17,4 +18,7 @@ class EmailValidation implements FieldValidation {
 
     return isValid ? null : ValidationError.invalidField;
   }
+
+  @override
+  List<Object> get props => [field];
 }
