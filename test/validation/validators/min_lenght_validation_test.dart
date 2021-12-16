@@ -23,6 +23,12 @@ void main() {
     expect(error, ValidationError.invalidField);
   });
 
+  test('Should return error if value is smaller than minLengthCaracters', () {
+    final error = sut.validate(value: '1234');
+
+    expect(error, ValidationError.invalidField);
+  });
+
   test('Should return null if value is equals than minLengthCaracters', () {
     final error = sut.validate(value: '12345');
 
