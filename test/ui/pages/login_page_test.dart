@@ -131,7 +131,7 @@ void main() {
 
   });
 
-  testWidgets('Should present error if email is invalid', (WidgetTester tester) async {
+  testWidgets('Should present error if email is empty', (WidgetTester tester) async {
 
     await loadPage(tester);
 
@@ -165,7 +165,7 @@ void main() {
 
     await tester.pump();
 
-    final passwordTextChildren = find.descendant(of: find.bySemanticsLabel('Email'), matching: find.byType(Text));
+    final passwordTextChildren = find.descendant(of: find.bySemanticsLabel('Senha'), matching: find.byType(Text));
     
     expect(passwordTextChildren, findsOneWidget);
 
@@ -305,6 +305,22 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(Get.currentRoute, AppRoute.LoginPage);
+  });
+
+  testWidgets('Should call goToSignUp on link click', (WidgetTester tester) async {
+
+    await loadPage(tester);
+
+    final goToSignUpButton = tester.widget<TextButton>(find.byKey(ValueKey('goToSignUpButton')));
+  
+    goToSignUpButton.onPressed();
+
+    expect(goToSignUpButton.onPressed, isNotNull);
+
+    await tester.pump();
+  
+    verify(loginPresenter.goToSignUp()).called(1);
+
   });
 
 }

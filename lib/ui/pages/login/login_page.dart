@@ -74,8 +74,21 @@ class LoginPage extends StatelessWidget {
                             icon: Icon(Icons.person),
                             label: Text(R.strings.addAccount), //Text('Adicionar Conta')
                           ),
+<<<<<<< HEAD
                         ],
                       ),
+=======
+                          child: PasswordInput(),
+                        ),
+                        LoginButton(),
+                        TextButton.icon(
+                          key: ValueKey('goToSignUpButton'),
+                          onPressed: loginPresenter.goToSignUp,
+                          icon: Icon(Icons.person),
+                          label: Text(R.strings.addAccount),
+                        ),
+                      ],
+>>>>>>> feature/signup
                     ),
                   ),
                 ),

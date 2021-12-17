@@ -6,7 +6,7 @@ import 'login.dart';
 
 LoginPresenter makeGetxLoginPresenter() {
   return GetxLoginPresenter(
-    validation: makeValidationComposite(),
+    validation: makeValidationComposite(validations: makeLoginValidations()),
     authentication: makeRemoteAuthentication(),
     localSaveCurrentAccount: makeLocalSaveCurrentAccount(),
   );

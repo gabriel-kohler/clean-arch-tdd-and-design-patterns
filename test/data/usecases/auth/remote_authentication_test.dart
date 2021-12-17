@@ -3,9 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:practice/domain/helpers/helpers.dart';
 
-import 'package:practice/domain/usecases/authentication.dart';
+import 'package:practice/domain/usecases/auth/authentication.dart';
 
-import 'package:practice/data/usecases/remote_authentication.dart';
+import 'package:practice/data/usecases/auth/remote_authentication.dart';
 import 'package:practice/data/http/http.dart';
 
 class HttpClientSpy extends Mock implements HttpClient {}

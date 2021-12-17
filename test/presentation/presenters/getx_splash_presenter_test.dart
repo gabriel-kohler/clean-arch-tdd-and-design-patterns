@@ -1,11 +1,11 @@
 import 'package:mockito/mockito.dart';
+import 'package:practice/domain/usecases/usecases.dart';
 import 'package:test/test.dart';
 
 import 'package:practice/utils/app_routes.dart';
 
 import 'package:practice/domain/entities/entities.dart';
 import 'package:practice/presentation/presenters/presenters.dart';
-import 'package:practice/domain/usecases/load_current_account.dart';
 
 class LoadCurrentAccountSpy extends Mock implements LoadCurrentAccount {}
 void main() {

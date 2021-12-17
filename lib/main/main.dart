@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:get/get.dart';
-import 'package:practice/utils/i18n/i18n.dart';
 import 'package:provider/provider.dart';
 import '/utils/app_routes.dart';
 
@@ -28,6 +27,7 @@ class App extends StatelessWidget {
       getPages: [
         GetPage(name: AppRoute.SplashPage, page: makeSplashPage),
         GetPage(name: AppRoute.LoginPage, page: makeLoginPage),
+        GetPage(name: AppRoute.SignUpPage, page: makeSignUpPage),
         GetPage(
           name: AppRoute.HomePage,
           page: () => Scaffold(
