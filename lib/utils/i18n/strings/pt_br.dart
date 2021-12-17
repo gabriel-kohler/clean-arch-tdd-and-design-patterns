@@ -19,7 +19,7 @@ class PtBr implements Translations {
 
   
   @override
-  String get addAccount => 'Adicionar Conta';
+  String get addAccount => 'Adicionar conta';
 
   @override
   String get confirmPassword => 'Confirmar senha';

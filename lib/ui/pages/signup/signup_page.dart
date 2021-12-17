@@ -4,10 +4,10 @@ import 'package:provider/provider.dart';
 
 import '/utils/i18n/resources.dart';
 
-import '/ui/helpers/errors/errors.dart';
-import '/ui/components/components.dart';
+import '/ui/helpers/helpers.dart';
+import '../../components/components.dart';
 import '/ui/pages/pages.dart';
-import '/ui/pages/signup/components/components.dart';
+import './components/components.dart';
 
 class SignUpPage extends StatelessWidget {
   final SignUpPresenter signUpPresenter;
@@ -39,9 +39,8 @@ class SignUpPage extends StatelessWidget {
         return SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              //LoginHeader(),
-              //Headline1(text: R.strings.addAccount),
+            children: <Widget> [
+              LoginHeader(),
               Padding(
                 padding: const EdgeInsets.all(32.0),
                 child: Provider(
