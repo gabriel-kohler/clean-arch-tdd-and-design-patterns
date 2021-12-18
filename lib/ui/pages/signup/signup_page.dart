@@ -16,6 +16,11 @@ class SignUpPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    void _hideKeyboard() {
+    FocusScope.of(context).requestFocus(FocusNode());
+    }
+
     return Scaffold(
       body: Builder(
         builder: (context) {
@@ -36,46 +41,49 @@ class SignUpPage extends StatelessWidget {
             Get.offAllNamed(page);
           }
         });
-        return SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget> [
-              LoginHeader(),
-              Padding(
-                padding: const EdgeInsets.all(32.0),
-                child: Provider(
-                  create: (_) => signUpPresenter,
-                  child: Form(
-                    child: Column(
-                      children: [
-                        NameInput(),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            vertical: 8,
+        return GestureDetector(
+          onTap: _hideKeyboard,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget> [
+                LoginHeader(),
+                Padding(
+                  padding: const EdgeInsets.all(32.0),
+                  child: Provider(
+                    create: (_) => signUpPresenter,
+                    child: Form(
+                      child: Column(
+                        children: [
+                          NameInput(),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              vertical: 8,
+                            ),
+                            child: EmailInput(),
                           ),
-                          child: EmailInput(),
-                        ),
-                        PasswordInput(),
-                        Padding(
-                          padding: EdgeInsets.only(
-                            top: 8.0,
-                            bottom: 32,
+                          PasswordInput(),
+                          Padding(
+                            padding: EdgeInsets.only(
+                              top: 8.0,
+                              bottom: 32,
+                            ),
+                            child: ConfirmPasswordInput(),
                           ),
-                          child: ConfirmPasswordInput(),
-                        ),
-                        SignUpButton(),
-                        TextButton.icon(
-                          key: ValueKey('goToLoginPage'),
-                          onPressed: signUpPresenter.goToLogin,
-                          label: Text(R.strings.login),
-                          icon: Icon(Icons.exit_to_app),
-                        ),
-                      ],
+                          SignUpButton(),
+                          TextButton.icon(
+                            key: ValueKey('goToLoginPage'),
+                            onPressed: signUpPresenter.goToLogin,
+                            label: Text(R.strings.login),
+                            icon: Icon(Icons.exit_to_app),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       }),
