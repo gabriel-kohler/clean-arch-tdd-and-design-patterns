@@ -1,4 +1,3 @@
-import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
 import 'package:practice/presentation/dependencies/dependencies.dart';
