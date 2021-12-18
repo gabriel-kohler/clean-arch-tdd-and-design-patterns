@@ -119,6 +119,7 @@ class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
     );
 
     try {
+      _mainError.value = null;
       _isLoading.value = true;
       final account = await addAccount.add(params: params);
       await saveCurrentAccount.save(account: account);

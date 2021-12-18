@@ -433,6 +433,7 @@ void main() {
     sut.validateConfirmPassword(password);
 
 
+    expectLater(sut.mainErrorStream, emits(null));
     expectLater(sut.isLoadingStream, emits(true));
 
     await sut.signUp();
@@ -449,11 +450,7 @@ void main() {
     sut.validateConfirmPassword(password);
 
     expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
-
-    sut.mainErrorStream.listen(
-      expectAsync1((mainError) { 
-        expect(mainError, UIError.emailInUse);
-      })); 
+    expectLater(sut.mainErrorStream, emitsInOrder([null, UIError.emailInUse]));
 
     await sut.signUp();
 
@@ -469,11 +466,7 @@ void main() {
     sut.validateConfirmPassword(password);
 
     expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
-
-    sut.mainErrorStream.listen(
-      expectAsync1((mainError) { 
-        expect(mainError, UIError.unexpected);
-      }));
+    expectLater(sut.mainErrorStream, emitsInOrder([null, UIError.unexpected]));
 
     await sut.signUp();
 
@@ -491,11 +484,8 @@ void main() {
   test('Should emit UnexpectedError if LocalSaveCurrentAccount fails', () async {
 
     when(saveCurrentAccountSpy.save(account: anyNamed('account'))).thenThrow(DomainError.unexpected);
-
-    sut.mainErrorStream.listen(
-      expectAsync1((mainError) { 
-        expect(mainError, UIError.unexpected);
-      }));
+    
+    expectLater(sut.mainErrorStream, emitsInOrder([null, UIError.unexpected]));
 
     await sut.signUp();
   });
