@@ -173,8 +173,8 @@ void main() {
 
     mockResponse(int statusCode, {String body = '{"any_key" : "any_value"}'}) => mockRequest().thenAnswer((_) async => Response(body, statusCode));
 
-    test('Should call post with correct values', () async {
-      
+    test('Should call get with correct values', () async {
+
       mockResponse(200);
 
       await sut.request(url: url, method: 'get');
@@ -186,6 +186,25 @@ void main() {
           'accept': 'application/json',
         },
       ));
+
+    });
+
+    test('Should return data if get returns 200', () async {
+
+      mockResponse(200);
+
+      final response = await sut.request(url: url, method: 'get');
+
+      expect(response, {'any_key' : 'any_value'});
+    });
+
+    test('Should return null if get returns 200 without data', () async {
+
+      mockResponse(200, body: '');
+
+      final response = await sut.request(url: url, method: 'get');
+
+      expect(response, null);
     });
 
 

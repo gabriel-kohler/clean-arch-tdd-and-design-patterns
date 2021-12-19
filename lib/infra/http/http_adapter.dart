@@ -32,7 +32,7 @@ class HttpAdapter implements HttpClient {
       } else if (method == 'get') {
         response = await client.get(Uri.parse(url), headers: headers);
       }
-      
+
     } catch (error) {
       throw HttpError.serverError;
     }
@@ -55,15 +55,15 @@ class HttpAdapter implements HttpClient {
       case 204:
         return null;
       case 400:
-        return throw HttpError.badRequest;
+        throw HttpError.badRequest;
       case 500:
-        return throw HttpError.serverError;
+        throw HttpError.serverError;
       case 401:
-        return throw HttpError.unauthorized;
+        throw HttpError.unauthorized;
       case 403:
-        return throw HttpError.forbidden;
+        throw HttpError.forbidden;
       default:
-        return throw HttpError.notFound;
+        throw HttpError.notFound;
     }
   }
 }
