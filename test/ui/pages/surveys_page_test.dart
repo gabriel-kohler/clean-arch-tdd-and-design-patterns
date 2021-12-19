@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:mockito/mockito.dart';
@@ -12,9 +15,16 @@ void main() {
 
   SurveysPresenter surveysPresenterSpy;
 
+  StreamController<bool> isLoadingController;
+
+
   Future<void> loadPage(WidgetTester tester) async {
 
+    isLoadingController = StreamController<bool>();
+
     surveysPresenterSpy = SurveysPresenterSpy();
+
+    when(surveysPresenterSpy.isLoadingStream).thenAnswer((_) => isLoadingController.stream);
 
     final surveysPage = GetMaterialApp(
       initialRoute: AppRoute.SurveysPage,
@@ -26,6 +36,10 @@ void main() {
     await tester.pumpWidget(surveysPage);
   }
 
+  tearDown(() {
+    isLoadingController.close();
+  });
+
   testWidgets('Should SurveysPage call loadData on page loading', (WidgetTester tester) async {
 
     await loadPage(tester);
@@ -33,4 +47,27 @@ void main() {
     verify(surveysPresenterSpy.loadData()).called(1);
 
   });
+
+  testWidgets('Should handle loading correctly', (WidgetTester tester) async {
+
+    await loadPage(tester);
+
+    isLoadingController.add(true);
+    await tester.pump();
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+    isLoadingController.add(false);
+    await tester.pump();
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+
+    isLoadingController.add(true);
+    await tester.pump();
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+    isLoadingController.add(null);
+    await tester.pump();
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+
+  });
+
 }
