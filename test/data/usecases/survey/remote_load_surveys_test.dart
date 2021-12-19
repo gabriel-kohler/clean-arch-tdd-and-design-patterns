@@ -22,8 +22,10 @@ class RemoteLoadSurveys implements LoadSurveys {
     try {
       final List<Map> response = await httpClient.request(url: url, method: 'get');
       return response.map((json) => RemoteSurveyModel.fromJson(json).toSurveyEntity()).toList();
-    } on HttpError {
-      throw DomainError.unexpected; 
+    } on HttpError catch (error) {
+      (error == HttpError.forbidden) 
+        ? throw DomainError.accessDenied
+        : throw DomainError.unexpected; 
     }
     
     
@@ -47,10 +49,13 @@ void main() {
 
   PostExpectation mockRequest() => when(httpClient.request(url: anyNamed('url'), method: anyNamed('method')));
 
+  void mockHttpError(HttpError error) => mockRequest().thenThrow(error);
+
   void mockHttpData(List<Map> data) {
     listData = data;
     mockRequest().thenAnswer((_) async => data);
   }
+
 
   List<Map> mockValidData() => [
     {
@@ -98,6 +103,15 @@ void main() {
     final future = sut.load();
 
     expect(future, throwsA(DomainError.unexpected));
+  });
+
+  test('Should throw AccessDeniedError if HttpClient returns 403', () async {
+
+    mockHttpError(HttpError.forbidden);
+
+    final future = sut.load();
+
+    expect(future, throwsA(DomainError.accessDenied));
   });
   
 }
