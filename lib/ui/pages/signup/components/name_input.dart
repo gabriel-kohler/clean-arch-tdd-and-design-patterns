@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '/ui/pages/pages.dart';
 import '/ui/helpers/errors/errors.dart';
 
-import '/utils/i18n/i18n.dart';
+import '/ui/helpers/helpers.dart';
 
 class NameInput extends StatelessWidget {
 

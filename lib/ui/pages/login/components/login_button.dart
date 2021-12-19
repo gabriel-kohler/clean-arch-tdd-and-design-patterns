@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:practice/utils/i18n/i18n.dart';
+import '/ui/helpers/helpers.dart';
 
 import 'package:provider/provider.dart';
 

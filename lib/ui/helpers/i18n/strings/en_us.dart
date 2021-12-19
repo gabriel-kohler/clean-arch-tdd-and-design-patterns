@@ -1,4 +1,4 @@
-import 'package:practice/utils/i18n/strings/translations.dart';
+import 'translations.dart';
 
 class EnUs implements Translations {
   
@@ -42,5 +42,8 @@ class EnUs implements Translations {
 
   @override
   String get wait => 'Aguarde...';
+
+  @override
+  String get surveys => 'Surveys';
 
 }

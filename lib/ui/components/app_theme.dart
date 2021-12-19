@@ -5,12 +5,15 @@ ThemeData makeAppTheme() {
   final primaryColor = Colors.deepPurple; //Color.fromRGBO(136, 14, 79, 1);
   final primaryColorLight = Colors.deepPurpleAccent; //Color.fromRGBO(188, 71, 123, 1);
   final primaryColorDark = Colors.deepPurple[800]; //Color.fromRGBO(96, 0, 39, 1);
+  final secondaryColor = Colors.deepPurple[300];
+
 
   return ThemeData(
     primarySwatch: primaryColor,
     primaryColor: primaryColor,
     primaryColorDark: primaryColorDark,
     primaryColorLight: primaryColorLight,
+    secondaryHeaderColor: secondaryColor,
     backgroundColor: Colors.white,
     textTheme: TextTheme(
       headline1: TextStyle(

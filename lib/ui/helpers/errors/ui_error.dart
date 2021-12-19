@@ -1,4 +1,4 @@
-import 'package:practice/utils/i18n/i18n.dart';
+import '../helpers.dart';
 
 enum UIError {
   requiredField,

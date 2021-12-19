@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 
 import 'package:provider/provider.dart';
 
-import '/utils/i18n/resources.dart';
+import '/ui/helpers/helpers.dart';
 
 import '/ui/helpers/errors/errors.dart';
 import '/ui/pages/login/components/components.dart';
