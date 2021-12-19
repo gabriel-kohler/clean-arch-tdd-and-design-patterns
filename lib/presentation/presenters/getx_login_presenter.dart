@@ -96,7 +96,7 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
         ),
       );
         await localSaveCurrentAccount.save(account: account);
-        _navigateTo.value = AppRoute.HomePage;
+        _navigateTo.value = AppRoute.SurveysPage;
     } on DomainError catch (error) {
       switch (error) {
         case DomainError.invalidCredentials:

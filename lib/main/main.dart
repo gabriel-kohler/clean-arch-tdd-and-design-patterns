@@ -28,14 +28,7 @@ class App extends StatelessWidget {
         GetPage(name: AppRoute.SplashPage, page: makeSplashPage),
         GetPage(name: AppRoute.LoginPage, page: makeLoginPage),
         GetPage(name: AppRoute.SignUpPage, page: makeSignUpPage),
-        GetPage(
-          name: AppRoute.HomePage,
-          page: () => Scaffold(
-            body: Center(
-              child: Text('Home Page'),
-            ),
-          ),
-        ),
+        GetPage(name: AppRoute.SurveysPage, page: makeSurveysPage),
       ],
     );
   }

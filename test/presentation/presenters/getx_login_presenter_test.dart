@@ -310,7 +310,7 @@ void main() {
 
     sut.navigateToStream.listen(
       expectAsync1((page) {
-        expect(page, AppRoute.HomePage);
+        expect(page, AppRoute.SurveysPage);
       }),
     );
 

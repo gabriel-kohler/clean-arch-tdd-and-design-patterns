@@ -123,7 +123,7 @@ class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
       _isLoading.value = true;
       final account = await addAccount.add(params: params);
       await saveCurrentAccount.save(account: account);
-      _navigateTo.value = AppRoute.HomePage;
+      _navigateTo.value = AppRoute.SurveysPage;
     } on DomainError catch (error) {
       switch (error) {
         case DomainError.emainInUse:

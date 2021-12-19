@@ -22,7 +22,7 @@ class GetxSplashPresenter extends GetxController implements SplashPresenter {
       final account = await loadCurrentAccount.fetch();
 
       if (account.token != null) {
-        _navigateTo.value = AppRoute.HomePage;
+        _navigateTo.value = AppRoute.SurveysPage;
       } else {
         _navigateTo.value = AppRoute.LoginPage;
       }
