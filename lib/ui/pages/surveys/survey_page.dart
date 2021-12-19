@@ -30,19 +30,21 @@ class SurveysPage extends StatelessWidget {
         });
 
         return StreamBuilder<List<SurveyViewModel>>(
-            stream: surveysPresenter.loadSurveysStream,
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return Column(
-                  children: <Widget>[
-                    Text(snapshot.error),
-                    ElevatedButton(
-                      onPressed: () {},
-                      child: Text(R.strings.reload),
-                    ),
-                  ],
-                );
-              }
+          stream: surveysPresenter.loadSurveysStream,
+          builder: (context, snapshot) { 
+            if (snapshot.hasError) {
+              return Column(
+                children: <Widget>[
+                  Text(snapshot.error),
+                  ElevatedButton(
+                    onPressed: () {},
+                    child: Text(R.strings.reload),
+                  ),
+                ],
+              );
+            }
+            if (snapshot.hasData) {
+              final List<SurveyViewModel> listSurveys = snapshot.data;
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 30.0),
                 child: CarouselSlider(
@@ -50,14 +52,13 @@ class SurveysPage extends StatelessWidget {
                     enlargeCenterPage: true,
                     aspectRatio: 1,
                   ),
-                  items: [
-                    SurveyItem(),
-                    SurveyItem(),
-                    SurveyItem(),
-                  ],
+                  items: listSurveys.map((survey) => SurveyItem(survey: survey)).toList(),
                 ),
               );
-            });
+            }
+            return SizedBox(height: 0);
+          },
+        );
       }),
     );
   }
