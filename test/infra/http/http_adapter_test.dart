@@ -255,6 +255,16 @@ void main() {
 
     });
 
+    test('Should return ForbiddenError if get returns 403', () async {
+
+      mockResponse(403);
+
+      final future = sut.request(url: url, method: 'get');
+
+      expect(future, throwsA(HttpError.forbidden));
+
+    });
+
 
   });
 
