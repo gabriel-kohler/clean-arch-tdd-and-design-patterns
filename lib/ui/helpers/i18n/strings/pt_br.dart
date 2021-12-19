@@ -44,4 +44,7 @@ class PtBr implements Translations {
 
   @override
   String get surveys => 'Enquetes';
+
+  @override
+  String get reload => 'Recarregar';
 }

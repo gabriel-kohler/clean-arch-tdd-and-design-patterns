@@ -15,5 +15,6 @@ abstract class Translations {
   String get name;
   String get wait;
   String get surveys;
+  String get reload;
   
 }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:mockito/mockito.dart';
+import 'package:practice/ui/helpers/errors/errors.dart';
 
 import 'package:practice/ui/pages/pages.dart';
 import 'package:practice/utils/app_routes.dart';
@@ -16,15 +17,17 @@ void main() {
   SurveysPresenter surveysPresenterSpy;
 
   StreamController<bool> isLoadingController;
-
+  StreamController<List<SurveyViewModel>> loadSurveysController;
 
   Future<void> loadPage(WidgetTester tester) async {
 
     isLoadingController = StreamController<bool>();
+    loadSurveysController = StreamController<List<SurveyViewModel>>();
 
     surveysPresenterSpy = SurveysPresenterSpy();
 
     when(surveysPresenterSpy.isLoadingStream).thenAnswer((_) => isLoadingController.stream);
+    when(surveysPresenterSpy.loadSurveysStream).thenAnswer((_) => loadSurveysController.stream);
 
     final surveysPage = GetMaterialApp(
       initialRoute: AppRoute.SurveysPage,
@@ -38,6 +41,7 @@ void main() {
 
   tearDown(() {
     isLoadingController.close();
+    loadSurveysController.close();
   });
 
   testWidgets('Should SurveysPage call loadData on page loading', (WidgetTester tester) async {
@@ -67,6 +71,19 @@ void main() {
     isLoadingController.add(null);
     await tester.pump();
     expect(find.byType(CircularProgressIndicator), findsNothing);
+
+  });
+
+  testWidgets('Should present error if loadSurveysStream fails', (WidgetTester tester) async {
+
+    await loadPage(tester);
+
+    loadSurveysController.addError(UIError.unexpected.description);
+    await tester.pump();
+
+    expect(find.text('Ocorreu um erro. Tente novamente em breve'), findsOneWidget);
+    expect(find.text('Recarregar'), findsOneWidget);
+    expect(find.text('Questão 1'), findsNothing);
 
   });
 
