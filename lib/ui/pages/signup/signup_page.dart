@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 
 import '/ui/helpers/helpers.dart';
 
-import '/ui/helpers/helpers.dart';
 import '../../components/components.dart';
 import '/ui/pages/pages.dart';
 import './components/components.dart';
@@ -25,7 +24,7 @@ class SignUpPage extends StatelessWidget {
       body: Builder(
         builder: (context) {
         signUpPresenter.isLoadingStream.listen((isLoading) {
-          if (isLoading) {
+          if (isLoading == true) {
             showLoading(context);
           } else {
             hideLoading(context);
