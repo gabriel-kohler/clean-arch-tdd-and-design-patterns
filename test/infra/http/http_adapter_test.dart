@@ -285,6 +285,16 @@ void main() {
 
     });
 
+    test('Should return ServerError if get throws', () async {
+
+      when(client.get(any, headers: anyNamed('headers'))).thenThrow(Exception());
+
+      final future = sut.request(url: url, method: 'get');
+
+      expect(future, throwsA(HttpError.serverError));
+
+    });
+
 
   });
 
