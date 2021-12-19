@@ -166,4 +166,29 @@ void main() {
     });
 
   });
+
+  group('get', () {
+
+    mockRequest() => when(client.get(any, headers: anyNamed('headers')));
+
+    mockResponse(int statusCode, {String body = '{"any_key" : "any_value"}'}) => mockRequest().thenAnswer((_) async => Response(body, statusCode));
+
+    test('Should call post with correct values', () async {
+      
+      mockResponse(200);
+
+      await sut.request(url: url, method: 'get');
+
+      verify(client.get(
+        Uri.parse(url),
+        headers: {
+          'content-type': 'application/json',
+          'accept': 'application/json',
+        },
+      ));
+    });
+
+
+  });
+
 }
