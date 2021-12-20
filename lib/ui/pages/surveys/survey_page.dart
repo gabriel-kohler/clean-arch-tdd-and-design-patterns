@@ -30,7 +30,7 @@ class SurveysPage extends StatelessWidget {
         });
 
         return StreamBuilder<List<SurveyViewModel>>(
-          stream: surveysPresenter.loadSurveysStream,
+          stream: surveysPresenter.surveysStream,
           builder: (context, snapshot) { 
             if (snapshot.hasError) {
               return Column(

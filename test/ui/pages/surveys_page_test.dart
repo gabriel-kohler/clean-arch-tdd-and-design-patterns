@@ -17,17 +17,17 @@ void main() {
   SurveysPresenter surveysPresenterSpy;
 
   StreamController<bool> isLoadingController;
-  StreamController<List<SurveyViewModel>> loadSurveysController;
+  StreamController<List<SurveyViewModel>> surveysController;
 
   Future<void> loadPage(WidgetTester tester) async {
 
     isLoadingController = StreamController<bool>();
-    loadSurveysController = StreamController<List<SurveyViewModel>>();
+    surveysController = StreamController<List<SurveyViewModel>>();
 
     surveysPresenterSpy = SurveysPresenterSpy();
 
     when(surveysPresenterSpy.isLoadingStream).thenAnswer((_) => isLoadingController.stream);
-    when(surveysPresenterSpy.loadSurveysStream).thenAnswer((_) => loadSurveysController.stream);
+    when(surveysPresenterSpy.surveysStream).thenAnswer((_) => surveysController.stream);
 
     final surveysPage = GetMaterialApp(
       initialRoute: AppRoute.SurveysPage,
@@ -41,7 +41,7 @@ void main() {
 
   tearDown(() {
     isLoadingController.close();
-    loadSurveysController.close();
+    surveysController.close();
   });
 
   List<SurveyViewModel> makeSurveys() => [
@@ -79,11 +79,11 @@ void main() {
 
   });
 
-  testWidgets('Should present error if loadSurveysStream fails', (WidgetTester tester) async {
+  testWidgets('Should present error if surveysStream fails', (WidgetTester tester) async {
 
     await loadPage(tester);
 
-    loadSurveysController.addError(UIError.unexpected.description);
+    surveysController.addError(UIError.unexpected.description);
     await tester.pump();
 
     expect(find.text('Ocorreu um erro. Tente novamente em breve'), findsOneWidget);
@@ -92,11 +92,11 @@ void main() {
 
   });
 
-  testWidgets('Should present data if loadSurveysStream success', (WidgetTester tester) async {
+  testWidgets('Should present data if surveysStream success', (WidgetTester tester) async {
 
     await loadPage(tester);
 
-    loadSurveysController.add(makeSurveys());
+    surveysController.add(makeSurveys());
     await tester.pump();
 
     expect(find.text('Ocorreu um erro. Tente novamente em breve'), findsNothing);
@@ -113,7 +113,7 @@ void main() {
 
     await loadPage(tester);
 
-    loadSurveysController.addError(UIError.unexpected.description);
+    surveysController.addError(UIError.unexpected.description);
     await tester.pump();
 
     await tester.tap(find.text('Recarregar'));
