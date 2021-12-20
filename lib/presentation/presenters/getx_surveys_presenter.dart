@@ -15,7 +15,7 @@ class GetxSurveysPresenter extends GetxController implements SurveysPresenter {
   GetxSurveysPresenter({@required this.loadSurveys});
 
   var _isLoading = true.obs;
-  var _surveys = RxList<SurveyViewModel>([]);
+  var _surveys = Rx<List<SurveyViewModel>>([]);
 
   @override
   Stream<bool> get isLoadingStream => _isLoading.stream;
@@ -40,6 +40,7 @@ class GetxSurveysPresenter extends GetxController implements SurveysPresenter {
 
     } on DomainError {
       _surveys.subject.addError(UIError.unexpected.description);
+      print('ASDASDADS $_surveys');
     } finally {
       _isLoading.value = false;
     }

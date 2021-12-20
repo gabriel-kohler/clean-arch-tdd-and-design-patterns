@@ -32,8 +32,10 @@ class SurveysPage extends StatelessWidget {
         return StreamBuilder<List<SurveyViewModel>>(
           stream: surveysPresenter.surveysStream,
           builder: (context, snapshot) { 
+            print('asASDASDAASDASDASDASD ${snapshot.hasError}');
             if (snapshot.hasError) {
               return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text(snapshot.error),
                   ElevatedButton(
