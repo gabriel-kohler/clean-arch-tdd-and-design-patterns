@@ -1,5 +1,7 @@
 import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
+import 'package:practice/domain/helpers/domain_error.dart';
+import 'package:practice/ui/helpers/errors/errors.dart';
 import 'package:practice/ui/pages/pages.dart';
 import 'package:test/test.dart';
 
@@ -19,10 +21,14 @@ void main() {
     SurveyEntity(id: faker.guid.guid(), question: faker.lorem.sentence(), date: DateTime(2021, 04, 28), didAnswer: false),
   ];
 
+  PostExpectation mockLoadSurveysCall() => when(loadSurveysSpy.load());
+
   void mockLoadSurveys({List<SurveyEntity> data}) {
     surveys = data;
-    when(loadSurveysSpy.load()).thenAnswer((_) async => surveys);
+    mockLoadSurveysCall().thenAnswer((_) async => surveys);
   }
+
+  void mockLoadSurveysError() => mockLoadSurveysCall().thenThrow(DomainError.unexpected);
 
   setUp(() {
     loadSurveysSpy = LoadSurveysSpy();
@@ -51,6 +57,23 @@ void main() {
           SurveyViewModel(id: surveys[0].id, question: surveys[0].question, date: '19 Dez 2021', didAnswer: surveys[0].didAnswer),
           SurveyViewModel(id: surveys[1].id, question: surveys[1].question, date: '28 Abr 2021', didAnswer: surveys[1].didAnswer),
         ]);
+      }),
+    );
+
+    await sut.loadData();
+
+  });
+
+  test('Should emit correct events on failure', () async {
+
+    mockLoadSurveysError();
+
+    expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
+
+    sut.surveysStream.listen(
+    null, 
+    onError: expectAsync1((error) {
+        expect(error, UIError.unexpected.description);
       }),
     );
 
