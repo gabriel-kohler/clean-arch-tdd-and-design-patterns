@@ -40,7 +40,6 @@ void main() {
     test('Should call post with correct values', () async {
 
       await sut.request(url: url, method: 'post', body: {'any_key': 'any_value'});
-
       verify(client.post(
         Uri.parse(url),
         headers: {
@@ -49,6 +48,18 @@ void main() {
         },
         body: jsonEncode({'any_key': 'any_value'}),
       ));
+
+      await sut.request(url: url, method: 'post', body: {'any_key': 'any_value'}, headers: {'any_header' : 'any_value'});
+      verify(client.post(
+        Uri.parse(url),
+        headers: {
+          'content-type': 'application/json',
+          'accept': 'application/json',
+          'any_header' : 'any_value'
+        },
+        body: jsonEncode({'any_key': 'any_value'}),
+      ));
+
     });
 
     test('Should call post without body', () async {
@@ -176,9 +187,18 @@ void main() {
     test('Should call get with correct values', () async {
 
       mockResponse(200);
+      await sut.request(url: url, method: 'get', headers: {'any_headers' : 'any_value'});
+
+      verify(client.get(
+        Uri.parse(url),
+        headers: {
+          'content-type': 'application/json',
+          'accept': 'application/json',
+          'any_headers' : 'any_value',
+        },
+      ));
 
       await sut.request(url: url, method: 'get');
-
       verify(client.get(
         Uri.parse(url),
         headers: {

@@ -15,11 +15,12 @@ class HttpAdapter implements HttpClient {
     @required String url,
     @required String method,
     Map body,
+    Map headers,
   }) async {
-    final headers = {
+    final defaultHeaders = headers?.cast<String, String>() ?? {} .. addAll({
       'content-type': 'application/json',
       'accept': 'application/json',
-    };
+    }); 
 
     final jsonBody = _jsonBody(body);
 
@@ -28,9 +29,9 @@ class HttpAdapter implements HttpClient {
     try {
 
       if (method == 'post') {
-        response = await client.post(Uri.parse(url), headers: headers, body: jsonBody);
+        response = await client.post(Uri.parse(url), headers: defaultHeaders, body: jsonBody);
       } else if (method == 'get') {
-        response = await client.get(Uri.parse(url), headers: headers);
+        response = await client.get(Uri.parse(url), headers: defaultHeaders);
       }
 
     } catch (error) {
