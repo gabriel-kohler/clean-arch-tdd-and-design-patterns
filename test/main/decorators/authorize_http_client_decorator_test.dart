@@ -23,6 +23,8 @@ class AuthorizeHttpClientDecorator {
       final token = await fetchSecureCacheStorage.fetchSecure(key: 'token');
       final headerWithToken = headers ?? {} ..addAll({'x-access-token' : token});
       return await decoratee.request(url: url, method: method, body: body, headers: headerWithToken);
+    } on HttpError {
+      rethrow;
     } catch (error) {
       throw HttpError.forbidden;
     }
@@ -75,7 +77,7 @@ void main() {
     mockHttpResponseCall().thenAnswer((_) async => httpResponse);
   }
 
-
+  void mockHttpResponseError(HttpError error) => mockHttpResponseCall().thenThrow(error);
 
   PostExpectation mockFetchSecureCall() => when(fetchSecureCacheSpy.fetchSecure(key: anyNamed('key')));
 
@@ -121,14 +123,14 @@ void main() {
 
   });
 
-  test('Should throw ForbbidenError if FetchSecureCurrentAccount throws', () async {
+  test('Should rethrow if decoratee throws', () async {
     
-    when(fetchSecureCacheSpy.fetchSecure(key: anyNamed('key'))).thenThrow(Exception());
+    mockHttpResponseError(HttpError.badRequest);
 
     final future =  sut.request(url: url, method: method, body: body);
 
-    expect(future, throwsA(HttpError.forbidden));
+    expect(future, throwsA(HttpError.badRequest));
 
   });
 
-} 
+}
