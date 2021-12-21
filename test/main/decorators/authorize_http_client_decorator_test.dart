@@ -1,38 +1,11 @@
 import 'package:faker/faker.dart';
 import 'package:test/test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:meta/meta.dart';
 
 import 'package:practice/data/http/http.dart';
 import 'package:practice/data/cache/cache.dart';
 
-class AuthorizeHttpClientDecorator {
-  final FetchSecureCurrentAccount fetchSecureCacheStorage;
-  final HttpClient decoratee;
-
-  AuthorizeHttpClientDecorator({@required this.fetchSecureCacheStorage, @required this.decoratee});
-
-  Future<dynamic> request({
-    @required String url,
-    @required String method,
-    Map body,
-    Map headers,
-  }) async {
-
-    try {
-      final token = await fetchSecureCacheStorage.fetchSecure(key: 'token');
-      final headerWithToken = headers ?? {} ..addAll({'x-access-token' : token});
-      return await decoratee.request(url: url, method: method, body: body, headers: headerWithToken);
-    } on HttpError {
-      rethrow;
-    } catch (error) {
-      throw HttpError.forbidden;
-    }
-
-  }
-
-
-}
+import 'package:practice/main/decorators/decorators.dart';
 
 class FetchSecureCacheSpy extends Mock implements FetchSecureCurrentAccount {}
 

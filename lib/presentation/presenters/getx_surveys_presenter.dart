@@ -40,7 +40,6 @@ class GetxSurveysPresenter extends GetxController implements SurveysPresenter {
 
     } on DomainError {
       _surveys.subject.addError(UIError.unexpected.description);
-      print('ASDASDADS $_surveys');
     } finally {
       _isLoading.value = false;
     }

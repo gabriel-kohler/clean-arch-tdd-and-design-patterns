@@ -4,4 +4,7 @@ import '/domain/usecases/usecases.dart';
 
 import '/main/factories/factories.dart';
 
-LoadSurveys makeLoadSurveys() => RemoteLoadSurveys(httpClient: makeHttpAdapter(), url: makeApiUrl('surveys'));
+LoadSurveys makeLoadSurveys() => RemoteLoadSurveys(
+      httpClient: makeHttpAdapter(),
+      url: makeApiUrl('surveys'),
+    );
