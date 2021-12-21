@@ -63,15 +63,23 @@ void main() {
     when(fetchSecureCacheSpy.fetchSecure(key: anyNamed('key'))).thenAnswer((_) async => token);
   }
 
-  void mockHttpResponse() {
-    httpResponse = 'any_response';
-
-    when(httpClient.request(
+  PostExpectation mockHttpResponseCall() => when(httpClient.request(
       url: anyNamed('url'), 
       method: anyNamed('method'), 
       body: anyNamed('body'), 
-      headers: anyNamed('headers'))).thenAnswer((_) async => httpResponse);
+      headers: anyNamed('headers')));
+
+  void mockHttpResponse() {
+    httpResponse = 'any_response';
+
+    mockHttpResponseCall().thenAnswer((_) async => httpResponse);
   }
+
+
+
+  PostExpectation mockFetchSecureCall() => when(fetchSecureCacheSpy.fetchSecure(key: anyNamed('key')));
+
+  void mockFetchSecureError() => mockFetchSecureCall().thenThrow(Exception());
 
   test('Should call FetchSecureCacheStorage with correct key', () async {
     
@@ -100,6 +108,16 @@ void main() {
     final response = await sut.request(url: url, method: method, body: body);
 
     expect(response, httpResponse);
+
+  });
+
+  test('Should throw ForbbidenError if FetchSecureCurrentAccount throws', () async {
+    
+    mockFetchSecureError();
+
+    final future =  sut.request(url: url, method: method, body: body);
+
+    expect(future, throwsA(HttpError.forbidden));
 
   });
 
