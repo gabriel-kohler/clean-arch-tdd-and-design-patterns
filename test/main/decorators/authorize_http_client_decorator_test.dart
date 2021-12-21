@@ -20,7 +20,7 @@ class AuthorizeHttpClientDecorator {
   }) async {
     final token = await fetchSecureCacheStorage.fetchSecure(key: 'token');
 
-    final headerWithToken = {'x-access-token' : token};
+    final headerWithToken = headers ?? {} ..addAll({'x-access-token' : token});
 
     await decoratee.request(url: url, method: method, body: body, headers: headerWithToken);
   }
@@ -71,8 +71,10 @@ void main() {
     mockToken();
     
     await sut.request(url: url, method: method, body: body);
-
     verify(httpClient.request(url: url, method: method, body: body, headers: {'x-access-token' : token})).called(1);
+
+    await sut.request(url: url, method: method, body: body, headers: {'any_header' : 'any_value'});
+    verify(httpClient.request(url: url, method: method, body: body, headers: {'x-access-token' : token, 'any_header' : 'any_value'})).called(1);
 
   });
 
