@@ -12,17 +12,21 @@ class AuthorizeHttpClientDecorator {
 
   AuthorizeHttpClientDecorator({@required this.fetchSecureCacheStorage, @required this.decoratee});
 
-  Future<void> request({
+  Future<dynamic> request({
     @required String url,
     @required String method,
     Map body,
     Map headers,
   }) async {
-    final token = await fetchSecureCacheStorage.fetchSecure(key: 'token');
 
-    final headerWithToken = headers ?? {} ..addAll({'x-access-token' : token});
+    try {
+      final token = await fetchSecureCacheStorage.fetchSecure(key: 'token');
+      final headerWithToken = headers ?? {} ..addAll({'x-access-token' : token});
+      return await decoratee.request(url: url, method: method, body: body, headers: headerWithToken);
+    } catch (error) {
+      throw HttpError.forbidden;
+    }
 
-    await decoratee.request(url: url, method: method, body: body, headers: headerWithToken);
   }
 
 
@@ -41,6 +45,7 @@ void main() {
   String method;
   Map body;
   String token;
+  String httpResponse;
 
   setUp(() {
     fetchSecureCacheSpy = FetchSecureCacheSpy();
@@ -58,6 +63,16 @@ void main() {
     when(fetchSecureCacheSpy.fetchSecure(key: anyNamed('key'))).thenAnswer((_) async => token);
   }
 
+  void mockHttpResponse() {
+    httpResponse = 'any_response';
+
+    when(httpClient.request(
+      url: anyNamed('url'), 
+      method: anyNamed('method'), 
+      body: anyNamed('body'), 
+      headers: anyNamed('headers'))).thenAnswer((_) async => httpResponse);
+  }
+
   test('Should call FetchSecureCacheStorage with correct key', () async {
     
     await sut.request(url: url, method: method, body: body);
@@ -65,7 +80,7 @@ void main() {
     verify(fetchSecureCacheSpy.fetchSecure(key: 'token')).called(1);
 
   });
-
+ 
   test('Should call decoratee with access token on header', () async {
 
     mockToken();
@@ -78,4 +93,24 @@ void main() {
 
   });
 
-}
+  test('Should return same result as decoratee', () async {
+    
+    mockHttpResponse();
+
+    final response = await sut.request(url: url, method: method, body: body);
+
+    expect(response, httpResponse);
+
+  });
+
+  test('Should throw ForbbidenError if FetchSecureCurrentAccount throws', () async {
+    
+    when(fetchSecureCacheSpy.fetchSecure(key: anyNamed('key'))).thenThrow(Exception());
+
+    final future =  sut.request(url: url, method: method, body: body);
+
+    expect(future, throwsA(HttpError.forbidden));
+
+  });
+
+} 
