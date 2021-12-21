@@ -14,11 +14,7 @@ class GetxSurveysPresenter extends GetxController implements SurveysPresenter {
 
   GetxSurveysPresenter({@required this.loadSurveys});
 
-  var _isLoading = true.obs;
   var _surveys = Rx<List<SurveyViewModel>>([]);
-
-  @override
-  Stream<bool> get isLoadingStream => _isLoading.stream;
 
   @override
   Stream<List<SurveyViewModel>> get surveysStream => _surveys.stream;
@@ -28,7 +24,6 @@ class GetxSurveysPresenter extends GetxController implements SurveysPresenter {
 
     try {
 
-      _isLoading.value = true;
       final surveys = await loadSurveys.load();
     
     _surveys.value = surveys.map((survey) => SurveyViewModel(
@@ -39,8 +34,6 @@ class GetxSurveysPresenter extends GetxController implements SurveysPresenter {
     )).toList();
     } on DomainError {
       _surveys.subject.addError(UIError.unexpected.description, StackTrace.empty);
-    } finally {
-      _isLoading.value = false;
     }
     
   }

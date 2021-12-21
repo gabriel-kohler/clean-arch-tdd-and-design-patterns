@@ -2,7 +2,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 
 import 'package:flutter/material.dart';
 
-import '/ui/components/components.dart';
 import '/ui/helpers/helpers.dart';
 
 import 'components/components.dart';
@@ -20,50 +19,44 @@ class SurveysPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(R.strings.surveys),
       ),
-      body: Builder(builder: (context) {
-        surveysPresenter.isLoadingStream.listen((isLoading) {
-          if (isLoading == true) {
-            showLoading(context);
-          } else {
-            hideLoading(context);
-          }
-        });
-
-        return StreamBuilder<List<SurveyViewModel>>(
-          stream: surveysPresenter.surveysStream,
-          builder: (context, snapshot) { 
-            if (snapshot.hasError) {
-              return Container(
-                alignment: Alignment.center,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(snapshot.error),
-                    ElevatedButton(
-                      onPressed: surveysPresenter.loadData,
-                      child: Text(R.strings.reload),
-                    ),
-                  ],
-                ),
-              );
-            }
-            if (snapshot.hasData) {
-              final List<SurveyViewModel> listSurveys = snapshot.data;
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 30.0),
-                child: CarouselSlider(
-                  options: CarouselOptions(
-                    enlargeCenterPage: true,
-                    aspectRatio: 1,
+      body: StreamBuilder<List<SurveyViewModel>>(
+        stream: surveysPresenter.surveysStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Container(
+              alignment: Alignment.center,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(snapshot.error),
+                  ElevatedButton(
+                    onPressed: surveysPresenter.loadData,
+                    child: Text(R.strings.reload),
                   ),
-                  items: listSurveys.map((survey) => SurveyItem(survey: survey)).toList(),
+                ],
+              ),
+            );
+          }
+          if (snapshot.hasData) {
+            final List<SurveyViewModel> listSurveys = snapshot.data;
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 30.0),
+              child: CarouselSlider(
+                options: CarouselOptions(
+                  enlargeCenterPage: true,
+                  aspectRatio: 1,
                 ),
-              );
-            }
-            return SizedBox(height: 0);
-          },
-        );
-      }),
+                items: listSurveys
+                    .map((survey) => SurveyItem(survey: survey))
+                    .toList(),
+              ),
+            );
+          }
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      ),
     );
   }
 }

@@ -16,17 +16,14 @@ void main() {
 
   SurveysPresenter surveysPresenterSpy;
 
-  StreamController<bool> isLoadingController;
   StreamController<List<SurveyViewModel>> surveysController;
 
   Future<void> loadPage(WidgetTester tester) async {
 
-    isLoadingController = StreamController<bool>();
     surveysController = StreamController<List<SurveyViewModel>>();
 
     surveysPresenterSpy = SurveysPresenterSpy();
 
-    when(surveysPresenterSpy.isLoadingStream).thenAnswer((_) => isLoadingController.stream);
     when(surveysPresenterSpy.surveysStream).thenAnswer((_) => surveysController.stream);
 
     final surveysPage = GetMaterialApp(
@@ -40,7 +37,6 @@ void main() {
   }
 
   tearDown(() {
-    isLoadingController.close();
     surveysController.close();
   });
 
@@ -57,31 +53,10 @@ void main() {
 
   });
 
-  testWidgets('Should handle loading correctly', (WidgetTester tester) async {
-
-    await loadPage(tester);
-
-    isLoadingController.add(true);
-    await tester.pump();
-    expect(find.byType(CircularProgressIndicator), findsOneWidget);
-
-    isLoadingController.add(false);
-    await tester.pump();
-    expect(find.byType(CircularProgressIndicator), findsNothing);
-
-    isLoadingController.add(true);
-    await tester.pump();
-    expect(find.byType(CircularProgressIndicator), findsOneWidget);
-
-    isLoadingController.add(null);
-    await tester.pump();
-    expect(find.byType(CircularProgressIndicator), findsNothing);
-
-  });
-
   testWidgets('Should present error if surveysStream fails', (WidgetTester tester) async {
 
     await loadPage(tester);
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
     surveysController.addError(UIError.unexpected.description);
     await tester.pump();
@@ -89,12 +64,14 @@ void main() {
     expect(find.text('Ocorreu um erro. Tente novamente em breve'), findsOneWidget);
     expect(find.text('Recarregar'), findsOneWidget);
     expect(find.text('Questão 1'), findsNothing);
+    expect(find.byType(CircularProgressIndicator), findsNothing);
 
   });
 
   testWidgets('Should present data if surveysStream success', (WidgetTester tester) async {
 
     await loadPage(tester);
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
     surveysController.add(makeSurveys());
     await tester.pump();
@@ -106,6 +83,7 @@ void main() {
 
     expect(find.text('Date1'), findsWidgets);
     expect(find.text('Date2'), findsWidgets);
+    expect(find.byType(CircularProgressIndicator), findsNothing);
 
   });
 
