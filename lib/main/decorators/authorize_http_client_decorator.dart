@@ -3,7 +3,7 @@ import 'package:meta/meta.dart';
 import '/data/cache/cache.dart';
 import '/data/http/http.dart';
 
-class AuthorizeHttpClientDecorator {
+class AuthorizeHttpClientDecorator implements HttpClient {
   final FetchSecureCurrentAccount fetchSecureCacheStorage;
   final HttpClient decoratee;
 
@@ -19,7 +19,8 @@ class AuthorizeHttpClientDecorator {
     try {
       final token = await fetchSecureCacheStorage.fetchSecure(key: 'token');
       final headerWithToken = headers ?? {} ..addAll({'x-access-token' : token});
-      return await decoratee.request(url: url, method: method, body: body, headers: headerWithToken);
+      final response = await decoratee.request(url: url, method: method, body: body, headers: headerWithToken);
+      return response;
     } on HttpError {
       rethrow;
     } catch (error) {

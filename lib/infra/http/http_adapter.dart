@@ -11,7 +11,7 @@ class HttpAdapter implements HttpClient {
   HttpAdapter(this.client);
 
   @override
-  Future<Map> request({
+  Future<dynamic> request({
     @required String url,
     @required String method,
     Map body,
@@ -37,7 +37,7 @@ class HttpAdapter implements HttpClient {
     } catch (error) {
       throw HttpError.serverError;
     }
-
+    
     return _handleResponse(response);
   }
 
@@ -49,7 +49,7 @@ class HttpAdapter implements HttpClient {
     }
   }
 
-  Map _handleResponse(Response response) {
+  dynamic _handleResponse(Response response) {
     switch (response.statusCode) {
       case 200:
         return response.body.isNotEmpty ? jsonDecode(response.body) : null;

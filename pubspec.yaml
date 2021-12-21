@@ -9,7 +9,7 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
-  flutter:
+  flutter: 
     sdk: flutter
 
 
@@ -20,7 +20,7 @@ dependencies:
   http:
   provider:
   equatable:
-  get: ^4.3.8
+  get: ^3.4.2
   carousel_slider: ^4.0.0
   flutter_secure_storage: 3.3.5
   intl:
