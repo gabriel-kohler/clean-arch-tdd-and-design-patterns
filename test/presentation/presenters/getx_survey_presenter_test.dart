@@ -70,7 +70,7 @@ void main() {
 
     sut.surveysStream.listen(
     null, 
-    onError: expectAsync1((error) {
+    onError: expectAsync2((error, stack) {
         expect(error, UIError.unexpected.description);
       }),
     );
