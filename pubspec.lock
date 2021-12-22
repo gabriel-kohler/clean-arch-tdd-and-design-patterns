@@ -229,7 +229,7 @@ packages:
     source: hosted
     version: "0.6.3"
   localstorage:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: localstorage
       url: "https://pub.dartlang.org"

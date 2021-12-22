@@ -24,6 +24,7 @@ dependencies:
   carousel_slider: ^4.0.0
   flutter_secure_storage: 3.3.5
   intl:
+  localstorage:
 
 dev_dependencies:
   flutter_test:
@@ -31,7 +32,6 @@ dev_dependencies:
   mockito: 3.0.2
   test:
   faker:
-  localstorage:
 
 flutter:
   uses-material-design: true
