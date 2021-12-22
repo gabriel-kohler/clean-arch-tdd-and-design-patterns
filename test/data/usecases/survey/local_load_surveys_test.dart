@@ -20,9 +20,15 @@ class LocalLoadSurveys {
 
 void main() {
 
+  FetchCacheStorage fetchCacheStorageSpy;
+  LocalLoadSurveys sut;
+
+  setUp(() {
+    fetchCacheStorageSpy = FetchCacheStorageSpy();
+    sut = LocalLoadSurveys(fetchCacheStorage: fetchCacheStorageSpy);
+  });
   test('Should call FetchCacheStorage with correct key', () async {
-    final fetchCacheStorageSpy = FetchCacheStorageSpy();
-    final sut = LocalLoadSurveys(fetchCacheStorage: fetchCacheStorageSpy);
+    
 
     await sut.load();
 
