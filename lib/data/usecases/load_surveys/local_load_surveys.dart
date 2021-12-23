@@ -9,14 +9,14 @@ import '/data/models/models.dart';
 import '/data/cache/cache.dart';
 
 class LocalLoadSurveys implements LoadSurveys {
-  final FetchCacheStorage fetchCacheStorage;
+  final CacheStorage cacheStorage;
 
-  LocalLoadSurveys({@required this.fetchCacheStorage});
+  LocalLoadSurveys({@required this.cacheStorage});
 
   Future<List<SurveyEntity>> load() async {
 
     try {
-      final List<dynamic> surveys = await fetchCacheStorage.fetch(key: 'surveys');
+      final List<dynamic> surveys = await cacheStorage.fetch(key: 'surveys');
       if (surveys?.isEmpty != false) {
         throw Exception();
       }
