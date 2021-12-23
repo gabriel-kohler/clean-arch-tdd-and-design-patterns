@@ -20,21 +20,22 @@ class LocalLoadSurveys implements LoadSurveys {
       if (surveys?.isEmpty != false) {
         throw Exception();
       }
-      return surveys.map<SurveyEntity>((survey) => LocalSurveyModel.fromJson(survey).toSurveyEntity()).toList();
+      return _map(surveys);
     } catch (error) {
       throw DomainError.unexpected;
     }
 
   }
 
-  @override
   Future<void> validate() async {
     final surveys = await cacheStorage.fetch(key: 'surveys');
     try {
-      surveys.map<SurveyEntity>((survey) => LocalSurveyModel.fromJson(survey).toSurveyEntity()).toList();
+      _map(surveys);
     } catch (error) {
       await cacheStorage.delete(key: 'surveys');
     }
   }
+
+  List<SurveyEntity> _map(List<Map> listData) => listData.map<SurveyEntity>((survey) => LocalSurveyModel.fromJson(survey).toSurveyEntity()).toList();
 
 }
