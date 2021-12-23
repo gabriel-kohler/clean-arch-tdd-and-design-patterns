@@ -178,6 +178,23 @@ void main() {
 
     });
 
+    test('Should delete cache if it is invalid', () async {
+    
+    mockFetchData([
+      {
+      'id': faker.guid.guid(),
+      'question': faker.randomGenerator.string(10),
+      'date': 'invalid_date',
+      'didAnswer': 'true',
+      },
+    ]);
+
+    await sut.validate();
+
+    verify(cacheStorageSpy.delete(key: 'surveys')).called(1);
+
+    });
+
   });
 
 }
