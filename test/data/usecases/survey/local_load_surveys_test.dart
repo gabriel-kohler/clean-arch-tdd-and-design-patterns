@@ -1,15 +1,15 @@
 import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
-import 'package:practice/domain/helpers/domain_error.dart';
 import 'package:test/test.dart';
 import 'package:meta/meta.dart';
 
 import 'package:practice/data/models/local_survey_model.dart';
+import 'package:practice/data/cache/cache.dart';
+
+import 'package:practice/domain/helpers/domain_error.dart';
 import 'package:practice/domain/entities/entities.dart';
 
-abstract class FetchCacheStorage {
-  Future<dynamic> fetch({@required key});
-}
+
 
 class FetchCacheStorageSpy extends Mock implements FetchCacheStorage {}
 
