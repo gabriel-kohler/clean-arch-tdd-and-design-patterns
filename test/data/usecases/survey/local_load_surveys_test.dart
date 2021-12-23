@@ -141,12 +141,15 @@ void main() {
 
     List<Map> listData;
 
+
     PostExpectation mockFetchCall() => when(cacheStorageSpy.fetch(key: anyNamed('key')));
 
     void mockFetchData(List<Map> data) {
       listData = data;
-     mockFetchCall().thenAnswer((_) async => data);
+     mockFetchCall().thenAnswer((_) async => listData);
     }
+
+    void mockFetchError() => mockFetchCall().thenThrow(Exception());
 
     List<Map> mockValidData() => [
       {
@@ -209,6 +212,17 @@ void main() {
     verify(cacheStorageSpy.delete(key: 'surveys')).called(1);
 
     });
+
+    test('Should delete cache if validate throws', () async {
+    
+    mockFetchError();
+
+    await sut.validate();
+
+    verify(cacheStorageSpy.delete(key: 'surveys')).called(1);
+
+    });
+
 
   });
 
