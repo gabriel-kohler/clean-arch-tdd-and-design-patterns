@@ -19,37 +19,36 @@ void main() {
     CacheStorage cacheStorageSpy;
     LocalLoadSurveys sut;
 
-   List<Map> listData;
+    List<Map> listData;
 
-   PostExpectation mockFetchCall() => when(cacheStorageSpy.fetch(key: anyNamed('key')));
+    PostExpectation mockFetchCall() => when(cacheStorageSpy.fetch(key: anyNamed('key')));
 
-   void mockFetchData(List<Map> data) {
-     listData = data;
-    mockFetchCall().thenAnswer((_) async => data);
-   }
+    void mockFetchData(List<Map> data) {
+      listData = data;
+     mockFetchCall().thenAnswer((_) async => data);
+    }
 
-   void mockFetchError() => mockFetchCall().thenThrow(Exception());
+    void mockFetchError() => mockFetchCall().thenThrow(Exception());
 
-   List<Map> mockValidData() => [
-     {
-     'id': faker.guid.guid(),
-     'question': faker.randomGenerator.string(10),
-     'date': '2021-09-20T00:00:00Z', 
-     'didAnswer': 'false',
-     },
-     {
-     'id': faker.guid.guid(),
-     'question': faker.randomGenerator.string(10),
-     'date': '2020-02-18T00:00:00Z',
-     'didAnswer': 'true',
-     },
-   ];
+    List<Map> mockValidData() => [
+      {
+      'id': faker.guid.guid(),
+      'question': faker.randomGenerator.string(10),
+      'date': '2021-09-20T00:00:00Z', 
+      'didAnswer': 'false',
+      },
+      {
+      'id': faker.guid.guid(),
+      'question': faker.randomGenerator.string(10),
+      'date': '2020-02-18T00:00:00Z',
+      'didAnswer': 'true',
+      },
+    ];
 
 
     setUp(() {
       cacheStorageSpy = CacheStorageSpy();
       sut = LocalLoadSurveys(cacheStorage: cacheStorageSpy);
-
     });
     test('Should call FetchCacheStorage with correct key', () async {
     
@@ -133,6 +132,52 @@ void main() {
       expect(future, throwsA(DomainError.unexpected));
 
     });
+  });
+
+  group('validate', () {
+
+    CacheStorage cacheStorageSpy;
+    LocalLoadSurveys sut;
+
+    List<Map> listData;
+
+    PostExpectation mockFetchCall() => when(cacheStorageSpy.fetch(key: anyNamed('key')));
+
+    void mockFetchData(List<Map> data) {
+      listData = data;
+     mockFetchCall().thenAnswer((_) async => data);
+    }
+
+    List<Map> mockValidData() => [
+      {
+      'id': faker.guid.guid(),
+      'question': faker.randomGenerator.string(10),
+      'date': '2021-09-20T00:00:00Z', 
+      'didAnswer': 'false',
+      },
+      {
+      'id': faker.guid.guid(),
+      'question': faker.randomGenerator.string(10),
+      'date': '2020-02-18T00:00:00Z',
+      'didAnswer': 'true',
+      },
+    ];
+
+
+    setUp(() {
+      cacheStorageSpy = CacheStorageSpy();
+      sut = LocalLoadSurveys(cacheStorage: cacheStorageSpy);
+    });
+    test('Should call CacheStorage with correct key', () async {
+    
+    mockFetchData(mockValidData());
+
+    await sut.validate();
+
+    verify(cacheStorageSpy.fetch(key: 'surveys')).called(1);
+
+    });
+
   });
 
 }
