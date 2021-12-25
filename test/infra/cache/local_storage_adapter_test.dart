@@ -19,6 +19,10 @@ class LocalStorageAdapter {
   Future<void> delete({@required String key}) async {
     await localStorage.deleteItem(key);
   }
+
+  Future<void> fetch({@required String key}) async {
+    await localStorage.getItem(key);
+  }
 }
 
 class LocalStorageSpy extends Mock implements LocalStorage {}
@@ -77,7 +81,7 @@ void main() {
 
   group('delete', () {
     
-    test('Should LocalStorageAdapter calls with correct key', () async {
+    test('Should LocalStorageAdapter calls delete cache with correct key', () async {
        await sut.delete(key: key);
 
       verify(localStorageSpy.deleteItem(key)).called(1);
@@ -91,6 +95,16 @@ void main() {
 
       expect(future, throwsA(TypeMatcher<Exception>()));
 
+    });
+
+  });
+
+  group('fetch', () {
+    
+    test('Should LocalStorageAdapter calls fetch with correct key', () async {
+       await sut.fetch(key: key);
+
+      verify(localStorageSpy.getItem(key)).called(1);
     });
 
   });
