@@ -5,9 +5,6 @@ import 'package:meta/meta.dart';
 
 import 'package:localstorage/localstorage.dart';
 
-import 'package:practice/domain/entities/entities.dart';
-
-
 class LocalStorageAdapter {
 
   final LocalStorage localStorage;
@@ -15,6 +12,7 @@ class LocalStorageAdapter {
   LocalStorageAdapter({@required this.localStorage});
 
   Future<void> save({@required String key, @required dynamic value}) async {
+    await localStorage.deleteItem(key);
     await localStorage.setItem(key, value);
   }
 }
@@ -41,6 +39,7 @@ void main() {
     
     await sut.save(key: key, value: value);
 
+    verify(localStorageSpy.deleteItem(key)).called(1);
     verify(localStorageSpy.setItem(key, value)).called(1);
 
   });
