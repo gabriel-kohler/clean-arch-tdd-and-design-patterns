@@ -1,3 +1,3 @@
 export './save_secure_current_account.dart';
 export './fetch_secure_current_account.dart';
-export './fetch_cache_storage.dart';
+export 'cache_storage.dart';
