@@ -20,8 +20,8 @@ class LocalStorageAdapter {
     await localStorage.deleteItem(key);
   }
 
-  Future<void> fetch({@required String key}) async {
-    await localStorage.getItem(key);
+  Future<dynamic> fetch({@required String key}) async {
+    return await localStorage.getItem(key);
   }
 }
 
@@ -46,6 +46,8 @@ void main() {
   void mockDeleteItemError() => when(localStorageSpy.deleteItem(any)).thenThrow(Exception());
 
   void mockSaveItemError() => when(localStorageSpy.setItem(any, any)).thenThrow(Exception());
+
+  
 
   group('save', () {
     test('Should LocalStorageAdapter calls save with correct values', () async {
@@ -100,11 +102,31 @@ void main() {
   });
 
   group('fetch', () {
-    
+
+    String result;
+
+    PostExpectation mockFetchCall() => when(localStorageSpy.getItem(any));
+
+    void mockFetch() => mockFetchCall().thenAnswer((_) async => result);
+    void mockFetchError() => mockFetchCall().thenThrow(Exception());
+
+    setUp(() {
+      result = faker.randomGenerator.string(30);
+    });
+
     test('Should LocalStorageAdapter calls fetch with correct key', () async {
        await sut.fetch(key: key);
 
       verify(localStorageSpy.getItem(key)).called(1);
+    });
+
+    test('Should return same as localStorage ', () async {
+
+      mockFetch();
+
+      final data = await sut.fetch(key: key);
+
+      expect(data, result);
     });
 
   });
