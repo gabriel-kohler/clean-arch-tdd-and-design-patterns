@@ -129,6 +129,16 @@ void main() {
       expect(data, result);
     });
 
+    test('Should throw if fetch throws', () async {
+
+      mockFetchError();
+    
+      final future = sut.fetch(key: key);
+
+      expect(future, throwsA(TypeMatcher<Exception>()));
+
+    });
+
   });
 
   
