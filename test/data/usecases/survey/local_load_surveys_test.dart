@@ -325,7 +325,7 @@ void main() {
 
     List<SurveyEntity> mockSurveys() => [
       SurveyEntity(id: faker.guid.guid(), question: faker.randomGenerator.string(10), date: DateTime.utc(2020, 2 , 2), didAnswer: true),
-      SurveyEntity(id: faker.guid.guid(), question: faker.randomGenerator.string(10), date: DateTime.utc(2018, 12 , 20), didAnswer: false),
+      SurveyEntity(id: faker.guid.guid(), question: faker.randomGenerator.string(10), date: DateTime.utc(2016, 12 , 5), didAnswer: false),
     ];
 
     setUp(() {
@@ -369,7 +369,7 @@ void main() {
       final future = sut.save(surveys);
 
       expect(future, throwsA(DomainError.unexpected));
-      
+
     });
 
   });
