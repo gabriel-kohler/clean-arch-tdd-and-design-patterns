@@ -335,6 +335,10 @@ void main() {
       surveys = mockSurveys();
     });
 
+    PostExpectation mockSaveCall() => when(cacheStorageSpy.save(key: anyNamed('key'), value: anyNamed('value')));
+
+    void mockSaveError() => mockSaveCall().thenThrow(Exception());
+
     test('Should call CacheStorage with correct values', () async {
     
     final list = [
@@ -347,7 +351,7 @@ void main() {
       {
       'id': surveys[1].id,
       'question': surveys[1].question,
-      'date': '2018-12-20T00:00:00.000Z',
+      'date': '2016-12-05T00:00:00.000Z',
       'didAnswer': 'false',
       },
     ];
@@ -356,6 +360,16 @@ void main() {
 
     verify(cacheStorageSpy.save(key: 'surveys', value: list)).called(1);
 
+    });
+    
+    test('Should LocalLoadSurveys throw UnexpectedError if save throws', () async {
+
+      mockSaveError();
+
+      final future = sut.save(surveys);
+
+      expect(future, throwsA(DomainError.unexpected));
+      
     });
 
   });
