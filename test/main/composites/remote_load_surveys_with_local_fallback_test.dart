@@ -1,12 +1,14 @@
 import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
-import 'package:practice/data/usecases/load_surveys/load_surveys.dart';
-import 'package:practice/domain/entities/entities.dart';
 import 'package:test/test.dart';
 import 'package:meta/meta.dart';
 
+import 'package:practice/data/usecases/load_surveys/load_surveys.dart';
+import 'package:practice/domain/entities/entities.dart';
+import 'package:practice/domain/usecases/survey/load_surveys.dart';
 
-class RemoteLoadSurveysWithLocalFallback {
+
+class RemoteLoadSurveysWithLocalFallback implements LoadSurveys {
 
   final RemoteLoadSurveys remoteLoad;
   final LocalLoadSurveys localLoad;
@@ -16,6 +18,7 @@ class RemoteLoadSurveysWithLocalFallback {
   Future<List<SurveyEntity>> load() async {
     final surveys = await remoteLoad.load();
     await localLoad.save(surveys);
+    return surveys;
   }
 }
 
@@ -29,7 +32,7 @@ void main() {
   LocalLoadSurveys localLoadSurveysSpy;
   RemoteLoadSurveysWithLocalFallback sut;
 
-  List<SurveyEntity> surveys;
+  List<SurveyEntity> remoteSurveys;
 
   List<SurveyEntity> mockSurveys() {
     return [
@@ -39,8 +42,8 @@ void main() {
   }
 
   void mockRemoteLoad() {
-    surveys = mockSurveys();
-    when(remoteLoadSurveysSpy.load()).thenAnswer((_) async => surveys);
+    remoteSurveys = mockSurveys();
+    when(remoteLoadSurveysSpy.load()).thenAnswer((_) async => remoteSurveys);
   }
 
   setUp(() {
@@ -63,6 +66,15 @@ void main() {
 
     await sut.load();
 
-    verify(localLoadSurveysSpy.save(surveys)).called(1);
+    verify(localLoadSurveysSpy.save(remoteSurveys)).called(1);
+  });
+
+  test('Should return remote data', () async {
+
+    mockRemoteLoad();
+
+    final surveys = await sut.load();
+
+    expect(surveys, remoteSurveys);
   });
 }
