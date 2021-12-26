@@ -7,18 +7,18 @@ import '/domain/usecases/usecases.dart';
 import '/data/models/models.dart';
 import '/data/http/http.dart';
 
-class RemoteLoadSurveys implements LoadSurveys {
+class RemoteLoadSurveyResult implements LoadSurveyResult {
 
   final HttpClient httpClient;
   final String url;
 
-  RemoteLoadSurveys({@required this.httpClient, @required this.url});
+  RemoteLoadSurveyResult({@required this.httpClient, @required this.url});
 
-  Future<List<SurveyEntity>> load() async {
+  Future<SurveyResultEntity> loadBySurvey({String surveyId}) async {
 
     try {
-      final response = await httpClient.request(url: url, method: 'get');
-      return response.map<SurveyEntity>((json) => RemoteSurveyModel.fromJson(json).toSurveyEntity()).toList();
+      final json = await httpClient.request(url: url, method: 'get');
+      return RemoteSurveyResultModel.fromJson(json).toSurveyEntity();
     } on HttpError catch (error) {
       (error == HttpError.forbidden) 
         ? throw DomainError.accessDenied
