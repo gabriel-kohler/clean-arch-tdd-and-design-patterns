@@ -20,10 +20,15 @@ class RemoteLoadSurveysSpy extends Mock implements RemoteLoadSurveys {}
 
 void main() {
 
-  test('Should call remote load surveys', () async {
-    final remoteLoadSurveysSpy = RemoteLoadSurveysSpy();
-    final sut = RemoteLoadSurveysWithLocalFallback(remoteLoad: remoteLoadSurveysSpy);
+  RemoteLoadSurveys remoteLoadSurveysSpy;
+  RemoteLoadSurveysWithLocalFallback sut;
+  setUp(() {
+    remoteLoadSurveysSpy = RemoteLoadSurveysSpy();
+    sut = RemoteLoadSurveysWithLocalFallback(remoteLoad: remoteLoadSurveysSpy);
+  });
 
+  test('Should call remote load surveys', () async {
+    
     await sut.load();
 
     verify(remoteLoadSurveysSpy.load()).called(1);
