@@ -27,7 +27,7 @@ class RemoteLoadSurveysWithLocalFallback implements LoadSurveys {
         rethrow;
       } else {
         localLoad.validate();
-        localLoad.load();
+        return localLoad.load();
       }
     }
   }
@@ -45,6 +45,7 @@ void main() {
   RemoteLoadSurveysWithLocalFallback sut;
 
   List<SurveyEntity> remoteSurveys;
+  List<SurveyEntity> localSurveys;
 
   List<SurveyEntity> mockSurveys() {
     return [
@@ -55,9 +56,16 @@ void main() {
 
   PostExpectation mockRemoteLoadCall() => when(remoteLoadSurveysSpy.load());
 
+  PostExpectation mockLocalLoadCall() => when(localLoadSurveysSpy.load());
+
   void mockRemoteLoad() {
     remoteSurveys = mockSurveys();
     mockRemoteLoadCall().thenAnswer((_) async => remoteSurveys);
+  }
+
+  void mockLocalLoad() {
+    localSurveys = mockSurveys();
+    mockLocalLoadCall().thenAnswer((_) async => localSurveys);
   }
 
   void mockRemoteLoadError(DomainError error) => mockRemoteLoadCall().thenThrow(error);
@@ -112,5 +120,16 @@ void main() {
     verify(localLoadSurveysSpy.validate()).called(1);
     verify(localLoadSurveysSpy.load()).called(1);
   });
-  
+
+  test('Should return local data on remote error', () async {
+
+    mockLocalLoad();
+
+    mockRemoteLoadError(DomainError.unexpected);
+
+    final surveys = await sut.load();
+
+    expect(surveys, localSurveys);
+  });
+
 }
