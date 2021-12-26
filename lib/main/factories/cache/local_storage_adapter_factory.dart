@@ -1,10 +1,6 @@
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:localstorage/localstorage.dart';
 
 import '/data/cache/cache.dart';
 import '/infra/cache/cache.dart';
 
-FetchSecureCurrentAccount makeLocalStorageAdapter() {
-  return SecureStorageAdapter(
-      flutterSecureStorage: FlutterSecureStorage(),
-    );
-}
+CacheStorage makeLocalStorageAdapter() => LocalStorageAdapter(localStorage: LocalStorage('appname'));

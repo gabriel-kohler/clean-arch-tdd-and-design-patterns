@@ -16,7 +16,7 @@ class LocalLoadSurveys implements LoadSurveys {
   Future<List<SurveyEntity>> load() async {
 
     try {
-      final List<dynamic> surveys = await cacheStorage.fetch(key: 'surveys');
+      final surveys = await cacheStorage.fetch(key: 'surveys');
       if (surveys?.isEmpty != false) {
         throw Exception();
       }
@@ -44,7 +44,7 @@ class LocalLoadSurveys implements LoadSurveys {
     }
   }
 
-  List<SurveyEntity> _mapToEntity(List<Map> list) => list.map<SurveyEntity>((survey)
+  List<SurveyEntity> _mapToEntity(dynamic list) => list.map<SurveyEntity>((survey)
     => LocalSurveyModel.fromJson(survey).toSurveyEntity()).toList();
 
   List<Map> _mapToJson(List<SurveyEntity> list) => list.map((entity)
