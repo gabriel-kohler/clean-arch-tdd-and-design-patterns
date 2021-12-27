@@ -16,11 +16,11 @@ void main() {
   SurveyResultPresenter surveyResultPresenterSpy;
 
   StreamController<bool> isLoadingController;
-  StreamController<dynamic> surveyResultController;
+  StreamController<SurveyResultViewModel> surveyResultController;
 
   void initStreams() {
     isLoadingController = StreamController<bool>();
-    surveyResultController = StreamController<dynamic>();
+    surveyResultController = StreamController<SurveyResultViewModel>();
   }
 
   void mockStreams() {
@@ -56,6 +56,12 @@ void main() {
     closeStreams();
   });
 
+
+  SurveyResultViewModel makeSurveyResult() => SurveyResultViewModel(surveyId: 'any_id', question: 'Question', answers: [
+    SurveyAnswerViewModel(image: 'Image 0', answer: 'Answer 0', isCurrentAnswer: true, percent: '60%'),
+    SurveyAnswerViewModel(answer: 'Answer 1', isCurrentAnswer: false, percent: '40%'),
+  ]);
+
   testWidgets('Should call LoadSurveyResult on page load', (WidgetTester tester) async {
 
     await loadPage(tester);
@@ -87,6 +93,7 @@ void main() {
 
     expect(find.text('Ocorreu um erro. Tente novamente em breve'), findsOneWidget);
     expect(find.text('Recarregar'), findsOneWidget);
+    expect(find.text('Question'), findsNothing);
 
   });
 
@@ -99,6 +106,22 @@ void main() {
     await tester.tap(find.text('Recarregar'));
 
     verify(surveyResultPresenterSpy.loadData()).called(2);
+
+  });
+
+  testWidgets('Should present valid data if surveyResultStream succeds', (WidgetTester tester) async {
+    await loadPage(tester);
+    
+    surveyResultController.add(makeSurveyResult());
+
+    await mockNetworkImagesFor(() async {
+      await tester.pump();
+    });
+    
+
+    expect(find.text('Ocorreu um erro. Tente novamente em breve'), findsNothing);
+    expect(find.text('Recarregar'), findsNothing);
+    expect(find.text('Question'), findsOneWidget);
 
   });
 

@@ -29,14 +29,14 @@ class SurveyResultPage extends StatelessWidget {
             }
           });
           surveyResultPresenter.loadData();
-          return StreamBuilder<dynamic>(
+          return StreamBuilder<SurveyResultViewModel>(
             stream: surveyResultPresenter.surveyResultStream,
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return ReloadScreen(error: snapshot.error, reload: surveyResultPresenter.loadData);
               }
-              if (snapshot.hasError) {
-                return SurveyResult();
+              if (snapshot.hasData) {
+                return SurveyResult(surveyResultViewModel: snapshot.data);
               }
               return SizedBox(height: 0);
             }

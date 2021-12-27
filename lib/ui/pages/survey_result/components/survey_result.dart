@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:practice/ui/pages/pages.dart';
 
 class SurveyResult extends StatelessWidget {
+
+  final SurveyResultViewModel surveyResultViewModel;
+
+  const SurveyResult({Key key, @required this.surveyResultViewModel}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
@@ -13,7 +19,7 @@ class SurveyResult extends StatelessWidget {
             decoration: BoxDecoration(
               color: Theme.of(context).disabledColor.withAlpha(15),
             ),
-            child: Text('Qual é o seu framework web favorito?'),
+            child: Text(surveyResultViewModel.question),
           );
         }
         return Column(
