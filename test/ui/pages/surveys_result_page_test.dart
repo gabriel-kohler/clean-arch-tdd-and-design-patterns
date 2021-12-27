@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:network_image_mock/network_image_mock.dart';
 import 'package:mockito/mockito.dart';
@@ -8,6 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:practice/ui/helpers/helpers.dart';
 import 'package:practice/ui/pages/pages.dart';
+import 'package:practice/ui/pages/survey_result/components/survey_result.dart';
 
 class SurveyResultPresenterSpy extends Mock implements SurveyResultPresenter {}
 
@@ -109,22 +112,6 @@ void main() {
 
   });
 
-  testWidgets('Should present valid data if surveyResultStream succeds', (WidgetTester tester) async {
-    await loadPage(tester);
-    
-    surveyResultController.add(makeSurveyResult());
-
-    await mockNetworkImagesFor(() async {
-      await tester.pump();
-    });
-    
-
-    expect(find.text('Ocorreu um erro. Tente novamente em breve'), findsNothing);
-    expect(find.text('Recarregar'), findsNothing);
-    expect(find.text('Question'), findsOneWidget);
-
-  });
-  
   testWidgets('Should present valid data if surveyResultStream', (WidgetTester tester) async {
     await loadPage(tester);
     
@@ -142,7 +129,12 @@ void main() {
     expect(find.text('Answer 1'), findsOneWidget);
     expect(find.text('60%'), findsOneWidget);
     expect(find.text('40%'), findsOneWidget);
+    expect(find.byType(ActiveIcon), findsOneWidget);
+    expect(find.byType(DisableIcon), findsOneWidget);
 
+    final image = tester.widget<Image>(find.byKey(ValueKey('imageUrl'))).image as NetworkImage;
+
+    expect(image.url, 'Image 0');
 
   });
 
