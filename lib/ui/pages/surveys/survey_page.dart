@@ -27,24 +27,35 @@ class SurveysPage extends StatelessWidget {
             return ReloadScreen(error: snapshot.error, reload: surveysPresenter.loadData);
           }
           if (snapshot.hasData) {
-            final List<SurveyViewModel> listSurveys = snapshot.data;
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 30.0),
-              child: CarouselSlider(
-                options: CarouselOptions(
-                  enlargeCenterPage: true,
-                  aspectRatio: 1,
-                ),
-                items: listSurveys
-                    .map((survey) => SurveyItem(survey: survey))
-                    .toList(),
-              ),
-            );
+            return SurveyItems(listSurveys: snapshot.data);
           }
           return Center(
             child: CircularProgressIndicator(),
           );
         },
+      ),
+    );
+  }
+}
+
+class SurveyItems extends StatelessWidget {
+
+  final List<SurveyViewModel> listSurveys;
+
+  const SurveyItems({Key key, @required this.listSurveys}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 30.0),
+      child: CarouselSlider(
+        options: CarouselOptions(
+          enlargeCenterPage: true,
+          aspectRatio: 1,
+        ),
+        items: listSurveys
+            .map((survey) => SurveyItem(survey: survey))
+            .toList(),
       ),
     );
   }
