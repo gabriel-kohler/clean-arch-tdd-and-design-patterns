@@ -6,6 +6,7 @@ import '/ui/helpers/helpers.dart';
 
 import 'components/components.dart';
 import '/ui/pages/pages.dart';
+import '/ui/components/components.dart';
 
 class SurveysPage extends StatelessWidget {
   final SurveysPresenter surveysPresenter;
@@ -23,19 +24,7 @@ class SurveysPage extends StatelessWidget {
         stream: surveysPresenter.surveysStream,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return Container(
-              alignment: Alignment.center,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(snapshot.error),
-                  ElevatedButton(
-                    onPressed: surveysPresenter.loadData,
-                    child: Text(R.strings.reload),
-                  ),
-                ],
-              ),
-            );
+            return ReloadScreen(error: snapshot.error, reload: surveysPresenter.loadData);
           }
           if (snapshot.hasData) {
             final List<SurveyViewModel> listSurveys = snapshot.data;
@@ -60,3 +49,5 @@ class SurveysPage extends StatelessWidget {
     );
   }
 }
+
+
