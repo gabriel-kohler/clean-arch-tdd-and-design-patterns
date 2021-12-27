@@ -19,16 +19,16 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
-
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       theme: makeAppTheme(),
-      initialRoute: AppRoute.SplashPage,
+      initialRoute: '/survey_result/3',
       getPages: [
         GetPage(name: AppRoute.SplashPage, page: makeSplashPage),
         GetPage(name: AppRoute.LoginPage, page: makeLoginPage),
         GetPage(name: AppRoute.SignUpPage, page: makeSignUpPage),
         GetPage(name: AppRoute.SurveysPage, page: makeSurveysPage),
+        GetPage(name: '/survey_result/:survey_id', page: makeSurveyResultPage),
       ],
     );
   }
