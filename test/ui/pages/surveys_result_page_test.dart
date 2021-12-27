@@ -124,5 +124,26 @@ void main() {
     expect(find.text('Question'), findsOneWidget);
 
   });
+  
+  testWidgets('Should present valid data if surveyResultStream', (WidgetTester tester) async {
+    await loadPage(tester);
+    
+    surveyResultController.add(makeSurveyResult());
+
+    await mockNetworkImagesFor(() async {
+      await tester.pump();
+    });
+    
+
+    expect(find.text('Ocorreu um erro. Tente novamente em breve'), findsNothing);
+    expect(find.text('Recarregar'), findsNothing);
+    expect(find.text('Question'), findsOneWidget);
+    expect(find.text('Answer 0'), findsOneWidget);
+    expect(find.text('Answer 1'), findsOneWidget);
+    expect(find.text('60%'), findsOneWidget);
+    expect(find.text('40%'), findsOneWidget);
+
+
+  });
 
 }
