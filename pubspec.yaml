@@ -29,9 +29,10 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  mockito: 3.0.2
+  mockito:
   test:
   faker:
+  network_image_mock:
 
 flutter:
   uses-material-design: true
