@@ -79,7 +79,7 @@ void main() {
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
   });
 
-  testWidgets('Should present error if surveyResultStream is empty', (WidgetTester tester) async {
+  testWidgets('Should present error if surveyResultStream fails', (WidgetTester tester) async {
     await loadPage(tester);
 
     surveyResultController.addError(UIError.unexpected.description);
