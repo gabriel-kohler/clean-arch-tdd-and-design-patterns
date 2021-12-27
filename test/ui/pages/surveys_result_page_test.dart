@@ -90,4 +90,16 @@ void main() {
 
   });
 
+  testWidgets('Should SurveyResultPage call loadData on reload button click', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    surveyResultController.addError(UIError.unexpected.description);
+    await tester.pump();
+
+    await tester.tap(find.text('Recarregar'));
+
+    verify(surveyResultPresenterSpy.loadData()).called(2);
+
+  });
+
 }
