@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 
 import '/ui/helpers/errors/errors.dart';
 
-mixin UIMainErrorManager {
+mixin UIMainErrorManager on GetxController {
   var _mainError = Rx<UIError>();
   Stream<UIError> get mainErrorStream => _mainError.stream;
 
