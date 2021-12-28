@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
+import '/utils/app_routes.dart';
+
+import '/ui/mixins/mixins.dart';
+import '/ui/pages/pages.dart';
+import '/ui/components/components.dart';
 import '/ui/helpers/helpers.dart';
 
 import 'components/components.dart';
-import '/ui/pages/pages.dart';
-import '/ui/components/components.dart';
-
-import '/utils/app_routes.dart';
 
 class SurveysPage extends StatelessWidget {
   final SurveysPresenter surveysPresenter;

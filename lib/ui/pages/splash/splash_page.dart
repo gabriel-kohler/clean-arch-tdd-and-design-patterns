@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '/ui/mixins/mixins.dart';
+
 import 'splash.dart';
 
 class SplashPage extends StatelessWidget {

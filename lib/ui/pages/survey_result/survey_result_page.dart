@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '/ui/mixins/mixins.dart';
 import '/ui/components/components.dart';
 import '/ui/pages/pages.dart';
 import '/ui/helpers/helpers.dart';

@@ -11,7 +11,7 @@ import '/ui/pages/login/components/components.dart';
 import '/ui/components/components.dart';
 import '/ui/pages/pages.dart';
 
-class LoginPage extends StatelessWidget with KeyboardManager {
+class LoginPage extends StatelessWidget with KeyboardManager, LoadingManager {
   final LoginPresenter loginPresenter;
 
   const LoginPage(this.loginPresenter);
@@ -20,18 +20,9 @@ class LoginPage extends StatelessWidget with KeyboardManager {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: Builder(builder: (context) {
-        loginPresenter.isLoadingStream.listen(
-          (isLoading) {
-            if (isLoading == true) {
-              showLoading(context);
-            } else {
-              hideLoading(context);
-            }
-          },
-        );
+        handleLoading(loginPresenter.isLoadingStream, context);
         loginPresenter.mainErrorStream.listen((UIError mainError) {
           if (mainError != null) {
             showErrorMessage(context, mainError.description);

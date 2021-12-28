@@ -9,7 +9,7 @@ import '/ui/pages/pages.dart';
 
 import 'components/components.dart';
 
-class SignUpPage extends StatelessWidget with KeyboardManager{
+class SignUpPage extends StatelessWidget with KeyboardManager, LoadingManager {
   final SignUpPresenter signUpPresenter;
 
   SignUpPage({@required this.signUpPresenter});
@@ -20,13 +20,7 @@ class SignUpPage extends StatelessWidget with KeyboardManager{
     return Scaffold(
       body: Builder(
         builder: (context) {
-        signUpPresenter.isLoadingStream.listen((isLoading) {
-          if (isLoading == true) {
-            showLoading(context);
-          } else {
-            hideLoading(context);
-          }
-        });
+        handleLoading(signUpPresenter.isLoadingStream, context);
         signUpPresenter.mainErrorStream.listen((UIError mainError) {
           if (mainError != null) {
             showErrorMessage(context, mainError.description);
