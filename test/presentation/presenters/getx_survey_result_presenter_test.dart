@@ -42,6 +42,7 @@ void main() {
   }
 
   void mockLoadSurveyResultError() => mockLoadSurveyResultCall().thenThrow(DomainError.unexpected);
+  void mockLoadSurveyResultAccessDeniedError() => mockLoadSurveyResultCall().thenThrow(DomainError.accessDenied);
 
   setUp(() {
     surveyId = faker.guid.guid();
@@ -103,6 +104,16 @@ void main() {
       }),
     );
 
+    await sut.loadData();
+
+  });
+
+  test('Should emit correct events on access denied', () async {
+
+    mockLoadSurveyResultAccessDeniedError();
+
+    expectLater(sut.isSessionExpiredStream, emits(true));
+    
     await sut.loadData();
 
   });

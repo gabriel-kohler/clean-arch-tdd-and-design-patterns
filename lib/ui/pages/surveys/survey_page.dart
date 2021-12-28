@@ -1,5 +1,3 @@
-import 'package:carousel_slider/carousel_slider.dart';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -9,6 +7,8 @@ import '/ui/helpers/helpers.dart';
 import 'components/components.dart';
 import '/ui/pages/pages.dart';
 import '/ui/components/components.dart';
+
+import '/utils/app_routes.dart';
 
 class SurveysPage extends StatelessWidget {
   final SurveysPresenter surveysPresenter;
@@ -27,6 +27,11 @@ class SurveysPage extends StatelessWidget {
           surveysPresenter.navigateToStream.listen((page) {
             if (page?.isNotEmpty == true) {
               Get.toNamed(page);
+            }
+          });
+          surveysPresenter.isSessionExpiredStream.listen((isExpired) {
+            if (isExpired) {
+              Get.offAllNamed(AppRoute.LoginPage);
             }
           });
           return StreamBuilder<List<SurveyViewModel>>(

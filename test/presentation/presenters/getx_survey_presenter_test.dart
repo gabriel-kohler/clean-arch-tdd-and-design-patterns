@@ -3,7 +3,6 @@ import 'package:mockito/mockito.dart';
 import 'package:practice/domain/helpers/domain_error.dart';
 import 'package:practice/ui/helpers/errors/errors.dart';
 import 'package:practice/ui/pages/pages.dart';
-import 'package:practice/utils/app_routes.dart';
 import 'package:test/test.dart';
 
 import 'package:practice/domain/entities/entities.dart';
@@ -30,6 +29,7 @@ void main() {
   }
 
   void mockLoadSurveysError() => mockLoadSurveysCall().thenThrow(DomainError.unexpected);
+  void mockLoadAccessDeniedError() => mockLoadSurveysCall().thenThrow(DomainError.accessDenied);
 
   setUp(() {
     loadSurveysSpy = LoadSurveysSpy();
@@ -76,6 +76,16 @@ void main() {
       }),
     );
 
+    await sut.loadData();
+
+  });
+
+  test('Should emit correct events on access denied', () async {
+
+    mockLoadAccessDeniedError();
+
+    expectLater(sut.isSessionExpiredStream, emits(true));
+    
     await sut.loadData();
 
   });

@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:network_image_mock/network_image_mock.dart';
 import 'package:mockito/mockito.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:practice/ui/helpers/helpers.dart';
 import 'package:practice/ui/pages/pages.dart';
+import 'package:practice/utils/utils.dart';
 
 class SurveyResultPresenterSpy extends Mock implements SurveyResultPresenter {}
 
@@ -16,17 +18,21 @@ void main() {
   SurveyResultPresenter surveyResultPresenterSpy;
 
   StreamController<SurveyResultViewModel> surveyResultController;
+  StreamController<bool> isSessionExpiredController;
 
   void initStreams() {
     surveyResultController = StreamController<SurveyResultViewModel>();
+    isSessionExpiredController = StreamController<bool>();
   }
 
   void mockStreams() {
     when(surveyResultPresenterSpy.surveyResultStream).thenAnswer((_) => surveyResultController.stream);
+    when(surveyResultPresenterSpy.isSessionExpiredStream).thenAnswer((_) => isSessionExpiredController.stream);
   }
 
   void closeStreams() {
     surveyResultController.close();  
+    isSessionExpiredController.close();
   }
 
   Future<void> loadPage(WidgetTester tester) async {
@@ -40,6 +46,9 @@ void main() {
       initialRoute: '/survey_result/:any_survey_id',
       getPages: [
         GetPage(name: '/survey_result/:survey_id', page: () => SurveyResultPage(surveyResultPresenter: surveyResultPresenterSpy)),
+        GetPage(name: '/login', page: () => Scaffold(
+          body: Text('fake login'),
+        )),
       ],
     );
 
@@ -120,6 +129,24 @@ void main() {
 
     expect(find.byType(CircularProgressIndicator), findsNothing);
 
+  });
+
+  testWidgets('Should logout', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isSessionExpiredController.add(true);
+    await tester.pumpAndSettle();
+
+    expect(Get.currentRoute, AppRoute.LoginPage);
+    expect(find.text('fake login'), findsOneWidget);
+  });
+
+  testWidgets('Should not logout', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isSessionExpiredController.add(false);
+    await tester.pump();
+    expect(Get.currentRoute, '${AppRoute.SurveyResultPage}/:any_survey_id');
   });
 
 }

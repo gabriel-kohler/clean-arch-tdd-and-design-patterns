@@ -17,12 +17,16 @@ class GetxSurveysPresenter extends GetxController implements SurveysPresenter {
 
   var _surveys = Rx<List<SurveyViewModel>>([]);
   var _navigateTo = Rx<String>();
+  var _isSessionExpired = RxBool();
 
   @override
   Stream<List<SurveyViewModel>> get surveysStream => _surveys.stream;
 
   @override
   Stream<String> get navigateToStream => _navigateTo.stream;
+
+  @override
+  Stream<bool> get isSessionExpiredStream => _isSessionExpired.stream;
 
   @override
   Future<void> loadData() async {
@@ -37,8 +41,12 @@ class GetxSurveysPresenter extends GetxController implements SurveysPresenter {
       date: DateFormat('dd MMM yyyy').format(survey.date), 
       didAnswer: survey.didAnswer,
     )).toList();
-    } on DomainError {
-      _surveys.subject.addError(UIError.unexpected.description, StackTrace.empty);
+    } on DomainError catch (error) {
+      if (error == DomainError.accessDenied) {
+        _isSessionExpired.value = true;
+      } else {
+        _surveys.subject.addError(UIError.unexpected.description, StackTrace.empty);
+      }
     }
     
   }

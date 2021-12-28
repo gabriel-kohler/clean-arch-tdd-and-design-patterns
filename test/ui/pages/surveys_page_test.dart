@@ -19,17 +19,19 @@ void main() {
 
   StreamController<List<SurveyViewModel>> surveysController;
   StreamController<String> navigateToController;
+  StreamController<bool> isSessionExpiredController;
 
   Future<void> loadPage(WidgetTester tester) async {
 
     surveysController = StreamController<List<SurveyViewModel>>();
     navigateToController = StreamController<String>();
+    isSessionExpiredController = StreamController<bool>();
 
     surveysPresenterSpy = SurveysPresenterSpy();
 
     when(surveysPresenterSpy.surveysStream).thenAnswer((_) => surveysController.stream);
     when(surveysPresenterSpy.navigateToStream).thenAnswer((_) => navigateToController.stream);
-
+    when(surveysPresenterSpy.isSessionExpiredStream).thenAnswer((_) => isSessionExpiredController.stream);
 
     final surveysPage = GetMaterialApp(
       initialRoute: AppRoute.SurveysPage,
@@ -37,6 +39,9 @@ void main() {
         GetPage(name: AppRoute.SurveysPage, page: () => SurveysPage(surveysPresenter: surveysPresenterSpy)),
         GetPage(name: '/any_route', page: () => Scaffold(
           body: Text('navigation test'),
+        )),
+        GetPage(name: '/login', page: () => Scaffold(
+          body: Text('fake login'),
         )),
       ],
     );
@@ -47,6 +52,7 @@ void main() {
   tearDown(() {
     surveysController.close();
     navigateToController.close();
+    isSessionExpiredController.close();
   });
 
   List<SurveyViewModel> makeSurveys() => [
@@ -141,6 +147,23 @@ void main() {
     expect(Get.currentRoute, AppRoute.SurveysPage);
 
     navigateToController.add(null);
+    await tester.pump();
+    expect(Get.currentRoute, AppRoute.SurveysPage);
+  });
+  testWidgets('Should logout', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isSessionExpiredController.add(true);
+    await tester.pumpAndSettle();
+
+    expect(Get.currentRoute, AppRoute.LoginPage);
+    expect(find.text('fake login'), findsOneWidget);
+  });
+
+  testWidgets('Should not logout', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isSessionExpiredController.add(false);
     await tester.pump();
     expect(Get.currentRoute, AppRoute.SurveysPage);
   });

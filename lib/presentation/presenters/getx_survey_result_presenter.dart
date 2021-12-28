@@ -17,9 +17,13 @@ class GetxSurveyResultPresenter extends GetxController implements SurveyResultPr
 
   var _isLoading = true.obs;
   var _surveyResult = Rx<SurveyResultViewModel>();
+  var _isSessionExpired = RxBool();
 
   @override
   Stream<SurveyResultViewModel> get surveyResultStream => _surveyResult.stream;
+
+  @override
+  Stream<bool> get isSessionExpiredStream => _isSessionExpired.stream;
 
   @override
   Future<void> loadData() async {
@@ -39,10 +43,15 @@ class GetxSurveyResultPresenter extends GetxController implements SurveyResultPr
         )).toList()
       );
 
-    } on DomainError {
-      _surveyResult.subject.addError(UIError.unexpected.description, StackTrace.empty);
+    } on DomainError catch (error) {
+      if (error == DomainError.accessDenied) {
+        _isSessionExpired.value = true;
+      } else {
+        _surveyResult.subject.addError(UIError.unexpected.description, StackTrace.empty);
+      }
     } finally {
       _isLoading.value = false;
     }
   }
+
 }
