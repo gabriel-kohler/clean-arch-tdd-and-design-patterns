@@ -9,7 +9,11 @@ import '/ui/pages/pages.dart';
 
 import 'components/components.dart';
 
-class SignUpPage extends StatelessWidget with KeyboardManager, LoadingManager {
+class SignUpPage extends StatelessWidget with 
+KeyboardManager, 
+LoadingManager, 
+UIMainErrorManager {
+  
   final SignUpPresenter signUpPresenter;
 
   SignUpPage({@required this.signUpPresenter});
@@ -21,11 +25,7 @@ class SignUpPage extends StatelessWidget with KeyboardManager, LoadingManager {
       body: Builder(
         builder: (context) {
         handleLoading(signUpPresenter.isLoadingStream, context);
-        signUpPresenter.mainErrorStream.listen((UIError mainError) {
-          if (mainError != null) {
-            showErrorMessage(context, mainError.description);
-          }
-        });
+        handleMainError(signUpPresenter.mainErrorStream, context);
         signUpPresenter.navigateToStream.listen((page) {
           if (page?.isNotEmpty == true) {
             Get.offAllNamed(page);
