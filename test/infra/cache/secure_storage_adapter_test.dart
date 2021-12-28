@@ -24,6 +24,10 @@ void main() {
   });
 
   group('Save Secure', () {
+
+    PostExpectation mockSaveSecureCall() => when(flutterSecureStorageSpy.write(key: anyNamed('key'), value: anyNamed('value')));
+    mockSaveSecureError() => mockSaveSecureCall().thenThrow(Exception());
+    
     test('Should SecureStorageAdapter calls saveSecure with correct values', () async {
       await sut.saveSecure(key: 'token', value: account.token);
 
@@ -32,7 +36,7 @@ void main() {
 
     test('Should SecureStorageAdapter throw if FlutterSecureStorage throws', () async {
 
-      when(flutterSecureStorageSpy.write(key: anyNamed('key'), value: anyNamed('value'))).thenThrow(Exception());
+      mockSaveSecureError();
 
       final future = sut.saveSecure(key: key, value: account.token);
 
@@ -42,6 +46,11 @@ void main() {
   });
 
   group('Fetch Secure', () {
+
+    PostExpectation mockFetchSecureCall() => when(flutterSecureStorageSpy.read(key: anyNamed('key')));
+    mockFetchSecure() => mockFetchSecureCall().thenAnswer((_) async => 'any_token');
+    mockFetchSecureError() => mockFetchSecureCall().thenThrow(Exception());
+
     test('Should SecureStorageAdapter calls FetchSecure with correct values', () async {
       
       await sut.fetchSecure(key: key);
@@ -52,7 +61,7 @@ void main() {
 
     test('Should SecureStorageAdapter return token if FetchSecure success', () async {
       
-      when(flutterSecureStorageSpy.read(key: anyNamed('key'))).thenAnswer((_) async => 'any_token');
+      mockFetchSecure();
 
       final account = await sut.fetchSecure(key: key);
 
@@ -61,7 +70,7 @@ void main() {
 
     test('Should SecureStorageAdapter throw if FetchSecure throws', () async {
 
-      when(flutterSecureStorageSpy.read(key: anyNamed('key'))).thenThrow(Exception());
+      mockFetchSecureError();
 
       final future = sut.fetchSecure(key: key);
 
@@ -71,5 +80,27 @@ void main() {
 
   });
 
+  group('delete', () {
+
+    PostExpectation mockDeleteSecureCall() => when(flutterSecureStorageSpy.delete(key: anyNamed('key')));
+    mockDeleteSecureError() => mockDeleteSecureCall().thenThrow(Exception());
+
+    test('Should call delete cache with correct key', () async {
+       await sut.deleteSecure(key: key);
+
+      verify(flutterSecureStorageSpy.delete(key: key)).called(1);
+    });
+
+    test('Should throw if delete throws', () async {
+
+      mockDeleteSecureError();
+    
+      final future = sut.deleteSecure(key: key);
+
+      expect(future, throwsA(TypeMatcher<Exception>()));
+
+    });
+
+  });
   
 }
