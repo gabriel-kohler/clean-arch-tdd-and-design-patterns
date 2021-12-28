@@ -6,12 +6,13 @@ import '/utils/app_routes.dart';
 import '/domain/helpers/helpers.dart';
 import '/domain/usecases/usecases.dart';
 
+import '/presentation/mixins/mixins.dart';
 import '/presentation/dependencies/dependencies.dart';
 
 import '/ui/pages/login/login_presenter.dart';
 import '/ui/helpers/errors/errors.dart';
 
-class GetxLoginPresenter extends GetxController implements LoginPresenter {
+class GetxLoginPresenter extends GetxController with LoadingManager implements LoginPresenter {
 
   final Authentication authentication;
   final Validation validation;
@@ -23,7 +24,6 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
   var _passwordError = Rx<UIError>(null);
   var _mainError = Rx<UIError>(null);
   var _navigateTo = RxString(null);
-  var _isLoading = false.obs;
   var _isFormValid = false.obs;
 
   String _email;
@@ -42,10 +42,7 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
   Stream<bool> get isFormValidStream => _isFormValid.stream;
 
   @override
-  Stream<bool> get isLoadingStream => _isLoading.stream;
-
-   @override
-   Stream<String> get navigateToStream => _navigateTo.stream;
+  Stream<String> get navigateToStream => _navigateTo.stream;
   
   @override
   void validateEmail(String email) {
@@ -88,7 +85,7 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
   Future<void> auth() async {
     try {
       _mainError.value = null;
-      _isLoading.value = true;
+      isLoading = true;
       final account = await authentication.auth(
         params: AuthenticationParams(
           email: _email, 
@@ -105,7 +102,7 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
         default:
            _mainError.value = UIError.unexpected;
       }
-      _isLoading.value = false;
+      isLoading = false;
     }
   }
 
