@@ -28,7 +28,7 @@ class App extends StatelessWidget {
         GetPage(name: AppRoute.LoginPage, page: makeLoginPage),
         GetPage(name: AppRoute.SignUpPage, page: makeSignUpPage),
         GetPage(name: AppRoute.SurveysPage, page: makeSurveysPage),
-        GetPage(name: '/survey_result/:survey_id', page: makeSurveyResultPage),
+        GetPage(name: '${AppRoute.SurveyResultPage}/:surveyId', page: makeSurveyResultPage),
       ],
     );
   }

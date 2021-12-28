@@ -22,7 +22,7 @@ class SurveyItems extends StatelessWidget {
           aspectRatio: 1,
         ),
         items: listSurveys
-            .map((survey) => SurveyItem(survey: survey))
+            .map((survey) => SurveyItem(surveyViewModel: survey))
             .toList(),
       ),
     );

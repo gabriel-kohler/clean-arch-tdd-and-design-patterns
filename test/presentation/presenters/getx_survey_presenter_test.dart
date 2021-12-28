@@ -3,6 +3,7 @@ import 'package:mockito/mockito.dart';
 import 'package:practice/domain/helpers/domain_error.dart';
 import 'package:practice/ui/helpers/errors/errors.dart';
 import 'package:practice/ui/pages/pages.dart';
+import 'package:practice/utils/app_routes.dart';
 import 'package:test/test.dart';
 
 import 'package:practice/domain/entities/entities.dart';
@@ -76,6 +77,18 @@ void main() {
     );
 
     await sut.loadData();
+
+  });
+
+  test('Should go to SurveyResultPage on link click', () async {
+    
+    sut.navigateToStream.listen(
+      expectAsync1((page) {
+        expect(page, '/survey_result/1');
+      }),
+    );
+
+    sut.goToSurveyResult('1');
 
   });
 

@@ -3,6 +3,7 @@ import 'package:meta/meta.dart';
 import 'package:intl/intl.dart';
 import 'package:practice/domain/helpers/domain_error.dart';
 import 'package:practice/ui/helpers/errors/errors.dart';
+import 'package:practice/utils/utils.dart';
 
 import '/domain/usecases/usecases.dart';
 
@@ -15,9 +16,13 @@ class GetxSurveysPresenter extends GetxController implements SurveysPresenter {
   GetxSurveysPresenter({@required this.loadSurveys});
 
   var _surveys = Rx<List<SurveyViewModel>>([]);
+  var _navigateTo = Rx<String>();
 
   @override
   Stream<List<SurveyViewModel>> get surveysStream => _surveys.stream;
+
+  @override
+  Stream<String> get navigateToStream => _navigateTo.stream;
 
   @override
   Future<void> loadData() async {
@@ -36,5 +41,10 @@ class GetxSurveysPresenter extends GetxController implements SurveysPresenter {
       _surveys.subject.addError(UIError.unexpected.description, StackTrace.empty);
     }
     
+  }
+
+  @override
+  void goToSurveyResult(String surveyId) {
+    _navigateTo.value = '${AppRoute.SurveyResultPage}/$surveyId';
   }
 }

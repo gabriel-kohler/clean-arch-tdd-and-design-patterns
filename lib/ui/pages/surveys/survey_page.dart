@@ -1,6 +1,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 import '/ui/helpers/helpers.dart';
 
@@ -20,19 +22,34 @@ class SurveysPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(R.strings.surveys),
       ),
-      body: StreamBuilder<List<SurveyViewModel>>(
-        stream: surveysPresenter.surveysStream,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return ReloadScreen(error: snapshot.error, reload: surveysPresenter.loadData);
-          }
-          if (snapshot.hasData) {
-            return SurveyItems(listSurveys: snapshot.data);
-          }
-          return Center(
-            child: CircularProgressIndicator(),
+      body: Builder(
+        builder: (context) {
+          surveysPresenter.navigateToStream.listen((page) {
+            if (page?.isNotEmpty == true) {
+              Get.toNamed(page);
+            }
+          });
+          return StreamBuilder<List<SurveyViewModel>>(
+            stream: surveysPresenter.surveysStream,
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return ReloadScreen(
+                  error: snapshot.error,
+                  reload: surveysPresenter.loadData,
+                );
+              }
+              if (snapshot.hasData) {
+                return Provider(
+                  create:  (_) => surveysPresenter,
+                  child: SurveyItems(listSurveys: snapshot.data),
+                );
+              }
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            },
           );
-        },
+        }
       ),
     );
   }
