@@ -6,6 +6,6 @@ import '/domain/usecases/usecases.dart';
 
 LoadCurrentAccount makeLoadCurrentAccount() {
   return LocalLoadCurrentAccount(
-    fetchSecureCurrentAccount: makeSecureStorageAdapter(),
+    fetchSecureCacheStorage: makeSecureStorageAdapter(),
   );
 }

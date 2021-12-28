@@ -7,12 +7,14 @@ import 'package:practice/data/cache/cache.dart';
 
 import 'package:practice/main/decorators/decorators.dart';
 
-class FetchSecureCacheSpy extends Mock implements FetchSecureCurrentAccount {}
+class FetchSecureCacheSpy extends Mock implements FetchSecureCacheStorage {}
+class DeleteSecureCacheSpy extends Mock implements DeleteSecureCacheStorage {}
 
 class HttpClientSpy extends Mock implements HttpClient {}
 
 void main() {
-  FetchSecureCurrentAccount fetchSecureCacheSpy;
+  FetchSecureCacheStorage fetchSecureCacheSpy;
+  DeleteSecureCacheStorage deleteSecureCacheSpy;
   HttpClient httpClient;
   AuthorizeHttpClientDecorator sut;
 
@@ -24,8 +26,9 @@ void main() {
 
   setUp(() {
     fetchSecureCacheSpy = FetchSecureCacheSpy();
+    deleteSecureCacheSpy = DeleteSecureCacheSpy();
     httpClient = HttpClientSpy();
-    sut = AuthorizeHttpClientDecorator(fetchSecureCacheStorage: fetchSecureCacheSpy, decoratee: httpClient);
+    sut = AuthorizeHttpClientDecorator(fetchSecureCacheStorage: fetchSecureCacheSpy, decoratee: httpClient, deleteSecureCacheStorage: deleteSecureCacheSpy);
 
     url = faker.internet.httpUrl();
     method = faker.randomGenerator.string(10);
@@ -86,13 +89,14 @@ void main() {
 
   });
 
-  test('Should throw ForbbidenError if FetchSecureCurrentAccount throws', () async {
+  test('Should throw ForbbidenError if FetchSecureCacheStorage throws', () async {
     
     mockFetchSecureError();
 
     final future =  sut.request(url: url, method: method, body: body);
 
     expect(future, throwsA(HttpError.forbidden));
+    verify(deleteSecureCacheSpy.deleteSecure(key: 'token')).called(1);
 
   });
 
@@ -103,6 +107,18 @@ void main() {
     final future =  sut.request(url: url, method: method, body: body);
 
     expect(future, throwsA(HttpError.badRequest));
+
+  });
+
+  test('Should delete cache if request throws ForbiddenError', () async {
+    
+    mockHttpResponseError(HttpError.forbidden);
+
+    final future =  sut.request(url: url, method: method, body: body);
+    await untilCalled(deleteSecureCacheSpy.deleteSecure(key: 'token'));
+
+    expect(future, throwsA(HttpError.forbidden));
+    verify(deleteSecureCacheSpy.deleteSecure(key: 'token')).called(1);
 
   });
 

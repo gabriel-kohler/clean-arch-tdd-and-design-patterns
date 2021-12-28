@@ -1,5 +1,5 @@
 import 'package:meta/meta.dart';
 
-abstract class FetchSecureCurrentAccount {
+abstract class FetchSecureCacheStorage {
   Future<String> fetchSecure({@required String key});
 }
