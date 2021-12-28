@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 import 'package:meta/meta.dart';
-import 'package:practice/presentation/mixins/ui_main_error_manager.dart';
 
 import '/utils/app_routes.dart';
 

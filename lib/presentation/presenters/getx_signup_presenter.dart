@@ -14,7 +14,12 @@ import '/presentation/dependencies/dependencies.dart';
 import '/ui/helpers/errors/ui_error.dart';
 import '/ui/pages/pages.dart';
 
-class GetxSignUpPresenter extends GetxController with LoadingManager, NavigationManager, FormManager, UIMainErrorManager implements SignUpPresenter {
+class GetxSignUpPresenter extends GetxController with 
+LoadingManager, 
+NavigationManager, 
+FormManager, 
+UIMainErrorManager 
+implements SignUpPresenter {
 
   final Validation validation;
   final AddAccount addAccount;

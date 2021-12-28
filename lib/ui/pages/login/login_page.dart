@@ -3,14 +3,15 @@ import 'package:get/get.dart';
 
 import 'package:provider/provider.dart';
 
-import '/ui/helpers/helpers.dart';
 
+import '/ui/helpers/helpers.dart';
+import '/ui/mixins/mixins.dart';
 import '/ui/helpers/errors/errors.dart';
 import '/ui/pages/login/components/components.dart';
 import '/ui/components/components.dart';
 import '/ui/pages/pages.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatelessWidget with KeyboardManager {
   final LoginPresenter loginPresenter;
 
   const LoginPage(this.loginPresenter);
@@ -19,10 +20,6 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    void _hideKeyboard() {
-    FocusScope.of(context).requestFocus(FocusNode());
-    }
 
     return Scaffold(
       body: Builder(builder: (context) {
@@ -46,7 +43,7 @@ class LoginPage extends StatelessWidget {
           }
         });
         return GestureDetector(
-          onTap: _hideKeyboard,
+          onTap: () => hideKeyboard(context),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
