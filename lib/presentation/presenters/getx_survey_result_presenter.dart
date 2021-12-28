@@ -44,7 +44,8 @@ class GetxSurveyResultPresenter extends GetxController implements SurveyResultPr
 
     } on DomainError {
       _surveyResult.subject.addError(UIError.unexpected.description, StackTrace.empty);
+    } finally {
+      _isLoading.value = false;
     }
-    _isLoading.value = false;
   }
 }

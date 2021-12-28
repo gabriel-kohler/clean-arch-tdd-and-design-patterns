@@ -24,5 +24,3 @@ List<FieldValidation> makeSignUpValidations() {
     ... ValidationBuilder.field('confirmPassword').required().sameAs('password').build(),
   ];
 }
-
-

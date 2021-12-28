@@ -7,8 +7,6 @@ import '/ui/helpers/helpers.dart';
 import 'components/components.dart';
 
 class SurveyResultPage extends StatelessWidget {
-
-
   final SurveyResultPresenter surveyResultPresenter;
 
   SurveyResultPage({@required this.surveyResultPresenter});
@@ -21,27 +19,32 @@ class SurveyResultPage extends StatelessWidget {
       ),
       body: Builder(
         builder: (context) {
-          surveyResultPresenter.isLoadingStream.listen((isLoading) { 
-            if (isLoading) {
-              showLoading(context);
-            } else {
-              hideLoading(context);
-            }
-          });
+          surveyResultPresenter.isLoadingStream.listen(
+            (isLoading) {
+              if (isLoading) {
+                showLoading(context);
+              } else {
+                hideLoading(context);
+              }
+            },
+          );
           surveyResultPresenter.loadData();
           return StreamBuilder<SurveyResultViewModel>(
             stream: surveyResultPresenter.surveyResultStream,
             builder: (context, snapshot) {
               if (snapshot.hasError) {
-                return ReloadScreen(error: snapshot.error, reload: surveyResultPresenter.loadData);
+                return ReloadScreen(
+                  error: snapshot.error,
+                  reload: surveyResultPresenter.loadData,
+                );
               }
               if (snapshot.hasData) {
                 return SurveyResult(surveyResultViewModel: snapshot.data);
               }
               return SizedBox(height: 0);
-            }
+            },
           );
-        }
+        },
       ),
     );
   }

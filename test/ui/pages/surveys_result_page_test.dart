@@ -10,7 +10,6 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:practice/ui/helpers/helpers.dart';
 import 'package:practice/ui/pages/pages.dart';
-import 'package:practice/ui/pages/survey_result/components/survey_result.dart';
 
 class SurveyResultPresenterSpy extends Mock implements SurveyResultPresenter {}
 

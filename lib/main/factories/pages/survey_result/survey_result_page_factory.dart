@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '/ui/pages/pages.dart';
+import '/main/factories/factories.dart';
 
-Widget makeSurveyResultPage() => SurveyResultPage(surveyResultPresenter: null);
+import '/ui/pages/pages.dart'; 
+Widget makeSurveyResultPage() => SurveyResultPage(surveyResultPresenter: makeGetxSurveyResultPresenter());
