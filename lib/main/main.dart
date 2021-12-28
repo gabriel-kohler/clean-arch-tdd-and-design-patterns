@@ -23,13 +23,18 @@ class App extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: makeAppTheme(),
       initialRoute: AppRoute.SplashPage,
-      getPages: [
-        GetPage(name: AppRoute.SplashPage, page: makeSplashPage),
-        GetPage(name: AppRoute.LoginPage, page: makeLoginPage),
-        GetPage(name: AppRoute.SignUpPage, page: makeSignUpPage),
-        GetPage(name: AppRoute.SurveysPage, page: makeSurveysPage),
-        GetPage(name: '${AppRoute.SurveyResultPage}/:survey_id', page: makeSurveyResultPage),
-      ],
+      getPages: makePages(),
     );
   }
 }
+
+List<GetPage> makePages() => [
+      GetPage(name: AppRoute.SplashPage, page: makeSplashPage),
+      GetPage(name: AppRoute.LoginPage, page: makeLoginPage),
+      GetPage(name: AppRoute.SignUpPage, page: makeSignUpPage),
+      GetPage(name: AppRoute.SurveysPage, page: makeSurveysPage),
+      GetPage(
+        name: '${AppRoute.SurveyResultPage}/:survey_id',
+        page: makeSurveyResultPage,
+      ),
+    ];
