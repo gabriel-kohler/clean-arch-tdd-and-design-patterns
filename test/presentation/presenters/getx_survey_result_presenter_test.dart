@@ -63,8 +63,6 @@ void main() {
 
     mockLoadSurveyResult(data: mockValidData());
 
-    expectLater(sut.isLoadingStream, emitsInAnyOrder([true, false]));
-    
     sut.surveyResultStream.listen(
       expectAsync1((result) {
         expect(result, 

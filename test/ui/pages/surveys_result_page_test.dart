@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:network_image_mock/network_image_mock.dart';
 import 'package:mockito/mockito.dart';
@@ -17,21 +15,17 @@ void main() {
 
   SurveyResultPresenter surveyResultPresenterSpy;
 
-  StreamController<bool> isLoadingController;
   StreamController<SurveyResultViewModel> surveyResultController;
 
   void initStreams() {
-    isLoadingController = StreamController<bool>();
     surveyResultController = StreamController<SurveyResultViewModel>();
   }
 
   void mockStreams() {
-    when(surveyResultPresenterSpy.isLoadingStream).thenAnswer((_) => isLoadingController.stream);
     when(surveyResultPresenterSpy.surveyResultStream).thenAnswer((_) => surveyResultController.stream);
   }
 
   void closeStreams() {
-    isLoadingController.close();
     surveyResultController.close();  
   }
 
@@ -71,24 +65,10 @@ void main() {
     verify(surveyResultPresenterSpy.loadData()).called(1);
 
   });
-  testWidgets('Should handle loading correctly', (WidgetTester tester) async {
-    await loadPage(tester);
-
-    isLoadingController.add(true);
-    await tester.pump();
-    expect(find.byType(CircularProgressIndicator), findsOneWidget);
-
-    isLoadingController.add(false);
-    await tester.pump();
-    expect(find.byType(CircularProgressIndicator), findsNothing);
-
-    isLoadingController.add(true);
-    await tester.pump();
-    expect(find.byType(CircularProgressIndicator), findsOneWidget);
-  });
 
   testWidgets('Should present error if surveyResultStream fails', (WidgetTester tester) async {
     await loadPage(tester);
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
     surveyResultController.addError(UIError.unexpected.description);
     await tester.pump();
@@ -97,11 +77,13 @@ void main() {
     expect(find.text('Recarregar'), findsOneWidget);
     expect(find.text('Question'), findsNothing);
 
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+
   });
 
   testWidgets('Should SurveyResultPage call loadData on reload button click', (WidgetTester tester) async {
     await loadPage(tester);
-
+    
     surveyResultController.addError(UIError.unexpected.description);
     await tester.pump();
 
@@ -113,6 +95,7 @@ void main() {
 
   testWidgets('Should present valid data if surveyResultStream', (WidgetTester tester) async {
     await loadPage(tester);
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
     
     surveyResultController.add(makeSurveyResult());
 
@@ -134,6 +117,8 @@ void main() {
     final image = tester.widget<Image>(find.byKey(ValueKey('imageUrl'))).image as NetworkImage;
 
     expect(image.url, 'Image 0');
+
+    expect(find.byType(CircularProgressIndicator), findsNothing);
 
   });
 

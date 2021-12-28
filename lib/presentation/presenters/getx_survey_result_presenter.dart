@@ -19,9 +19,6 @@ class GetxSurveyResultPresenter extends GetxController implements SurveyResultPr
   var _surveyResult = Rx<SurveyResultViewModel>();
 
   @override
-  Stream<bool> get isLoadingStream => _isLoading.stream;
-
-  @override
   Stream<SurveyResultViewModel> get surveyResultStream => _surveyResult.stream;
 
   @override
