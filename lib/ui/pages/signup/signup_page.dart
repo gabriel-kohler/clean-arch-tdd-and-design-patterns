@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '/ui/helpers/helpers.dart';
@@ -12,8 +11,9 @@ import 'components/components.dart';
 class SignUpPage extends StatelessWidget with 
 KeyboardManager, 
 LoadingManager, 
-UIMainErrorManager {
-  
+UIMainErrorManager,
+NavigationManager {
+
   final SignUpPresenter signUpPresenter;
 
   SignUpPage({@required this.signUpPresenter});
@@ -26,11 +26,7 @@ UIMainErrorManager {
         builder: (context) {
         handleLoading(signUpPresenter.isLoadingStream, context);
         handleMainError(signUpPresenter.mainErrorStream, context);
-        signUpPresenter.navigateToStream.listen((page) {
-          if (page?.isNotEmpty == true) {
-            Get.offAllNamed(page);
-          }
-        });
+        handleNavigation(navigateToStream: signUpPresenter.navigateToStream, clearNavigation: true);
         return GestureDetector(
           onTap: () => hideKeyboard(context),
           child: SingleChildScrollView(

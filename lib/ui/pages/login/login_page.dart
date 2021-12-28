@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import 'package:provider/provider.dart';
 
 
 import '/ui/helpers/helpers.dart';
 import '/ui/mixins/mixins.dart';
-import '/ui/helpers/errors/errors.dart';
 import '/ui/pages/login/components/components.dart';
 import '/ui/components/components.dart';
 import '/ui/pages/pages.dart';
@@ -14,7 +12,8 @@ import '/ui/pages/pages.dart';
 class LoginPage extends StatelessWidget with 
 KeyboardManager, 
 LoadingManager, 
-UIMainErrorManager {
+UIMainErrorManager,
+NavigationManager {
 
   final LoginPresenter loginPresenter;
 
@@ -28,11 +27,7 @@ UIMainErrorManager {
       body: Builder(builder: (context) {
         handleLoading(loginPresenter.isLoadingStream, context);
         handleMainError(loginPresenter.mainErrorStream, context);
-        loginPresenter.navigateToStream.listen((page) {
-          if (page?.isNotEmpty == true) {
-            Get.offAllNamed(page);
-          }
-        });
+        handleNavigation(navigateToStream: loginPresenter.navigateToStream, clearNavigation: true);
         return GestureDetector(
           onTap: () => hideKeyboard(context),
           child: SingleChildScrollView(

@@ -11,7 +11,7 @@ import '/ui/helpers/helpers.dart';
 
 import 'components/components.dart';
 
-class SurveysPage extends StatelessWidget {
+class SurveysPage extends StatelessWidget with NavigationManager {
   final SurveysPresenter surveysPresenter;
 
   const SurveysPage({@required this.surveysPresenter});
@@ -25,11 +25,7 @@ class SurveysPage extends StatelessWidget {
       ),
       body: Builder(
         builder: (context) {
-          surveysPresenter.navigateToStream.listen((page) {
-            if (page?.isNotEmpty == true) {
-              Get.toNamed(page);
-            }
-          });
+          handleNavigation(surveysPresenter.navigateToStream, clearNavigation: false);
           surveysPresenter.isSessionExpiredStream.listen((isExpired) {
             if (isExpired) {
               Get.offAllNamed(AppRoute.LoginPage);
