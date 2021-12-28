@@ -14,7 +14,7 @@ import '/presentation/dependencies/dependencies.dart';
 import '/ui/helpers/errors/ui_error.dart';
 import '/ui/pages/pages.dart';
 
-class GetxSignUpPresenter extends GetxController with LoadingManager, NavigationManager implements SignUpPresenter {
+class GetxSignUpPresenter extends GetxController with LoadingManager, NavigationManager, FormManager implements SignUpPresenter {
 
   final Validation validation;
   final AddAccount addAccount;
@@ -32,7 +32,6 @@ class GetxSignUpPresenter extends GetxController with LoadingManager, Navigation
   var _passwordError = Rx<UIError>(null);
   var _confirmPasswordError = Rx<UIError>(null);
   var _mainError = Rx<UIError>(null);
-  var _isFormValid = false.obs;
 
   @override
   Stream<UIError> get nameErrorStream => _nameError.stream;
@@ -49,11 +48,8 @@ class GetxSignUpPresenter extends GetxController with LoadingManager, Navigation
   @override
   Stream<UIError> get mainErrorStream => _mainError.stream;
 
-  @override
-  Stream<bool> get isFormValidStream => _isFormValid.stream;
-
   void _validateForm() {
-   _isFormValid.value = _emailError.value == null 
+   isFormValid = _emailError.value == null 
     && _passwordError.value == null 
     && _nameError.value == null
     && _confirmPasswordError.value == null
