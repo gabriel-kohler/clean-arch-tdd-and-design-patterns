@@ -12,7 +12,7 @@ import '/presentation/dependencies/dependencies.dart';
 import '/ui/pages/login/login_presenter.dart';
 import '/ui/helpers/errors/errors.dart';
 
-class GetxLoginPresenter extends GetxController with LoadingManager implements LoginPresenter {
+class GetxLoginPresenter extends GetxController with LoadingManager, NavigationManager implements LoginPresenter {
 
   final Authentication authentication;
   final Validation validation;
@@ -23,7 +23,6 @@ class GetxLoginPresenter extends GetxController with LoadingManager implements L
   var _emailError = Rx<UIError>(null);
   var _passwordError = Rx<UIError>(null);
   var _mainError = Rx<UIError>(null);
-  var _navigateTo = RxString(null);
   var _isFormValid = false.obs;
 
   String _email;
@@ -41,9 +40,6 @@ class GetxLoginPresenter extends GetxController with LoadingManager implements L
   @override
   Stream<bool> get isFormValidStream => _isFormValid.stream;
 
-  @override
-  Stream<String> get navigateToStream => _navigateTo.stream;
-  
   @override
   void validateEmail(String email) {
     _email = email;
@@ -93,7 +89,7 @@ class GetxLoginPresenter extends GetxController with LoadingManager implements L
         ),
       );
         await localSaveCurrentAccount.save(account: account);
-        _navigateTo.value = AppRoute.SurveysPage;
+        navigateTo = AppRoute.SurveysPage;
     } on DomainError catch (error) {
       switch (error) {
         case DomainError.invalidCredentials:
@@ -108,7 +104,7 @@ class GetxLoginPresenter extends GetxController with LoadingManager implements L
 
   @override
   void goToSignUp() {
-    _navigateTo.value = AppRoute.SignUpPage;
+    navigateTo = AppRoute.SignUpPage;
   }
 
 }
