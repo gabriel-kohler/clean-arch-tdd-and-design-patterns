@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:meta/meta.dart';
+import 'package:practice/presentation/mixins/ui_main_error_manager.dart';
 
 import '/utils/app_routes.dart';
 
@@ -12,7 +13,7 @@ import '/presentation/dependencies/dependencies.dart';
 import '/ui/pages/login/login_presenter.dart';
 import '/ui/helpers/errors/errors.dart';
 
-class GetxLoginPresenter extends GetxController with LoadingManager, NavigationManager, FormManager implements LoginPresenter {
+class GetxLoginPresenter extends GetxController with LoadingManager, NavigationManager, FormManager, UIMainErrorManager implements LoginPresenter {
 
   final Authentication authentication;
   final Validation validation;
@@ -22,7 +23,6 @@ class GetxLoginPresenter extends GetxController with LoadingManager, NavigationM
 
   var _emailError = Rx<UIError>(null);
   var _passwordError = Rx<UIError>(null);
-  var _mainError = Rx<UIError>(null);
 
   String _email;
   String _password;
@@ -32,9 +32,6 @@ class GetxLoginPresenter extends GetxController with LoadingManager, NavigationM
 
   @override
   Stream<UIError> get passwordErrorStream => _passwordError.stream;
-
-  @override
-  Stream<UIError> get mainErrorStream => _mainError.stream;
 
   @override
   void validateEmail(String email) {
@@ -76,7 +73,7 @@ class GetxLoginPresenter extends GetxController with LoadingManager, NavigationM
   @override
   Future<void> auth() async {
     try {
-      _mainError.value = null;
+      mainError = null;
       isLoading = true;
       final account = await authentication.auth(
         params: AuthenticationParams(
@@ -89,10 +86,10 @@ class GetxLoginPresenter extends GetxController with LoadingManager, NavigationM
     } on DomainError catch (error) {
       switch (error) {
         case DomainError.invalidCredentials:
-           _mainError.value = UIError.invalidCredentials;
+           mainError = UIError.invalidCredentials;
           break;
         default:
-           _mainError.value = UIError.unexpected;
+           mainError = UIError.unexpected;
       }
       isLoading = false;
     }

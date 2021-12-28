@@ -14,7 +14,7 @@ import '/presentation/dependencies/dependencies.dart';
 import '/ui/helpers/errors/ui_error.dart';
 import '/ui/pages/pages.dart';
 
-class GetxSignUpPresenter extends GetxController with LoadingManager, NavigationManager, FormManager implements SignUpPresenter {
+class GetxSignUpPresenter extends GetxController with LoadingManager, NavigationManager, FormManager, UIMainErrorManager implements SignUpPresenter {
 
   final Validation validation;
   final AddAccount addAccount;
@@ -31,7 +31,6 @@ class GetxSignUpPresenter extends GetxController with LoadingManager, Navigation
   var _emailError = Rx<UIError>(null);
   var _passwordError = Rx<UIError>(null);
   var _confirmPasswordError = Rx<UIError>(null);
-  var _mainError = Rx<UIError>(null);
 
   @override
   Stream<UIError> get nameErrorStream => _nameError.stream;
@@ -44,9 +43,6 @@ class GetxSignUpPresenter extends GetxController with LoadingManager, Navigation
 
   @override
   Stream<UIError> get confirmPasswordErrorStream => _confirmPasswordError.stream;
-
-  @override
-  Stream<UIError> get mainErrorStream => _mainError.stream;
 
   void _validateForm() {
    isFormValid = _emailError.value == null 
@@ -116,7 +112,7 @@ class GetxSignUpPresenter extends GetxController with LoadingManager, Navigation
     );
 
     try {
-      _mainError.value = null;
+      mainError = null;
       isLoading = true;
       final account = await addAccount.add(params: params);
       await saveCurrentAccount.save(account: account);
@@ -124,10 +120,10 @@ class GetxSignUpPresenter extends GetxController with LoadingManager, Navigation
     } on DomainError catch (error) {
       switch (error) {
         case DomainError.emainInUse:
-          _mainError.value = UIError.emailInUse;
+          mainError = UIError.emailInUse;
           break;
         default:
-          _mainError.value = UIError.unexpected;
+          mainError = UIError.unexpected;
       }
       isLoading = false;
     }
