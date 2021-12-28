@@ -26,7 +26,7 @@ NavigationManager {
         builder: (context) {
         handleLoading(signUpPresenter.isLoadingStream, context);
         handleMainError(signUpPresenter.mainErrorStream, context);
-        handleNavigation(navigateToStream: signUpPresenter.navigateToStream, clearNavigation: true);
+        handleNavigation(signUpPresenter.navigateToStream, clearNavigation: true);
         return GestureDetector(
           onTap: () => hideKeyboard(context),
           child: SingleChildScrollView(
