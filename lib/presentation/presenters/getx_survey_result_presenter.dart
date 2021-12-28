@@ -16,7 +16,6 @@ class GetxSurveyResultPresenter extends GetxController with SessionManager imple
 
   GetxSurveyResultPresenter({@required this.loadSurveyResult, @required this.surveyId});
 
-  var _isLoading = true.obs;
   var _surveyResult = Rx<SurveyResultViewModel>();
 
   @override
@@ -26,7 +25,6 @@ class GetxSurveyResultPresenter extends GetxController with SessionManager imple
   Future<void> loadData() async {
 
     try {
-      _isLoading.value = true;
       final surveyResult = await loadSurveyResult.loadBySurvey(surveyId: surveyId);
       _surveyResult.value = SurveyResultViewModel(
         surveyId: surveyResult.surveyId, 
@@ -46,8 +44,6 @@ class GetxSurveyResultPresenter extends GetxController with SessionManager imple
       } else {
         _surveyResult.subject.addError(UIError.unexpected.description, StackTrace.empty);
       }
-    } finally {
-      _isLoading.value = false;
     }
   }
 
