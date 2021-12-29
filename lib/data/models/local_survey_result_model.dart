@@ -24,10 +24,22 @@ class LocalSurveyResultModel {
 
   }
 
+  factory LocalSurveyResultModel.fromSurveyResultEntity(SurveyResultEntity entity) => LocalSurveyResultModel(
+    surveyId: entity.surveyId,
+    question: entity.question,
+    answers: entity.answers.map<LocalSurveyAnswerModel>((answer) => LocalSurveyAnswerModel.fromSurveyResultEntity(answer)).toList(),
+  );
+
   SurveyResultEntity toSurveyResultEntity() => SurveyResultEntity(
     surveyId: surveyId,
     question: question,
     answers: answers.map<SurveyAnswerEntity>((answer) => answer.toSurveyAnswerEntity()).toList(),
   );
+
+  Map toJson() => {
+    'surveyId': surveyId,
+    'question': question,
+    'answers': answers.map<Map>((answer) => answer.toJson()).toList(),
+  };
 
 }
