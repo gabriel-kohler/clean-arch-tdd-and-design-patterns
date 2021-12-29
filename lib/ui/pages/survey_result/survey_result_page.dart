@@ -17,7 +17,7 @@ class SurveyResultPage extends StatelessWidget with SessionManager {
     surveyResultPresenter.loadData();
     return Scaffold(
       appBar: AppBar(
-        title: Text(R.strings.surveys),
+        title: Text(R.strings.surveyResult),
       ),
       body: Builder(
         builder: (context) {

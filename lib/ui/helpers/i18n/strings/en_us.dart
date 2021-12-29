@@ -49,4 +49,7 @@ class EnUs implements Translations {
   @override
   String get reload => 'Reload';
 
+  @override
+  String get surveyResult => 'Answer result';
+
 }
