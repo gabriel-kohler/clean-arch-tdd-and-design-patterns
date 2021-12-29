@@ -9,7 +9,7 @@ import '/main/factories/factories.dart';
 SurveyResultPresenter makeGetxSurveyResultPresenter() {
   final surveyId = Get.parameters['survey_id'];
   return GetxSurveyResultPresenter(
-    loadSurveyResult: makeRemoteLoadSurveyResult(surveyId),
+    loadSurveyResult: makeRemoteLoadSurveyResultWithLocalFallback(surveyId),
     surveyId: surveyId,
   );
 }
