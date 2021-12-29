@@ -1,6 +1,7 @@
 import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
 import 'package:meta/meta.dart';
+import 'package:practice/domain/helpers/domain_error.dart';
 import 'package:test/test.dart';
 
 import 'package:practice/domain/usecases/usecases.dart';
@@ -34,6 +35,10 @@ void main() {
   String surveyId;
   SurveyResultEntity surveyResult;
 
+  PostExpectation mockRemoteSurveyResultCall() => when(remoteSpy.loadBySurvey(surveyId: anyNamed('surveyId')));
+
+  void mockRemoteSurveyResultError(DomainError error) => mockRemoteSurveyResultCall().thenThrow(error);
+
   void mockSurveyResult() {
 
     surveyResult = SurveyResultEntity(
@@ -53,7 +58,7 @@ void main() {
           ),
         ]);
 
-    when(remoteSpy.loadBySurvey(surveyId: anyNamed('surveyId'))).thenAnswer((_) async => surveyResult);
+    mockRemoteSurveyResultCall().thenAnswer((_) async => surveyResult);
   }
 
   setUp(() {
@@ -92,4 +97,15 @@ void main() {
     expect(result, surveyResult);
 
   });
+
+  test('Should rethrow if remote return AccessDeniedError', () async {
+
+    mockRemoteSurveyResultError(DomainError.accessDenied);
+
+    final future = sut.loadBySurvey(surveyId: surveyId);
+
+    expect(future, throwsA(DomainError.accessDenied));
+
+  });
+  
 }
