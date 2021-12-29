@@ -27,4 +27,13 @@ class LocalLoadSurveyResult implements LoadSurveyResult {
 
   }
 
+  Future<void> validate({String surveyId}) async {
+    try {
+      final json = await cacheStorage.fetch(key: 'survey_result/$surveyId');
+      LocalSurveyResultModel.fromJson(json).toSurveyResultEntity();
+    } catch (error) {
+      await cacheStorage.delete(key: 'survey_result/$surveyId');
+    }
+  }
+
 }
