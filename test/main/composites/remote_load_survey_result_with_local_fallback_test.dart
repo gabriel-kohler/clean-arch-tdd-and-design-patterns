@@ -82,7 +82,7 @@ void main() {
 
     await sut.loadBySurvey(surveyId: surveyId);
 
-    verify(localSpy.save(surveyId: surveyId, surveyResult: remoteResult)).called(1);
+    verify(localSpy.save(surveyResult: remoteResult)).called(1);
 
   });
 

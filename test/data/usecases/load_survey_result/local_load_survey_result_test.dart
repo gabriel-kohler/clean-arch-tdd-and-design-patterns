@@ -311,9 +311,9 @@ void main() {
       ],
     };
     
-    await sut.save(surveyId: surveyId, surveyResult: surveyResult);
+    await sut.save(surveyResult: surveyResult);
 
-    verify(cacheStorageSpy.save(key: 'survey_result/$surveyId', value: json)).called(1);
+    verify(cacheStorageSpy.save(key: 'survey_result/${surveyResult.surveyId}', value: json)).called(1);
 
     });
     
@@ -321,7 +321,7 @@ void main() {
 
       mockSaveError();
 
-      final future = sut.save(surveyId: surveyId, surveyResult: surveyResult);
+      final future = sut.save(surveyResult: surveyResult);
 
       expect(future, throwsA(DomainError.unexpected));
 
