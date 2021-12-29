@@ -26,8 +26,6 @@ class LocalSurveyModel {
     didAnswer: entity.didAnswer,
   );
 
-  
-
   SurveyEntity toSurveyEntity() => SurveyEntity(
     id: id, 
     question: question, 
