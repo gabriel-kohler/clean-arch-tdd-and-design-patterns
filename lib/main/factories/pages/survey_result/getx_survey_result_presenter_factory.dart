@@ -10,7 +10,7 @@ SurveyResultPresenter  makeGetxSurveyResultPresenter() {
   final surveyId = Get.parameters['survey_id'];
   return GetxSurveyResultPresenter(
     loadSurveyResult: makeRemoteLoadSurveyResultWithLocalFallback(surveyId),
-    saveSurveyResult: null,
+    saveSurveyResult: makeRemoteSaveSurveyResult(surveyId),
     surveyId: surveyId,
   );
 }
