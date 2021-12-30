@@ -12,9 +12,10 @@ import '/ui/pages/pages.dart';
 class GetxSurveyResultPresenter extends GetxController with SessionManager implements SurveyResultPresenter {
 
   final LoadSurveyResult loadSurveyResult;
+  final SaveSurveyResult saveSurveyResult;
   final String surveyId;
 
-  GetxSurveyResultPresenter({@required this.loadSurveyResult, @required this.surveyId});
+  GetxSurveyResultPresenter({@required this.loadSurveyResult, @required this.saveSurveyResult, @required this.surveyId});
 
   var _surveyResult = Rx<SurveyResultViewModel>();
 
@@ -48,8 +49,8 @@ class GetxSurveyResultPresenter extends GetxController with SessionManager imple
   }
 
   @override
-  Future<void> save({String answer}) {
-    return null;
+  Future<void> save({String answer}) async {
+    await saveSurveyResult.save(answer: answer);
   }
 
 }
