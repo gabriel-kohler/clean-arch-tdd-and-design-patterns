@@ -7,7 +7,10 @@ import 'package:practice/domain/helpers/helpers.dart';
 import 'package:practice/data/usecases/usecases.dart';
 import 'package:practice/data/http/http.dart';
 
+import '../../../mocks/mocks.dart';
+
 class HttpClientSpy extends Mock implements HttpClient {}
+
 void main() {
 
   HttpClient httpClient;
@@ -26,25 +29,6 @@ void main() {
   PostExpectation mockRequest() => when(httpClient.request(url: anyNamed('url'), method: anyNamed('method'), body: anyNamed('body')));
   void mockHttpError(HttpError error) => mockRequest().thenThrow(error);
 
-  Map mockValidData() => {
-    'surveyId': faker.guid.guid(),
-    'question': faker.randomGenerator.string(10),
-    'date': faker.date.dateTime().toIso8601String(),
-    'answers': [{
-      'image': faker.internet.httpUrl(),
-      'answer': faker.randomGenerator.string(20),
-      'percent': faker.randomGenerator.integer(100),
-      'count': faker.randomGenerator.integer(1000),
-      'isCurrentAccountAnswer': faker.randomGenerator.boolean(),
-    }, {
-      'image': faker.internet.httpUrl(),
-      'answer': faker.randomGenerator.string(20),
-      'percent': faker.randomGenerator.integer(100),
-      'count': faker.randomGenerator.integer(1000),
-      'isCurrentAccountAnswer': faker.randomGenerator.boolean(),
-    }],
-  };
-
   void mockHttpData(Map data) {
     surveyResult = data;
     mockRequest().thenAnswer((_) async => data);
@@ -52,7 +36,7 @@ void main() {
 
   test('Should call HttpClient with correct values', () async {
 
-    mockHttpData(mockValidData()); 
+    mockHttpData(FakeSurveyResultFactory.makeApiJson()); 
 
     await sut.save(answer: answer);
 
@@ -90,7 +74,7 @@ void main() {
 
     test('Should return surveyResult on 200', () async {
 
-    mockHttpData(mockValidData()); 
+    mockHttpData(FakeSurveyResultFactory.makeApiJson()); 
 
     final result = await sut.save(answer: answer);
 
@@ -114,7 +98,7 @@ void main() {
 
   test('Should throw UnexpectedError if HttpClient returns 200 with invalid data', () async {
 
-    mockHttpData({'invalid_key' : 'invalid_value'});
+    mockHttpData(FakeSurveyResultFactory.makeInvalidApiJson());
 
     final future = sut.save(answer: answer);
 

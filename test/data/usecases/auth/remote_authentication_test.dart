@@ -1,12 +1,14 @@
 import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:practice/domain/helpers/helpers.dart';
 
+import 'package:practice/domain/helpers/helpers.dart';
 import 'package:practice/domain/usecases/auth/authentication.dart';
 
 import 'package:practice/data/usecases/auth/remote_authentication.dart';
 import 'package:practice/data/http/http.dart';
+
+import '../../../mocks/mocks.dart';
 
 class HttpClientSpy extends Mock implements HttpClient {}
 
@@ -15,8 +17,7 @@ void main() {
   String url;
   RemoteAuthentication sut;
   AuthenticationParams params;
-
-  Map mockValidData() => {'accessToken': faker.person.name(), 'name': faker.guid.guid()};
+  Map apiResult;
 
   PostExpectation mockRequest() => when(httpClient.request(url: anyNamed('url'), method: anyNamed('method'), body: anyNamed('body')));
   
@@ -26,6 +27,7 @@ void main() {
   }
 
   void mockHttpData(Map data) {
+    apiResult = data;
     mockRequest().thenAnswer((_) async => data);
   }
 
@@ -34,12 +36,9 @@ void main() {
     url = faker.internet.httpUrl();
     sut = RemoteAuthentication(httpClient: httpClient, url: url);
 
-    params = AuthenticationParams(
-      email: faker.internet.email(),
-      password: faker.internet.password(),
-    );
+    params = FakeParamsFactory.makeAuthenticationParams();
 
-    mockHttpData(mockValidData()); //qualquer teste que não faça nada, por padrão ele vai mockar um caso de sucesso
+    mockHttpData(FakeAccountFactory.makeApiJson());
   });
 
   test('Should call httpClient with correct values', () async {
@@ -97,13 +96,9 @@ void main() {
 
   test('Should return an Account if HttpClient returns 200', () async {
 
-    final validData = mockValidData();
-
-    mockHttpData(validData);
-
     final account  = await sut.auth(params: params);
 
-    expect(account.token, validData['accessToken']);
+    expect(account.token, apiResult['accessToken']);
 
   });
 
