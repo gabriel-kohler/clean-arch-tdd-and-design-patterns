@@ -32,7 +32,7 @@ class SurveyResultPage extends StatelessWidget with SessionManager {
                 );
               }
               if (snapshot.hasData) {
-                return SurveyResult(surveyResultViewModel: snapshot.data);
+                return SurveyResult(surveyResultViewModel: snapshot.data, onSave: surveyResultPresenter.save);
               }
               return Center(
                 child: CircularProgressIndicator(),

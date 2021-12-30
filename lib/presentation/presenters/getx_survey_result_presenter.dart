@@ -47,4 +47,9 @@ class GetxSurveyResultPresenter extends GetxController with SessionManager imple
     }
   }
 
+  @override
+  Future<void> save({String answer}) {
+    return null;
+  }
+
 }
