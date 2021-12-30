@@ -50,7 +50,25 @@ class GetxSurveyResultPresenter extends GetxController with SessionManager imple
 
   @override
   Future<void> save({String answer}) async {
-    await saveSurveyResult.save(answer: answer);
+    try {
+      final saveResult = await saveSurveyResult.save(answer: answer);
+      _surveyResult.value = SurveyResultViewModel(
+          surveyId: saveResult.surveyId,
+          question: saveResult.question,
+          answers: saveResult.answers.map((answer) => 
+          SurveyAnswerViewModel(
+            image: answer.image,
+            answer: answer.answer,
+            isCurrentAnswer: answer.isCurrentAnswer,
+            percent: '${answer.percent}%',
+          )).toList());
+    } on DomainError catch (error) {
+      if (error == DomainError.accessDenied) {
+        isSession = true;
+      } else {
+        _surveyResult.subject.addError(UIError.unexpected.description, StackTrace.empty);
+      }
+    }
   }
 
 }
