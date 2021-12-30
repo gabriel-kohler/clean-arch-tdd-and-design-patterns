@@ -52,6 +52,8 @@ void main() {
 
   test('Should call HttpClient with correct values', () async {
 
+    mockHttpData(mockValidData()); 
+
     await sut.save(answer: answer);
 
     verify(httpClient.request(url: url, method: 'put', body: {'answer' : answer})).called(1);
