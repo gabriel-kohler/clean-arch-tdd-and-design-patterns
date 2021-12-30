@@ -6,7 +6,7 @@ import '/ui/pages/pages.dart';
 
 import '/main/factories/factories.dart';
 
-SurveyResultPresenter makeGetxSurveyResultPresenter() {
+SurveyResultPresenter  makeGetxSurveyResultPresenter() {
   final surveyId = Get.parameters['survey_id'];
   return GetxSurveyResultPresenter(
     loadSurveyResult: makeRemoteLoadSurveyResultWithLocalFallback(surveyId),
