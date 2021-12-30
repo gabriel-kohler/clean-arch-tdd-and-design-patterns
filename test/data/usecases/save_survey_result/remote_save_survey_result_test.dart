@@ -2,6 +2,7 @@ import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
+import 'package:practice/domain/entities/entities.dart';
 import 'package:practice/domain/helpers/helpers.dart';
 import 'package:practice/data/usecases/usecases.dart';
 import 'package:practice/data/http/http.dart';
@@ -13,9 +14,7 @@ void main() {
   String url;
   RemoteSaveSurveyResult sut;
   String answer;
-
-  PostExpectation mockRequest() => when(httpClient.request(url: anyNamed('url'), method: anyNamed('method'), body: anyNamed('body')));
-  void mockHttpError(HttpError error) => mockRequest().thenThrow(error);
+  Map surveyResult;
 
   setUp(() {
     httpClient = HttpClientSpy();
@@ -24,6 +23,32 @@ void main() {
     answer = faker.lorem.sentence();
   });
 
+  PostExpectation mockRequest() => when(httpClient.request(url: anyNamed('url'), method: anyNamed('method'), body: anyNamed('body')));
+  void mockHttpError(HttpError error) => mockRequest().thenThrow(error);
+
+  Map mockValidData() => {
+    'surveyId': faker.guid.guid(),
+    'question': faker.randomGenerator.string(10),
+    'date': faker.date.dateTime().toIso8601String(),
+    'answers': [{
+      'image': faker.internet.httpUrl(),
+      'answer': faker.randomGenerator.string(20),
+      'percent': faker.randomGenerator.integer(100),
+      'count': faker.randomGenerator.integer(1000),
+      'isCurrentAccountAnswer': faker.randomGenerator.boolean(),
+    }, {
+      'image': faker.internet.httpUrl(),
+      'answer': faker.randomGenerator.string(20),
+      'percent': faker.randomGenerator.integer(100),
+      'count': faker.randomGenerator.integer(1000),
+      'isCurrentAccountAnswer': faker.randomGenerator.boolean(),
+    }],
+  };
+
+  void mockHttpData(Map data) {
+    surveyResult = data;
+    mockRequest().thenAnswer((_) async => data);
+  }
 
   test('Should call HttpClient with correct values', () async {
 
@@ -59,6 +84,30 @@ void main() {
     final future = sut.save(answer: answer);
 
     expect(future, throwsA(DomainError.unexpected));
+  });
+
+    test('Should return surveyResult on 200', () async {
+
+    mockHttpData(mockValidData()); 
+
+    final result = await sut.save(answer: answer);
+
+    final mockSurvers = SurveyResultEntity(surveyId: surveyResult['surveyId'], question: surveyResult['question'], answers: [
+      SurveyAnswerEntity(
+        image: surveyResult['answers'][0]['image'], 
+        answer: surveyResult['answers'][0]['answer'], 
+        isCurrentAnswer: surveyResult['answers'][0]['isCurrentAccountAnswer'], 
+        percent: surveyResult['answers'][0]['percent'],
+      ),
+      SurveyAnswerEntity(
+        image: surveyResult['answers'][1]['image'], 
+        answer: surveyResult['answers'][1]['answer'], 
+        isCurrentAnswer: surveyResult['answers'][1]['isCurrentAccountAnswer'], 
+        percent: surveyResult['answers'][1]['percent'],
+      ),
+    ]);
+
+    expect(result, mockSurvers);
   });
   
 }
