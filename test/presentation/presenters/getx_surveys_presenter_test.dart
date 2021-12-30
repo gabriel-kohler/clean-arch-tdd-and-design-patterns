@@ -92,12 +92,18 @@ void main() {
 
   test('Should go to SurveyResultPage on link click', () async {
     
+    expectLater(sut.navigateToStream, emitsInOrder([
+      '/survey_result/1',
+      '/survey_result/1',
+    ]));
+
     sut.navigateToStream.listen(
       expectAsync1((page) {
         expect(page, '/survey_result/1');
       }),
     );
 
+    sut.goToSurveyResult('1');
     sut.goToSurveyResult('1');
 
   });
