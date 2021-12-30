@@ -33,11 +33,17 @@ void main() {
     when(surveysPresenterSpy.navigateToStream).thenAnswer((_) => navigateToController.stream);
     when(surveysPresenterSpy.isSessionExpiredStream).thenAnswer((_) => isSessionExpiredController.stream);
 
+    final routeObserver =  Get.put<RouteObserver>(RouteObserver<PageRoute>());
+
     final surveysPage = GetMaterialApp(
+      navigatorObservers: [routeObserver],
       initialRoute: AppRoute.SurveysPage,
       getPages: [
         GetPage(name: AppRoute.SurveysPage, page: () => SurveysPage(surveysPresenter: surveysPresenterSpy)),
         GetPage(name: '/any_route', page: () => Scaffold(
+          appBar: AppBar(
+            title: Text('any_title'),
+            ),
           body: Text('navigation test'),
         )),
         GetPage(name: '/login', page: () => Scaffold(
@@ -60,11 +66,23 @@ void main() {
     SurveyViewModel(id: '2', question: 'Question 2', date: 'Date2', didAnswer: false),
   ];
 
-  testWidgets('Should SurveysPage call loadData on page loading', (WidgetTester tester) async {
+  testWidgets('Should SurveysPage call loadData on page load', (WidgetTester tester) async {
 
     await loadPage(tester);
 
     verify(surveysPresenterSpy.loadData()).called(1);
+
+  });
+
+  testWidgets('Should SurveysPage call loadData on page reload', (WidgetTester tester) async {
+
+    await loadPage(tester);
+
+    navigateToController.add('/any_route');
+    await tester.pumpAndSettle();
+    await tester.pageBack();
+
+    verify(surveysPresenterSpy.loadData()).called(2);
 
   });
 
