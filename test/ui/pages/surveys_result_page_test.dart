@@ -164,4 +164,19 @@ void main() {
 
   });
 
+  testWidgets('Should SurveyResultPage not call on current answer click', (WidgetTester tester) async {
+    await loadPage(tester);
+    
+    surveyResultController.add(makeSurveyResult());
+
+    await mockNetworkImagesFor(() async {
+      await tester.pump();
+    });
+
+    await tester.tap(find.text('Answer 0'));
+
+    verifyNever(surveyResultPresenterSpy.save(answer: 'Answer 0'));
+
+  });
+
 }

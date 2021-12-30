@@ -18,7 +18,9 @@ class SurveyResult extends StatelessWidget {
           }
           final surveyResult = surveyResultViewModel.answers[index - 1];
           return GestureDetector(
-            onTap: () => onSave(answer: surveyResult.answer),
+            onTap: () => surveyResult.isCurrentAnswer 
+            ? null 
+            : onSave(answer: surveyResult.answer),
             child: SurveyAnswer(surveyResult: surveyResult),
           );
         });
