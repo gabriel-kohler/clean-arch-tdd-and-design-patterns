@@ -2,14 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
-import 'package:get/get_navigation/get_navigation.dart';
 import 'package:mockito/mockito.dart';
 import 'package:practice/ui/helpers/errors/errors.dart';
 
 import 'package:practice/ui/pages/pages.dart';
 import 'package:practice/utils/app_routes.dart';
 import 'package:practice/utils/utils.dart';
+
+import '../helpers/helpers.dart';
 
 class SurveysPresenterSpy extends Mock implements SurveysPresenter {}
 
@@ -33,26 +33,12 @@ void main() {
     when(surveysPresenterSpy.navigateToStream).thenAnswer((_) => navigateToController.stream);
     when(surveysPresenterSpy.isSessionExpiredStream).thenAnswer((_) => isSessionExpiredController.stream);
 
-    final routeObserver =  Get.put<RouteObserver>(RouteObserver<PageRoute>());
-
-    final surveysPage = GetMaterialApp(
-      navigatorObservers: [routeObserver],
-      initialRoute: AppRoute.SurveysPage,
-      getPages: [
-        GetPage(name: AppRoute.SurveysPage, page: () => SurveysPage(surveysPresenter: surveysPresenterSpy)),
-        GetPage(name: '/any_route', page: () => Scaffold(
-          appBar: AppBar(
-            title: Text('any_title'),
-            ),
-          body: Text('navigation test'),
-        )),
-        GetPage(name: '/login', page: () => Scaffold(
-          body: Text('fake login'),
-        )),
-      ],
+    await tester.pumpWidget(
+      makePage(
+        initialRoute: AppRoute.SurveysPage, 
+        page: () => SurveysPage(surveysPresenter: surveysPresenterSpy),
+      ),
     );
-
-    await tester.pumpWidget(surveysPage);
   }
 
   tearDown(() {
@@ -153,7 +139,7 @@ void main() {
     navigateToController.add('/any_route');
     await tester.pumpAndSettle();
 
-    expect(Get.currentRoute, '/any_route');
+    expect(currentRoute, '/any_route');
     expect(find.text('navigation test'), findsOneWidget);
   });
 
@@ -162,11 +148,11 @@ void main() {
 
     navigateToController.add('');
     await tester.pump();
-    expect(Get.currentRoute, AppRoute.SurveysPage);
+    expect(currentRoute, AppRoute.SurveysPage);
 
     navigateToController.add(null);
     await tester.pump();
-    expect(Get.currentRoute, AppRoute.SurveysPage);
+    expect(currentRoute, AppRoute.SurveysPage);
   });
   testWidgets('Should logout', (WidgetTester tester) async {
     await loadPage(tester);
@@ -174,7 +160,7 @@ void main() {
     isSessionExpiredController.add(true);
     await tester.pumpAndSettle();
 
-    expect(Get.currentRoute, AppRoute.LoginPage);
+    expect(currentRoute, AppRoute.LoginPage);
     expect(find.text('fake login'), findsOneWidget);
   });
 
@@ -183,7 +169,7 @@ void main() {
 
     isSessionExpiredController.add(false);
     await tester.pump();
-    expect(Get.currentRoute, AppRoute.SurveysPage);
+    expect(currentRoute, AppRoute.SurveysPage);
   });
 
 

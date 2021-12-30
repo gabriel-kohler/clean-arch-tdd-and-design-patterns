@@ -1,5 +1,3 @@
-import 'package:get/get.dart';
-import 'package:get/get_navigation/get_navigation.dart';
 import 'package:network_image_mock/network_image_mock.dart';
 import 'package:mockito/mockito.dart';
 
@@ -10,6 +8,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:practice/ui/helpers/helpers.dart';
 import 'package:practice/ui/pages/pages.dart';
 import 'package:practice/utils/utils.dart';
+
+import '../helpers/helpers.dart';
 
 class SurveyResultPresenterSpy extends Mock implements SurveyResultPresenter {}
 
@@ -42,19 +42,15 @@ void main() {
     initStreams();
     mockStreams();
 
-    final surveysPage = GetMaterialApp(
-      initialRoute: '/survey_result/:any_survey_id',
-      getPages: [
-        GetPage(name: '/survey_result/:survey_id', page: () => SurveyResultPage(surveyResultPresenter: surveyResultPresenterSpy)),
-        GetPage(name: '/login', page: () => Scaffold(
-          body: Text('fake login'),
-        )),
-      ],
-    );
-
     await mockNetworkImagesFor(() async {
-      await tester.pumpWidget(surveysPage);
+      await tester.pumpWidget(
+        makePage(
+          initialRoute: '/survey_result/:any_survey_id', 
+          page: () => SurveyResultPage(surveyResultPresenter: surveyResultPresenterSpy),
+        ),
+      );
     });
+
   }
 
   tearDown(() {
@@ -137,7 +133,7 @@ void main() {
     isSessionExpiredController.add(true);
     await tester.pumpAndSettle();
 
-    expect(Get.currentRoute, AppRoute.LoginPage);
+    expect(currentRoute, AppRoute.LoginPage);
     expect(find.text('fake login'), findsOneWidget);
   });
 
@@ -146,7 +142,7 @@ void main() {
 
     isSessionExpiredController.add(false);
     await tester.pump();
-    expect(Get.currentRoute, '${AppRoute.SurveyResultPage}/:any_survey_id');
+    expect(currentRoute, '${AppRoute.SurveyResultPage}/:any_survey_id');
   });
 
   testWidgets('Should SurveyResultPage call save on item list click', (WidgetTester tester) async {

@@ -2,11 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
 import 'package:mockito/mockito.dart';
 
 import 'package:practice/ui/pages/pages.dart';
 import 'package:practice/utils/app_routes.dart';
+
+import '../helpers/helpers.dart';
 
 
 class SplashPresenterSpy extends Mock implements SplashPresenter {}
@@ -25,17 +26,13 @@ void main() {
 
     when(splashPresenterSpy.navigateToStream).thenAnswer((_) => navigationToController.stream);
 
-    final splashPage = GetMaterialApp(
-      initialRoute: AppRoute.SplashPage,
-      getPages: [
-        GetPage(name: AppRoute.SplashPage, page: () => SplashPage(splashPresenter: splashPresenterSpy)),
-        GetPage(name: '/any_route', page: () => Scaffold(
-          body: Text('navigation test'),
-          ),
-        ),
-      ],
+    await tester.pumpWidget(
+      makePage(
+        initialRoute: AppRoute.SplashPage, 
+        page: () => SplashPage(splashPresenter: splashPresenterSpy),
+      ),
     );
-    await tester.pumpWidget(splashPage);
+
   }
 
   tearDown(() {
@@ -59,7 +56,7 @@ void main() {
     navigationToController.add('/any_route');
     await tester.pumpAndSettle();
 
-    expect(Get.currentRoute, '/any_route');
+    expect(currentRoute, '/any_route');
   });
 
   testWidgets('Should not change page', (WidgetTester tester) async {
@@ -68,12 +65,12 @@ void main() {
     navigationToController.add('');
     await tester.pump();
 
-    expect(Get.currentRoute, AppRoute.SplashPage);
+    expect(currentRoute, AppRoute.SplashPage);
 
     navigationToController.add(null);
     await tester.pump();
 
-    expect(Get.currentRoute, AppRoute.SplashPage);
+    expect(currentRoute, AppRoute.SplashPage);
   });
 
 }
