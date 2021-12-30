@@ -62,6 +62,26 @@ void main() {
 
   void mockSaveSurveyResultError(DomainError error) => mockSaveSurveyResultCall().thenThrow(error);
 
+  SurveyResultViewModel mapToViewModel(SurveyResultEntity entity) {
+    return SurveyResultViewModel(
+              surveyId: entity.surveyId, 
+              question: entity.question, 
+              answers: [
+                SurveyAnswerViewModel(
+                  image: entity.answers[0].image,
+                  answer: entity.answers[0].answer, 
+                  isCurrentAnswer: entity.answers[0].isCurrentAnswer, 
+                  percent: '${entity.answers[0].percent}%',
+                ),
+                SurveyAnswerViewModel(
+                  answer: entity.answers[1].answer, 
+                  isCurrentAnswer: entity.answers[1].isCurrentAnswer, 
+                  percent: '${entity.answers[1].percent}%',
+                ),
+              ], 
+            );
+  }
+
   setUp(() {
     surveyId = faker.guid.guid();
 
@@ -90,24 +110,7 @@ void main() {
 
       sut.surveyResultStream.listen(
         expectAsync1((result) {
-          expect(result, 
-            SurveyResultViewModel(
-              surveyId: loadResult.surveyId, 
-              question: loadResult.question, 
-              answers: [
-                SurveyAnswerViewModel(
-                  image: loadResult.answers[0].image,
-                  answer: loadResult.answers[0].answer, 
-                  isCurrentAnswer: loadResult.answers[0].isCurrentAnswer, 
-                  percent: '${loadResult.answers[0].percent}%',
-                ),
-                SurveyAnswerViewModel(
-                  answer: loadResult.answers[1].answer, 
-                  isCurrentAnswer: loadResult.answers[1].isCurrentAnswer, 
-                  percent: '${loadResult.answers[1].percent}%',
-                ),
-              ],
-            ),
+          expect(result, mapToViewModel(loadResult),
           );
         }),
       );
@@ -157,32 +160,16 @@ void main() {
 
     test('Should emit correct events on success', () async {
 
+      mockLoadSurveyResult(data: mockValidData());
       mockSaveSurveyResult(data: mockValidData());
 
-      sut.surveyResultStream.listen(
-        expectAsync1((result) {
-          expect(result, 
-            SurveyResultViewModel(
-              surveyId: saveResult.surveyId, 
-              question: saveResult.question, 
-              answers: [
-                SurveyAnswerViewModel(
-                  image: saveResult.answers[0].image,
-                  answer: saveResult.answers[0].answer, 
-                  isCurrentAnswer: saveResult.answers[0].isCurrentAnswer, 
-                  percent: '${saveResult.answers[0].percent}%',
-                ),
-                SurveyAnswerViewModel(
-                  answer: saveResult.answers[1].answer, 
-                  isCurrentAnswer: saveResult.answers[1].isCurrentAnswer, 
-                  percent: '${saveResult.answers[1].percent}%',
-                ),
-              ], 
-            ),
-          );
-        }),
-      );
+      expectLater(sut.surveyResultStream, emitsInOrder([
+        mapToViewModel(loadResult),
+        mapToViewModel(saveResult),
+      ]));
 
+
+      await sut.loadData();
       await sut.save(answer: answer);
 
     });

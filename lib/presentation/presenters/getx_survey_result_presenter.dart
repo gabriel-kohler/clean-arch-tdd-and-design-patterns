@@ -3,8 +3,9 @@ import 'package:meta/meta.dart';
 
 import '/domain/entities/entities.dart';
 import '/domain/usecases/usecases.dart';
-import '/domain/helpers/domain_error.dart';
+import '/domain/helpers/helpers.dart';
 
+import '/presentation/helpers/helpers.dart';
 import '/presentation/mixins/mixins.dart';
 
 import '/ui/helpers/errors/errors.dart';
@@ -36,16 +37,7 @@ class GetxSurveyResultPresenter extends GetxController with SessionManager imple
   Future<void> showResultOnAction(Future<SurveyResultEntity> action()) async {
     try {
       final actionResult = await action();
-      _surveyResult.value = SurveyResultViewModel(
-          surveyId: actionResult.surveyId,
-          question: actionResult.question,
-          answers: actionResult.answers.map((answer) => 
-          SurveyAnswerViewModel(
-            image: answer.image,
-            answer: answer.answer,
-            isCurrentAnswer: answer.isCurrentAnswer,
-            percent: '${answer.percent}%',
-          )).toList());
+      _surveyResult.subject.add(actionResult.toViewModel());
     } on DomainError catch (error) {
       if (error == DomainError.accessDenied) {
         isSession = true;
