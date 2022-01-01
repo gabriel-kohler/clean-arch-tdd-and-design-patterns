@@ -10,6 +10,7 @@ import 'package:practice/utils/app_routes.dart';
 import 'package:practice/utils/utils.dart';
 
 import '../helpers/helpers.dart';
+import '../../mocks/mocks.dart';
 
 class SurveysPresenterSpy extends Mock implements SurveysPresenter {}
 
@@ -46,11 +47,6 @@ void main() {
     navigateToController.close();
     isSessionExpiredController.close();
   });
-
-  List<SurveyViewModel> makeSurveys() => [
-    SurveyViewModel(id: '1', question: 'Question 1', date: 'Date1', didAnswer: true),
-    SurveyViewModel(id: '2', question: 'Question 2', date: 'Date2', didAnswer: false),
-  ];
 
   testWidgets('Should SurveysPage call loadData on page load', (WidgetTester tester) async {
 
@@ -92,7 +88,7 @@ void main() {
     await loadPage(tester);
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
-    surveysController.add(makeSurveys());
+    surveysController.add(FakeSurveysFactory.makeSurveysViewModel());
     await tester.pump();
 
     expect(find.text('Ocorreu um erro. Tente novamente em breve'), findsNothing);
@@ -123,7 +119,7 @@ void main() {
 
     await loadPage(tester);
 
-    surveysController.add(makeSurveys());
+    surveysController.add(FakeSurveysFactory.makeSurveysViewModel());
     await tester.pump();
 
     await tester.tap(find.text('Question 1'));

@@ -9,6 +9,7 @@ import 'package:practice/ui/helpers/helpers.dart';
 import 'package:practice/ui/pages/pages.dart';
 import 'package:practice/utils/utils.dart';
 
+import '../../mocks/mocks.dart';
 import '../helpers/helpers.dart';
 
 class SurveyResultPresenterSpy extends Mock implements SurveyResultPresenter {}
@@ -57,12 +58,6 @@ void main() {
     closeStreams();
   });
 
-
-  SurveyResultViewModel makeSurveyResult() => SurveyResultViewModel(surveyId: 'any_id', question: 'Question', answers: [
-    SurveyAnswerViewModel(image: 'Image 0', answer: 'Answer 0', isCurrentAnswer: true, percent: '60%'),
-    SurveyAnswerViewModel(answer: 'Answer 1', isCurrentAnswer: false, percent: '40%'),
-  ]);
-
   testWidgets('Should call LoadSurveyResult on page load', (WidgetTester tester) async {
 
     await loadPage(tester);
@@ -102,7 +97,7 @@ void main() {
     await loadPage(tester);
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
     
-    surveyResultController.add(makeSurveyResult());
+    surveyResultController.add(FakeSurveyResultFactory.makeSurveyResultViewModel());
 
     await mockNetworkImagesFor(() async {
       await tester.pump();
@@ -148,7 +143,7 @@ void main() {
   testWidgets('Should SurveyResultPage call save on item list click', (WidgetTester tester) async {
     await loadPage(tester);
     
-    surveyResultController.add(makeSurveyResult());
+    surveyResultController.add(FakeSurveyResultFactory.makeSurveyResultViewModel());
 
     await mockNetworkImagesFor(() async {
       await tester.pump();
@@ -163,7 +158,7 @@ void main() {
   testWidgets('Should SurveyResultPage not call on current answer click', (WidgetTester tester) async {
     await loadPage(tester);
     
-    surveyResultController.add(makeSurveyResult());
+    surveyResultController.add(FakeSurveyResultFactory.makeSurveyResultViewModel());
 
     await mockNetworkImagesFor(() async {
       await tester.pump();

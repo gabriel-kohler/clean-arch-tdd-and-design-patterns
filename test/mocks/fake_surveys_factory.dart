@@ -1,6 +1,7 @@
 import 'package:faker/faker.dart';
 
 import 'package:practice/domain/entities/entities.dart';
+import 'package:practice/ui/pages/pages.dart';
 
 class FakeSurveysFactory {
   static List<Map> makeCacheJson() => [
@@ -48,6 +49,11 @@ class FakeSurveysFactory {
           didAnswer: false,
         ),
       ];
+
+  static List<SurveyViewModel> makeSurveysViewModel() => [
+    SurveyViewModel(id: '1', question: 'Question 1', date: 'Date1', didAnswer: true),
+    SurveyViewModel(id: '2', question: 'Question 2', date: 'Date2', didAnswer: false),
+  ];
 
   static List<Map> makeApiJson() => [
         {
