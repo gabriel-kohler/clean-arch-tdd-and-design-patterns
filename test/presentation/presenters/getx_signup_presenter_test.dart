@@ -11,6 +11,8 @@ import 'package:practice/presentation/dependencies/dependencies.dart';
 import 'package:practice/presentation/presenters/presenters.dart';
 import 'package:practice/ui/helpers/errors/errors.dart';
 
+import '../../mocks/fake_account_factory.dart';
+
 class ValidationSpy extends Mock implements Validation {}
 class AddAccountSpy extends Mock implements AddAccount {}
 class SaveCurrentAccountSpy extends Mock implements SaveCurrentAccount {}
@@ -24,7 +26,7 @@ void main() {
   String email;
   String name;
   String password;
-  String token;
+  AccountEntity account;
 
   setUp(() {
     validationSpy = ValidationSpy();
@@ -35,7 +37,6 @@ void main() {
     email = faker.internet.email();
     name = faker.person.name();
     password = faker.internet.password();
-    token = faker.guid.guid();
   });
 
   PostExpectation mockValidationCall() => when(validationSpy.validate(field: anyNamed('field'), inputFormData: anyNamed('inputFormData')));
@@ -43,7 +44,12 @@ void main() {
   mockValidationError({ValidationError errorReturn}) => mockValidationCall().thenReturn(errorReturn);
 
   PostExpectation mockAddAccountCall() => when(addAccountSpy.add(params: anyNamed('params')));
-  void mockAddAccount({String account}) => mockAddAccountCall().thenAnswer((_) async => AccountEntity(account));
+
+  void mockAddAccount(AccountEntity data) {
+    account = data;
+    mockAddAccountCall().thenAnswer((_) async => data);
+  }
+
   void mockAddAccountError(DomainError error) => mockAddAccountCall().thenThrow(error);
 
   test('Should SignUpPresenter call Validation in email changed', ()  {
@@ -474,11 +480,11 @@ void main() {
 
   test('Should call LocalSaveCurrentAccount with correct values', () async {
 
-    mockAddAccount(account: token);
+    mockAddAccount(FakeAccountFactory.makeAccountEntity());
 
     await sut.signUp();
 
-    verify(saveCurrentAccountSpy.save(account: AccountEntity(token))).called(1);
+    verify(saveCurrentAccountSpy.save(account: account)).called(1);
   });
 
   test('Should emit UnexpectedError if LocalSaveCurrentAccount fails', () async {

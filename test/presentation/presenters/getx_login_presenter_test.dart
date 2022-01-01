@@ -13,6 +13,8 @@ import 'package:practice/presentation/presenters/presenters.dart';
 
 import 'package:practice/ui/helpers/errors/errors.dart';
 
+import '../../mocks/fake_account_factory.dart';
+
 class ValidationSpy extends Mock implements Validation {}
 class AuthenticationSpy extends Mock implements Authentication {}
 class AddCurrentAccountSpy extends Mock implements AddCurrentAccount {}
@@ -24,7 +26,7 @@ void main() {
   GetxLoginPresenter sut;
   String email;
   String password;
-  String account;
+  AccountEntity account;
 
   PostExpectation mockValidationCall(String field) => when(validation.validate(
       field: field == null ? anyNamed('field') : field,
@@ -36,8 +38,9 @@ void main() {
 
   PostExpectation mockAuthenticationCall() => when(authentication.auth(params: anyNamed('params')));
 
-  void mockAuthentication() {
-    mockAuthenticationCall().thenAnswer((_) async => AccountEntity(account));
+  void mockAuthentication(AccountEntity data) {
+    account = data;
+    mockAuthenticationCall().thenAnswer((_) async => data);
   }
 
   void mockAuthenticationError(DomainError error) {
@@ -51,10 +54,9 @@ void main() {
     sut = GetxLoginPresenter(validation: validation, authentication: authentication, localSaveCurrentAccount: localSaveCurrentAccountSpy);
     email = faker.internet.email();
     password = faker.internet.password();
-    account = faker.guid.guid();
 
     mockValidation();
-    mockAuthentication();
+    mockAuthentication(FakeAccountFactory.makeAccountEntity());
   });
 
   test('Should call validation with correct email', () {
@@ -289,7 +291,7 @@ void main() {
 
     await sut.auth();
 
-    verify(localSaveCurrentAccountSpy.save(account: AccountEntity(account))).called(1);
+    verify(localSaveCurrentAccountSpy.save(account: account)).called(1);
   });
 
   test('Should emit UnexpectedError if LocalSaveCurrentAccount fails', () async {

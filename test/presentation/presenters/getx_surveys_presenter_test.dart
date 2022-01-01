@@ -1,4 +1,3 @@
-import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
 import 'package:practice/domain/helpers/domain_error.dart';
 import 'package:practice/ui/helpers/errors/errors.dart';
@@ -10,16 +9,14 @@ import 'package:practice/domain/usecases/survey/survey.dart';
 
 import 'package:practice/presentation/presenters/presenters.dart';
 
+import '../../mocks/fake_surveys_factory.dart';
+
 class LoadSurveysSpy extends Mock implements LoadSurveys {}
+
 void main() {
   LoadSurveys loadSurveysSpy;
   GetxSurveysPresenter sut;
   List<SurveyEntity> surveys;
-
-  List<SurveyEntity> mockValidData() => [
-    SurveyEntity(id: faker.guid.guid(), question: faker.lorem.sentence(), date: DateTime(2021, 12, 19), didAnswer: true),
-    SurveyEntity(id: faker.guid.guid(), question: faker.lorem.sentence(), date: DateTime(2021, 04, 28), didAnswer: false),
-  ];
 
   PostExpectation mockLoadSurveysCall() => when(loadSurveysSpy.load());
 
@@ -38,7 +35,7 @@ void main() {
 
   test('Should call LoadSurveys with correct values', () async {
 
-    mockLoadSurveys(data: mockValidData());
+    mockLoadSurveys(data: FakeSurveysFactory.makeSurveyEntity());
 
     await sut.loadData();
 
@@ -48,14 +45,14 @@ void main() {
 
   test('Should emit correct events on success', () async {
 
-    mockLoadSurveys(data: mockValidData());
+    mockLoadSurveys(data:FakeSurveysFactory.makeSurveyEntity());
 
 
     sut.surveysStream.listen(
       expectAsync1((surveys) {
         expect(surveys, [
-          SurveyViewModel(id: surveys[0].id, question: surveys[0].question, date: '19 Dez 2021', didAnswer: surveys[0].didAnswer),
-          SurveyViewModel(id: surveys[1].id, question: surveys[1].question, date: '28 Abr 2021', didAnswer: surveys[1].didAnswer),
+          SurveyViewModel(id: surveys[0].id, question: surveys[0].question, date: '19 Dec 2021', didAnswer: surveys[0].didAnswer),
+          SurveyViewModel(id: surveys[1].id, question: surveys[1].question, date: '28 Apr 2021', didAnswer: surveys[1].didAnswer),
         ]);
       }),
     );

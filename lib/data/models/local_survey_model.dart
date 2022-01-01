@@ -15,7 +15,12 @@ class LocalSurveyModel {
     if (!json.keys.toSet().containsAll(['id', 'question', 'date', 'didAnswer'])) {
       throw Exception();
     }
-    return LocalSurveyModel(id: json['id'], question: json['question'], date: DateTime.parse(json['date']), didAnswer: bool.fromEnvironment(json['didAnswer']));
+    return LocalSurveyModel(
+      id: json['id'], 
+      question: json['question'], 
+      date: DateTime.parse(json['date']), 
+      didAnswer: json['didAnswer'].toLowerCase() == 'true',
+    );
 
   }
 

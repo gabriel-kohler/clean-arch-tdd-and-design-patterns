@@ -10,6 +10,6 @@ class SurveyResultEntity extends Equatable {
   SurveyResultEntity({@required this.surveyId, @required this.question, @required this.answers});
 
   @override
-  List<Object> get props => ['id', 'question', 'answers'];
+  List<Object> get props => [surveyId, question, answers];
 
 }

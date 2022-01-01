@@ -1,4 +1,3 @@
-import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
@@ -52,12 +51,14 @@ void main() {
 
       final surveys = await sut.load();
 
-      final mockSurvers = [
+
+      final mockSurveys = [
         SurveyEntity(id: listData[0]['id'], question: listData[0]['question'], date: DateTime.utc(2021, 9, 20), didAnswer: false),
         SurveyEntity(id: listData[1]['id'], question: listData[1]['question'], date: DateTime.utc(2020, 2, 18), didAnswer: true),
         ];
 
-      expect(surveys, mockSurvers);
+
+      expect(surveys, mockSurveys);
 
     });
 
@@ -202,13 +203,13 @@ void main() {
       {
         'id': surveys[0].id,
         'question': surveys[0].question,
-        'date': '2020-02-02T00:00:00.000Z',
+        'date': '2021-12-19T00:00:00.000Z',
         'didAnswer': 'true',
       },
       {
       'id': surveys[1].id,
       'question': surveys[1].question,
-      'date': '2016-12-05T00:00:00.000Z',
+      'date': '2021-04-28T00:00:00.000Z',
       'didAnswer': 'false',
       },
     ];

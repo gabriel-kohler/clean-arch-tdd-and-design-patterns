@@ -10,6 +10,6 @@ class SurveyAnswerEntity extends Equatable {
   SurveyAnswerEntity({this.image, @required this.answer, @required this.isCurrentAnswer, @required this.percent});
 
   @override
-  List<Object> get props => ['image', 'answer', 'isCurrentAnswer', 'percent'];
+  List<Object> get props => [image, answer, isCurrentAnswer, percent];
 
 }

@@ -22,6 +22,7 @@ class LocalLoadSurveys implements LoadSurveys {
       }
       return _mapToEntity(surveys);
     } catch (error) {
+      print(error.toString());
       throw DomainError.unexpected;
     }
 

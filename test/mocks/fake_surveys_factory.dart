@@ -38,13 +38,13 @@ class FakeSurveysFactory {
         SurveyEntity(
           id: faker.guid.guid(),
           question: faker.randomGenerator.string(10),
-          date: DateTime.utc(2020, 2, 2),
+          date: DateTime.utc(2021, 12, 19),
           didAnswer: true,
         ),
         SurveyEntity(
           id: faker.guid.guid(),
           question: faker.randomGenerator.string(10),
-          date: DateTime.utc(2016, 12, 5),
+          date: DateTime.utc(2021, 04, 28),
           didAnswer: false,
         ),
       ];

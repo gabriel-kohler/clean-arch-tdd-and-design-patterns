@@ -9,6 +9,8 @@ import 'package:practice/data/usecases/usecases.dart';
 
 import 'package:practice/main/composites/composites.dart';
 
+import '../../mocks/mocks.dart';
+
 class RemoteLoadSurveyResultSpy extends Mock implements RemoteLoadSurveyResult {}
 class LocalLoadSurveyResultSpy extends Mock implements LocalLoadSurveyResult {}
 
@@ -22,25 +24,6 @@ void main() {
   SurveyResultEntity remoteResult;
   SurveyResultEntity localResult;
 
-  SurveyResultEntity mockSurveyResult() => SurveyResultEntity(
-        surveyId: faker.guid.guid(),
-        question: faker.lorem.sentence(),
-        answers: [
-          SurveyAnswerEntity(
-            image: faker.internet.httpUrl(),
-            answer: faker.lorem.sentence(),
-            isCurrentAnswer: faker.randomGenerator.boolean(),
-            percent: faker.randomGenerator.integer(100),
-          ),
-          SurveyAnswerEntity(
-            answer: faker.lorem.sentence(),
-            isCurrentAnswer: faker.randomGenerator.boolean(),
-            percent: faker.randomGenerator.integer(100),
-          ),
-        ],
-      );
-
-
   PostExpectation mockRemoteSurveyResultCall() => when(remoteSpy.loadBySurvey(surveyId: anyNamed('surveyId')));
   PostExpectation mockLocalSurveyResultCall() => when(localSpy.loadBySurvey(surveyId: anyNamed('surveyId')));
 
@@ -49,12 +32,12 @@ void main() {
   void mockLocalSurveyResultError() => mockLocalSurveyResultCall().thenThrow(DomainError.unexpected);
 
   void mockRemoteSurveyResult() {
-    remoteResult = mockSurveyResult();
+    remoteResult = FakeSurveyResultFactory.makeSurveyResultEntity();
     mockRemoteSurveyResultCall().thenAnswer((_) async => remoteResult);
   }
 
   void mockLocalSurveyResult() {
-    localResult = mockSurveyResult();
+    localResult = FakeSurveyResultFactory.makeSurveyResultEntity();
     mockLocalSurveyResultCall().thenAnswer((_) async => localResult);
   }
 

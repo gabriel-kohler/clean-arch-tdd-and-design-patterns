@@ -10,6 +10,8 @@ import 'package:practice/domain/usecases/survey/survey.dart';
 
 import 'package:practice/presentation/presenters/presenters.dart';
 
+import '../../mocks/mocks.dart';
+
 class LoadSurveyResultSpy extends Mock implements LoadSurveyResult {}
 
 class SaveSurveyResultSpy extends Mock implements SaveSurveyResult {}
@@ -26,23 +28,6 @@ void main() {
   String surveyId;
 
   String answer;
-
-  SurveyResultEntity mockValidData() => SurveyResultEntity(
-    surveyId: faker.guid.guid(), 
-    question: faker.lorem.sentence(), 
-    answers: [
-      SurveyAnswerEntity(
-        image: faker.internet.httpUrl(),
-        answer: faker.lorem.sentence(), 
-        isCurrentAnswer: faker.randomGenerator.boolean(), 
-        percent: faker.randomGenerator.integer(100)
-      ),
-      SurveyAnswerEntity(
-        answer: faker.lorem.sentence(), 
-        isCurrentAnswer: faker.randomGenerator.boolean(), 
-        percent: faker.randomGenerator.integer(100)
-      ),
-    ]);
 
   PostExpectation mockLoadSurveyResultCall() => when(loadSurveyResultSpy.loadBySurvey(surveyId: anyNamed('surveyId')));
 
@@ -96,7 +81,7 @@ void main() {
   group('loadData', () {
     test('Should call LoadSurveys with correct values', () async {
 
-      mockLoadSurveyResult(data: mockValidData());
+      mockLoadSurveyResult(data: FakeSurveyResultFactory.makeSurveyResultEntity());
 
       await sut.loadData();
 
@@ -106,7 +91,7 @@ void main() {
 
     test('Should emit correct events on success', () async {
 
-      mockLoadSurveyResult(data: mockValidData());
+      mockLoadSurveyResult(data:FakeSurveyResultFactory.makeSurveyResultEntity());
 
       sut.surveyResultStream.listen(
         expectAsync1((result) {
@@ -150,7 +135,7 @@ void main() {
   group('save', () {
     test('Should call SaveSurveyResult with correct values', () async {
 
-      mockSaveSurveyResult(data: mockValidData());
+      mockSaveSurveyResult(data:FakeSurveyResultFactory.makeSurveyResultEntity());
 
       await sut.save(answer: answer);
 
@@ -160,8 +145,8 @@ void main() {
 
     test('Should emit correct events on success', () async {
 
-      mockLoadSurveyResult(data: mockValidData());
-      mockSaveSurveyResult(data: mockValidData());
+      mockLoadSurveyResult(data:FakeSurveyResultFactory.makeSurveyResultEntity());
+      mockSaveSurveyResult(data:FakeSurveyResultFactory.makeSurveyResultEntity());
 
       expectLater(sut.surveyResultStream, emitsInOrder([
         mapToViewModel(loadResult),

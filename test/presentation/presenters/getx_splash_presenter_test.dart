@@ -20,7 +20,7 @@ void main() {
 
   PostExpectation mockLoadCurrentAccountCall() => when(loadCurrentAccountSpy.fetch());
 
-  void mockLoadCurrentAccount(String account) => mockLoadCurrentAccountCall().thenAnswer((_)async => AccountEntity(account));
+  void mockLoadCurrentAccount(String account) => mockLoadCurrentAccountCall().thenAnswer((_) async => AccountEntity(account));
 
   void mockLoadCurrentAccountError() => mockLoadCurrentAccountCall().thenThrow(Exception());
 
