@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:practice/utils/utils.dart';
 
-Widget makePage({@required String initialRoute, @required Widget Function() page}) {
+Widget makePage({required String initialRoute, required Widget Function() page}) {
   final routeObserver = Get.put<RouteObserver>(RouteObserver<PageRoute>());
 
   final getPages = [

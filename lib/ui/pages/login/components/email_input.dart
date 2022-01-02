@@ -11,13 +11,13 @@ class EmailInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final loginPresenter = Provider.of<LoginPresenter>(context);
-    return StreamBuilder<UIError>(
+    return StreamBuilder<UIError?>(
       stream: loginPresenter.emailErrorStream,
       builder: (context, snapshot) {
         return TextFormField(
           decoration: InputDecoration(
             labelText: 'Email',
-            errorText: snapshot.hasData ? snapshot.data.description : null,
+            errorText: snapshot.hasData ? snapshot.data?.description : null,
             icon: Icon(
               Icons.email,
               color: Theme.of(context).primaryColorLight,

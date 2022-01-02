@@ -5,7 +5,7 @@ import 'package:practice/validation/validators/validators.dart';
 
 void main() {
 
-  MinLengthValidation sut;
+  late MinLengthValidation sut;
 
   setUp((){
     sut = MinLengthValidation(field: 'any_field', minLengthCaracters: 5);

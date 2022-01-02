@@ -16,7 +16,7 @@ NavigationManager {
 
   final SignUpPresenter signUpPresenter;
 
-  SignUpPage({@required this.signUpPresenter});
+  SignUpPage({required this.signUpPresenter});
 
   @override
   Widget build(BuildContext context) {

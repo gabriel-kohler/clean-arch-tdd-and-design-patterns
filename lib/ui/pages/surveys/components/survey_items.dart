@@ -10,7 +10,7 @@ class SurveyItems extends StatelessWidget {
 
   final List<SurveyViewModel> listSurveys;
 
-  const SurveyItems({Key key, @required this.listSurveys}) : super(key: key);
+  const SurveyItems(this.listSurveys);
 
   @override
   Widget build(BuildContext context) {

@@ -5,12 +5,10 @@ import '/ui/components/components.dart';
 import '/ui/pages/pages.dart';
 import '/ui/helpers/helpers.dart';
 
-import 'components/components.dart';
-
 class SurveyResultPage extends StatelessWidget with SessionManager {
   final SurveyResultPresenter surveyResultPresenter;
 
-  SurveyResultPage({@required this.surveyResultPresenter});
+  SurveyResultPage(this.surveyResultPresenter);
 
   @override
   Widget build(BuildContext context) {
@@ -22,17 +20,17 @@ class SurveyResultPage extends StatelessWidget with SessionManager {
       body: Builder(
         builder: (context) {
           handleSession(surveyResultPresenter.isSessionExpiredStream);
-          return StreamBuilder<SurveyResultViewModel>(
+          return StreamBuilder<SurveyResultViewModel?>(
             stream: surveyResultPresenter.surveyResultStream,
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return ReloadScreen(
-                  error: snapshot.error,
+                  error: '${snapshot.error}',
                   reload: surveyResultPresenter.loadData,
                 );
               }
               if (snapshot.hasData) {
-                return SurveyResult(surveyResultViewModel: snapshot.data, onSave: surveyResultPresenter.save);
+                return SurveyResult(surveyResultViewModel: snapshot.data!, onSave: surveyResultPresenter.save);
               }
               return Center(
                 child: CircularProgressIndicator(),

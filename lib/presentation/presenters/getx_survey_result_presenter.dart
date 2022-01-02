@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:meta/meta.dart';
+
 
 import '/domain/entities/entities.dart';
 import '/domain/usecases/usecases.dart';
@@ -17,12 +17,12 @@ class GetxSurveyResultPresenter extends GetxController with SessionManager imple
   final SaveSurveyResult saveSurveyResult;
   final String surveyId;
 
-  GetxSurveyResultPresenter({@required this.loadSurveyResult, @required this.saveSurveyResult, @required this.surveyId});
+  GetxSurveyResultPresenter({required this.loadSurveyResult, required this.saveSurveyResult, required this.surveyId});
 
-  var _surveyResult = Rx<SurveyResultViewModel>();
+  var _surveyResult = Rx<SurveyResultViewModel?>(null);
 
   @override
-  Stream<SurveyResultViewModel> get surveyResultStream => _surveyResult.stream;
+  Stream<SurveyResultViewModel?> get surveyResultStream => _surveyResult.stream;
 
   @override
   Future<void> loadData() async {
@@ -30,7 +30,7 @@ class GetxSurveyResultPresenter extends GetxController with SessionManager imple
   }
 
   @override
-  Future<void> save({String answer}) async {
+  Future<void> save({required String answer}) async {
     showResultOnAction(() => saveSurveyResult.save(answer: answer));
   }
 

@@ -1,5 +1,5 @@
 import 'package:faker/faker.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 import 'package:practice/domain/helpers/helpers.dart';
@@ -7,23 +7,25 @@ import 'package:practice/domain/entities/entities.dart';
 import 'package:practice/data/usecases/usecases.dart';
 import 'package:practice/data/http/http.dart';
 
-import '../../../mocks/mocks.dart';
+import '../../../infra/mocks/mocks.dart';
 
 class HttpClientSpy extends Mock implements HttpClient {}
 void main() {
 
-  HttpClient httpClient;
-  String url;
-  RemoteLoadSurveyResult sut;
-  Map surveyResult;
+  late HttpClient httpClient;
+  late String url;
+  late RemoteLoadSurveyResult sut;
+  late Map surveyResult;
+  late String surveyId;
 
   setUp(() {
     httpClient = HttpClientSpy();
     url = faker.internet.httpUrl();
     sut = RemoteLoadSurveyResult(httpClient: httpClient, url: url);
+    surveyId = faker.guid.guid();
   });
 
-  PostExpectation mockRequest() => when(httpClient.request(url: anyNamed('url'), method: anyNamed('method')));
+  When mockRequest() => when(() => (httpClient.request(url: any(named: 'url'), method: any(named: 'method'))));
 
   void mockHttpError(HttpError error) => mockRequest().thenThrow(error);
 
@@ -37,19 +39,19 @@ void main() {
 
   test('Should call HttpClient with correct values', () async {
 
-    mockHttpData(FakeSurveyResultFactory.makeApiJson());
+    mockHttpData(ApiFactory.makeSurveyResultJson());
     
-    await sut.loadBySurvey();
+    await sut.loadBySurvey(surveyId: surveyId);
 
-    verify(httpClient.request(url: url, method: 'get')).called(1);
+    verify(() => (httpClient.request(url: url, method: 'get'))).called(1);
 
   });
 
   test('Should return surveyResult on 200', () async {
 
-    mockHttpData(FakeSurveyResultFactory.makeApiJson()); 
+    mockHttpData(ApiFactory.makeSurveyResultJson()); 
 
-    final result = await sut.loadBySurvey();
+    final result = await sut.loadBySurvey(surveyId: surveyId);
 
     final mockSurvers = SurveyResultEntity(surveyId: surveyResult['surveyId'], question: surveyResult['question'], answers: [
       SurveyAnswerEntity(
@@ -71,9 +73,9 @@ void main() {
 
   test('Should throw UnexpectedError if HttpClient returns 200 with invalid data', () async {
 
-    mockHttpData(FakeSurveyResultFactory.makeInvalidApiJson());
+    mockHttpData(ApiFactory.makeInvalidApiJson());
 
-    final future = sut.loadBySurvey();
+    final future = sut.loadBySurvey(surveyId: surveyId);
 
     expect(future, throwsA(DomainError.unexpected));
   });
@@ -82,7 +84,7 @@ void main() {
 
     mockHttpError(HttpError.forbidden);
 
-    final future = sut.loadBySurvey();
+    final future = sut.loadBySurvey(surveyId: surveyId);
 
     expect(future, throwsA(DomainError.accessDenied));
   });
@@ -92,7 +94,7 @@ void main() {
 
     mockHttpError(HttpError.notFound);
 
-    final future = sut.loadBySurvey();
+    final future = sut.loadBySurvey(surveyId: surveyId);
 
     expect(future, throwsA(DomainError.unexpected));
   });
@@ -101,7 +103,7 @@ void main() {
 
     mockHttpError(HttpError.serverError);
 
-    final future = sut.loadBySurvey();
+    final future = sut.loadBySurvey(surveyId: surveyId);
 
     expect(future, throwsA(DomainError.unexpected));
   });

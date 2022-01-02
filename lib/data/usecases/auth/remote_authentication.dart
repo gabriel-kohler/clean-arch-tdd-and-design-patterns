@@ -13,11 +13,11 @@ class RemoteAuthentication implements Authentication {
   final String url;
 
   RemoteAuthentication({
-    @required this.httpClient,
-    @required this.url,
+    required this.httpClient,
+    required this.url,
   });
 
-  Future<AccountEntity> auth({@required AuthenticationParams params}) async {
+  Future<AccountEntity> auth({required AuthenticationParams params}) async {
     final body = RemoteAuthenticationParams.fromDomain(params).toJson();
     try {
        final httpResponse = await httpClient.request(url: url, method: 'post', body: body);
@@ -35,8 +35,8 @@ class RemoteAuthenticationParams {
   final String password;
 
   RemoteAuthenticationParams({
-    @required this.email,
-    @required this.password,
+    required this.email,
+    required this.password,
   });
 
   factory RemoteAuthenticationParams.fromDomain(AuthenticationParams params) =>

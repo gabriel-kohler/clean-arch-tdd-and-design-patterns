@@ -1,11 +1,11 @@
-import 'package:meta/meta.dart';
+
 
 import '/main/builders/builders.dart';
 import '/main/composites/composites.dart';
 
 import '/validation/dependencies/dependencies.dart';
 
-ValidationComposite makeValidationComposite({@required List<FieldValidation> validations}) {
+ValidationComposite makeValidationComposite({required List<FieldValidation> validations}) {
   return ValidationComposite(validations);
 }
 

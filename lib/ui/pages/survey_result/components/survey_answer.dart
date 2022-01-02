@@ -3,12 +3,10 @@ import 'package:flutter/material.dart';
 import '/ui/pages/pages.dart';
 
 class SurveyAnswer extends StatelessWidget {
-  const SurveyAnswer({
-    Key key,
-    @required this.surveyResult,
-  }) : super(key: key);
 
   final SurveyAnswerViewModel surveyResult;
+
+  SurveyAnswer(this.surveyResult);
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +37,7 @@ class SurveyAnswer extends StatelessWidget {
         children.insert(
             0,
             Image.network(
-              surveyResult.image,
+              surveyResult.image!,
               width: 40,
               key: ValueKey('imageUrl'),
             ));

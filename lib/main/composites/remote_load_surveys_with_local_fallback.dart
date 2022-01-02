@@ -1,4 +1,4 @@
-import 'package:meta/meta.dart';
+
 
 import '/data/usecases/usecases.dart';
 
@@ -12,7 +12,7 @@ class RemoteLoadSurveysWithLocalFallback implements LoadSurveys {
   final RemoteLoadSurveys remoteLoad;
   final LocalLoadSurveys localLoad;
 
-  RemoteLoadSurveysWithLocalFallback({@required this.remoteLoad, @required this.localLoad});
+  RemoteLoadSurveysWithLocalFallback({required this.remoteLoad, required this.localLoad});
 
   Future<List<SurveyEntity>> load() async {
 

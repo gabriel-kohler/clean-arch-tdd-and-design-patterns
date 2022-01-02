@@ -1,4 +1,4 @@
-import 'package:meta/meta.dart';
+
 
 import '/domain/helpers/helpers.dart';
 import '/domain/entities/entities.dart';
@@ -11,9 +11,9 @@ class RemoteLoadSurveyResultWithLocalFallback implements LoadSurveyResult {
   final RemoteLoadSurveyResult remote;
   final LocalLoadSurveyResult local;
 
-  RemoteLoadSurveyResultWithLocalFallback({@required this.remote, @required this.local});
+  RemoteLoadSurveyResultWithLocalFallback({required this.remote, required this.local});
 
-  Future<SurveyResultEntity> loadBySurvey({String surveyId}) async {
+  Future<SurveyResultEntity> loadBySurvey({required String surveyId}) async {
 
     try {
       final result = await remote.loadBySurvey(surveyId: surveyId);

@@ -1,6 +1,6 @@
 import 'package:faker/faker.dart';
 import 'package:test/test.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 
 import 'package:practice/data/http/http.dart';
 import 'package:practice/data/cache/cache.dart';
@@ -13,16 +13,16 @@ class DeleteSecureCacheSpy extends Mock implements DeleteSecureCacheStorage {}
 class HttpClientSpy extends Mock implements HttpClient {}
 
 void main() {
-  FetchSecureCacheStorage fetchSecureCacheSpy;
-  DeleteSecureCacheStorage deleteSecureCacheSpy;
-  HttpClient httpClient;
-  AuthorizeHttpClientDecorator sut;
+  late FetchSecureCacheStorage fetchSecureCacheSpy;
+  late DeleteSecureCacheStorage deleteSecureCacheSpy;
+  late HttpClient httpClient;
+  late AuthorizeHttpClientDecorator sut;
 
-  String url;
-  String method;
-  Map body;
-  String token;
-  String httpResponse;
+  late String url;
+  late String method;
+  late Map body;
+  late String token;
+  late String httpResponse;
 
   setUp(() {
     fetchSecureCacheSpy = FetchSecureCacheSpy();
@@ -38,14 +38,14 @@ void main() {
 
   void mockToken() {
     token = faker.guid.guid();
-    when(fetchSecureCacheSpy.fetchSecure(key: anyNamed('key'))).thenAnswer((_) async => token);
+    when(() => (fetchSecureCacheSpy.fetchSecure(key: any(named: 'key').thenAnswer((_) async => token))));
   }
 
-  PostExpectation mockHttpResponseCall() => when(httpClient.request(
-      url: anyNamed('url'), 
-      method: anyNamed('method'), 
-      body: anyNamed('body'), 
-      headers: anyNamed('headers')));
+  When mockHttpResponseCall() => when(() => (httpClient.request(
+      url: any(named: 'url'), 
+      method: any(named: 'method'), 
+      body: any(named: 'body'), 
+      headers: any(named: 'headers'))));
 
   void mockHttpResponse() {
     httpResponse = 'any_response';
@@ -55,7 +55,7 @@ void main() {
 
   void mockHttpResponseError(HttpError error) => mockHttpResponseCall().thenThrow(error);
 
-  PostExpectation mockFetchSecureCall() => when(fetchSecureCacheSpy.fetchSecure(key: anyNamed('key')));
+  When mockFetchSecureCall() => when(() => (fetchSecureCacheSpy.fetchSecure(key: any(named: 'key'))));
 
   void mockFetchSecureError() => mockFetchSecureCall().thenThrow(Exception());
 
@@ -63,7 +63,7 @@ void main() {
     
     await sut.request(url: url, method: method, body: body);
 
-    verify(fetchSecureCacheSpy.fetchSecure(key: 'token')).called(1);
+    verify(() => (fetchSecureCacheSpy.fetchSecure(key: 'token'))).called(1);
 
   });
  
@@ -72,10 +72,10 @@ void main() {
     mockToken();
     
     await sut.request(url: url, method: method, body: body);
-    verify(httpClient.request(url: url, method: method, body: body, headers: {'x-access-token' : token})).called(1);
+    verify(() => (httpClient.request(url: url, method: method, body: body, headers: {'x-access-token' : token}))).called(1);
 
     await sut.request(url: url, method: method, body: body, headers: {'any_header' : 'any_value'});
-    verify(httpClient.request(url: url, method: method, body: body, headers: {'x-access-token' : token, 'any_header' : 'any_value'})).called(1);
+    verify(() => (httpClient.request(url: url, method: method, body: body, headers: {'x-access-token' : token, 'any_header' : 'any_value'}))).called(1);
 
   });
 
@@ -96,7 +96,7 @@ void main() {
     final future =  sut.request(url: url, method: method, body: body);
 
     expect(future, throwsA(HttpError.forbidden));
-    verify(deleteSecureCacheSpy.deleteSecure(key: 'token')).called(1);
+    verify(() => (deleteSecureCacheSpy.deleteSecure(key: 'token'))).called(1);
 
   });
 
@@ -115,10 +115,10 @@ void main() {
     mockHttpResponseError(HttpError.forbidden);
 
     final future =  sut.request(url: url, method: method, body: body);
-    await untilCalled(deleteSecureCacheSpy.deleteSecure(key: 'token'));
+    await untilCalled(() => deleteSecureCacheSpy.deleteSecure(key: 'token'));
 
     expect(future, throwsA(HttpError.forbidden));
-    verify(deleteSecureCacheSpy.deleteSecure(key: 'token')).called(1);
+    verify(() => (deleteSecureCacheSpy.deleteSecure(key: 'token'))).called(1);
 
   });
 

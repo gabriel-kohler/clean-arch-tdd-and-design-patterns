@@ -1,6 +1,7 @@
 import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
+
 
 import 'package:practice/domain/helpers/helpers.dart';
 import 'package:practice/domain/usecases/auth/authentication.dart';
@@ -8,18 +9,20 @@ import 'package:practice/domain/usecases/auth/authentication.dart';
 import 'package:practice/data/usecases/auth/remote_authentication.dart';
 import 'package:practice/data/http/http.dart';
 
-import '../../../mocks/mocks.dart';
+import '../../../domain/mocks/mocks.dart';
+import '../../../infra/mocks/mocks.dart';
+
 
 class HttpClientSpy extends Mock implements HttpClient {}
 
 void main() {
-  HttpClient httpClient;
-  String url;
-  RemoteAuthentication sut;
-  AuthenticationParams params;
-  Map apiResult;
+  late HttpClient httpClient;
+  late String url;
+  late RemoteAuthentication sut;
+  late AuthenticationParams params;
+  late Map apiResult;
 
-  PostExpectation mockRequest() => when(httpClient.request(url: anyNamed('url'), method: anyNamed('method'), body: anyNamed('body')));
+  When mockRequest() => when(() => (httpClient.request(url: any(named: 'url'), method: any(named: 'method'), body: any(named: 'body'))));
   
 
   void mockHttpError(HttpError error) {
@@ -36,9 +39,9 @@ void main() {
     url = faker.internet.httpUrl();
     sut = RemoteAuthentication(httpClient: httpClient, url: url);
 
-    params = FakeParamsFactory.makeAuthenticationParams();
+    params = ParamsFactory.makeAuthenticationParams();
 
-    mockHttpData(FakeAccountFactory.makeApiJson());
+    mockHttpData((ApiFactory.makeAccountJson()));
   });
 
   test('Should call httpClient with correct values', () async {
@@ -50,11 +53,11 @@ void main() {
       'password': params.password,
     };
 
-    verify(httpClient.request(
+    verify(() => (httpClient.request(
       url: url,
       method: 'post',
       body: body,
-    ));
+    )));
   });
 
   test('Should throw UnexpectedError if HttpClient returns 400', () async {

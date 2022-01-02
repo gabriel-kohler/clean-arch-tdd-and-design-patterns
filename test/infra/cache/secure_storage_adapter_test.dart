@@ -1,5 +1,5 @@
 import 'package:faker/faker.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -11,10 +11,10 @@ class FlutterSecureStorageSpy extends Mock implements FlutterSecureStorage {}
 
 void main() {
 
-  FlutterSecureStorageSpy flutterSecureStorageSpy;
-  SecureStorageAdapter sut;
-  AccountEntity account;
-  String key;
+  late FlutterSecureStorageSpy flutterSecureStorageSpy;
+  late SecureStorageAdapter sut;
+  late AccountEntity account;
+  late String key;
 
   setUp(() {
     flutterSecureStorageSpy = FlutterSecureStorageSpy();
@@ -25,13 +25,13 @@ void main() {
 
   group('Save Secure', () {
 
-    PostExpectation mockSaveSecureCall() => when(flutterSecureStorageSpy.write(key: anyNamed('key'), value: anyNamed('value')));
+    When mockSaveSecureCall() => when(() => (flutterSecureStorageSpy.write(key: any(named: 'key'), value: any(named: 'value'))));
     mockSaveSecureError() => mockSaveSecureCall().thenThrow(Exception());
     
     test('Should SecureStorageAdapter calls saveSecure with correct values', () async {
       await sut.saveSecure(key: 'token', value: account.token);
 
-      verify(flutterSecureStorageSpy.write(key: key, value: account.token));
+      verify(() => (flutterSecureStorageSpy.write(key: key, value: account.token)));
     });
 
     test('Should SecureStorageAdapter throw if FlutterSecureStorage throws', () async {
@@ -47,7 +47,7 @@ void main() {
 
   group('Fetch Secure', () {
 
-    PostExpectation mockFetchSecureCall() => when(flutterSecureStorageSpy.read(key: anyNamed('key')));
+    When mockFetchSecureCall() => when(() => (flutterSecureStorageSpy.read(key: any(named: 'key'))));
     mockFetchSecure() => mockFetchSecureCall().thenAnswer((_) async => 'any_token');
     mockFetchSecureError() => mockFetchSecureCall().thenThrow(Exception());
 
@@ -55,7 +55,7 @@ void main() {
       
       await sut.fetchSecure(key: key);
 
-      verify(flutterSecureStorageSpy.read(key: key)).called(1);
+      verify(() => (flutterSecureStorageSpy.read(key: key))).called(1);
 
     });
 
@@ -82,13 +82,13 @@ void main() {
 
   group('delete', () {
 
-    PostExpectation mockDeleteSecureCall() => when(flutterSecureStorageSpy.delete(key: anyNamed('key')));
+    When mockDeleteSecureCall() => when(() => (flutterSecureStorageSpy.delete(key: any(named: 'key'))));
     mockDeleteSecureError() => mockDeleteSecureCall().thenThrow(Exception());
 
     test('Should call delete cache with correct key', () async {
        await sut.deleteSecure(key: key);
 
-      verify(flutterSecureStorageSpy.delete(key: key)).called(1);
+      verify(() => (flutterSecureStorageSpy.delete(key: key))).called(1);
     });
 
     test('Should throw if delete throws', () async {

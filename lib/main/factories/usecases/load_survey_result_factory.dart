@@ -5,12 +5,12 @@ import '/data/usecases/usecases.dart';
 
 import '/domain/usecases/usecases.dart';
 
-LoadSurveyResult makeRemoteLoadSurveyResult(String surveyId) => RemoteLoadSurveyResult(
+RemoteLoadSurveyResult makeRemoteLoadSurveyResult(String surveyId) => RemoteLoadSurveyResult(
   httpClient: makeAuthorizeHttpClientDecorator(),
   url: makeApiUrl('surveys/$surveyId/results'),
 );
 
-LoadSurveyResult makeLocalLoadSurveyResult(String surveyId) => LocalLoadSurveyResult(
+LocalLoadSurveyResult makeLocalLoadSurveyResult(String surveyId) => LocalLoadSurveyResult(
   cacheStorage: makeLocalStorageAdapter(),
 );
 

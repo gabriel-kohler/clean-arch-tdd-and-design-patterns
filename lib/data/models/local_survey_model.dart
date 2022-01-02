@@ -1,4 +1,4 @@
-import 'package:meta/meta.dart';
+
 
 import '/domain/entities/entities.dart';
 
@@ -9,7 +9,7 @@ class LocalSurveyModel {
   final DateTime date;
   final bool didAnswer;
 
-  LocalSurveyModel({@required this.id, @required this.question, @required this.date, @required this.didAnswer});
+  LocalSurveyModel({required this.id, required this.question, required this.date, required this.didAnswer});
 
   factory LocalSurveyModel.fromJson(Map json) {
     if (!json.keys.toSet().containsAll(['id', 'question', 'date', 'didAnswer'])) {

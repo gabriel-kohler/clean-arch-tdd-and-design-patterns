@@ -1,5 +1,5 @@
 import 'package:faker/faker.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 import 'package:practice/domain/helpers/helpers.dart';
@@ -7,15 +7,15 @@ import 'package:practice/domain/entities/entities.dart';
 import 'package:practice/data/usecases/usecases.dart';
 import 'package:practice/data/http/http.dart';
 
-import '../../../mocks/mocks.dart';
+import '../../../infra/mocks/mocks.dart';
 
 class HttpClientSpy extends Mock implements HttpClient {}
 void main() {
 
-  HttpClient httpClient;
-  String url;
-  RemoteLoadSurveys sut;
-  List<Map> listData;
+  late HttpClient httpClient;
+  late String url;
+  late RemoteLoadSurveys sut;
+  late List<Map> listData;
 
   setUp(() {
     httpClient = HttpClientSpy();
@@ -23,7 +23,7 @@ void main() {
     sut = RemoteLoadSurveys(httpClient: httpClient, url: url);
   });
 
-  PostExpectation mockRequest() => when(httpClient.request(url: anyNamed('url'), method: anyNamed('method')));
+  When mockRequest() => when(() => (httpClient.request(url: any(named: 'url'), method: any(named: 'method'))));
 
   void mockHttpError(HttpError error) => mockRequest().thenThrow(error);
 
@@ -35,17 +35,17 @@ void main() {
 
   test('Should call HttpClient with correct values', () async {
 
-    mockHttpData(FakeSurveysFactory.makeApiJson());
+    mockHttpData(ApiFactory.makeSurveyList());
     
     await sut.load();
 
-    verify(httpClient.request(url: url, method: 'get')).called(1);
+    verify(() => (httpClient.request(url: url, method: 'get'))).called(1);
 
   });
 
   test('Should return surveys on 200', () async {
 
-    mockHttpData(FakeSurveysFactory.makeApiJson()); 
+    mockHttpData(ApiFactory.makeSurveyList()); 
 
     final listSurveys = await sut.load();
 
@@ -59,7 +59,7 @@ void main() {
 
   test('Should throw UnexpectedError if HttpClient returns 200 with invalid data', () async {
 
-    mockHttpData(FakeSurveysFactory.makeInvalidApiJson());
+    mockHttpData(ApiFactory.makeInvalidList());
 
     final future = sut.load();
 

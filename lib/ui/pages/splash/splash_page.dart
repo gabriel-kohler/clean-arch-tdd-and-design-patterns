@@ -8,7 +8,7 @@ class SplashPage extends StatelessWidget with NavigationManager {
 
   final SplashPresenter splashPresenter;
 
-  SplashPage({@required this.splashPresenter});
+  SplashPage({required this.splashPresenter});
 
   @override
   Widget build(BuildContext context) {

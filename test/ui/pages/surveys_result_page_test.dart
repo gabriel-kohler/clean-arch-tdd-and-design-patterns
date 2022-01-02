@@ -1,5 +1,5 @@
 import 'package:network_image_mock/network_image_mock.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -9,17 +9,18 @@ import 'package:practice/ui/helpers/helpers.dart';
 import 'package:practice/ui/pages/pages.dart';
 import 'package:practice/utils/utils.dart';
 
-import '../../mocks/mocks.dart';
+import '../../infra/mocks/mocks.dart';
 import '../helpers/helpers.dart';
+import '../mocks/mocks.dart';
 
 class SurveyResultPresenterSpy extends Mock implements SurveyResultPresenter {}
 
 void main() {
 
-  SurveyResultPresenter surveyResultPresenterSpy;
+  late SurveyResultPresenter surveyResultPresenterSpy;
 
-  StreamController<SurveyResultViewModel> surveyResultController;
-  StreamController<bool> isSessionExpiredController;
+  late StreamController<SurveyResultViewModel> surveyResultController;
+  late StreamController<bool> isSessionExpiredController;
 
   void initStreams() {
     surveyResultController = StreamController<SurveyResultViewModel>();
@@ -27,8 +28,8 @@ void main() {
   }
 
   void mockStreams() {
-    when(surveyResultPresenterSpy.surveyResultStream).thenAnswer((_) => surveyResultController.stream);
-    when(surveyResultPresenterSpy.isSessionExpiredStream).thenAnswer((_) => isSessionExpiredController.stream);
+    when(() => (surveyResultPresenterSpy.surveyResultStream)).thenAnswer((_) => surveyResultController.stream);
+    when(() => (surveyResultPresenterSpy.isSessionExpiredStream)).thenAnswer((_) => isSessionExpiredController.stream);
   }
 
   void closeStreams() {
@@ -47,7 +48,7 @@ void main() {
       await tester.pumpWidget(
         makePage(
           initialRoute: '/survey_result/:any_survey_id', 
-          page: () => SurveyResultPage(surveyResultPresenter: surveyResultPresenterSpy),
+          page: () => SurveyResultPage(surveyResultPresenterSpy),
         ),
       );
     });
@@ -62,7 +63,7 @@ void main() {
 
     await loadPage(tester);
 
-    verify(surveyResultPresenterSpy.loadData()).called(1);
+    verify(() => (surveyResultPresenterSpy.loadData())).called(1);
 
   });
 
@@ -89,7 +90,7 @@ void main() {
 
     await tester.tap(find.text('Recarregar'));
 
-    verify(surveyResultPresenterSpy.loadData()).called(2);
+    verify(() => (surveyResultPresenterSpy.loadData())).called(2);
 
   });
 
@@ -97,7 +98,7 @@ void main() {
     await loadPage(tester);
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
     
-    surveyResultController.add(FakeSurveyResultFactory.makeSurveyResultViewModel());
+    surveyResultController.add(ViewModelFactory.makeSurveyResultViewModel());
 
     await mockNetworkImagesFor(() async {
       await tester.pump();
@@ -143,7 +144,7 @@ void main() {
   testWidgets('Should SurveyResultPage call save on item list click', (WidgetTester tester) async {
     await loadPage(tester);
     
-    surveyResultController.add(FakeSurveyResultFactory.makeSurveyResultViewModel());
+    surveyResultController.add(ViewModelFactory.makeSurveyResultViewModel());
 
     await mockNetworkImagesFor(() async {
       await tester.pump();
@@ -151,14 +152,14 @@ void main() {
 
     await tester.tap(find.text('Answer 1'));
 
-    verify(surveyResultPresenterSpy.save(answer: 'Answer 1')).called(1);
+    verify(() => (surveyResultPresenterSpy.save(answer: 'Answer 1'))).called(1);
 
   });
 
   testWidgets('Should SurveyResultPage not call on current answer click', (WidgetTester tester) async {
     await loadPage(tester);
     
-    surveyResultController.add(FakeSurveyResultFactory.makeSurveyResultViewModel());
+    surveyResultController.add(ViewModelFactory.makeSurveyResultViewModel());
 
     await mockNetworkImagesFor(() async {
       await tester.pump();
@@ -166,7 +167,7 @@ void main() {
 
     await tester.tap(find.text('Answer 0'));
 
-    verifyNever(surveyResultPresenterSpy.save(answer: 'Answer 0'));
+    verifyNever(() => surveyResultPresenterSpy.save(answer: 'Answer 0'));
 
   });
 

@@ -12,7 +12,7 @@ import 'components/components.dart';
 class SurveysPage extends StatefulWidget {
   final SurveysPresenter surveysPresenter;
 
-  const SurveysPage({@required this.surveysPresenter});
+  const SurveysPage({required this.surveysPresenter});
 
   @override
   State<SurveysPage> createState() => _SurveysPageState();
@@ -36,7 +36,7 @@ class _SurveysPageState extends State<SurveysPage> with NavigationManager, Sessi
   @override
   Widget build(BuildContext context) {
 
-    Get.find<RouteObserver>().subscribe(this, ModalRoute.of(context));
+    Get.find<RouteObserver>().subscribe(this, ModalRoute.of(context) as PageRoute);
     
     widget.surveysPresenter.loadData();
     return Scaffold(
@@ -52,14 +52,14 @@ class _SurveysPageState extends State<SurveysPage> with NavigationManager, Sessi
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return ReloadScreen(
-                  error: snapshot.error,
+                  error: '${snapshot.error}',
                   reload: widget.surveysPresenter.loadData,
                 );
               }
               if (snapshot.hasData) {
                 return Provider(
                   create:  (_) => widget.surveysPresenter,
-                  child: SurveyItems(listSurveys: snapshot.data),
+                  child: SurveyItems(snapshot.data!),
                 );
               }
               return Center(

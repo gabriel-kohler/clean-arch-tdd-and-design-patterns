@@ -1,5 +1,5 @@
 import 'package:faker/faker.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 
@@ -10,19 +10,20 @@ import 'package:practice/domain/entities/entities.dart';
 import 'package:practice/domain/helpers/helpers.dart';
 import 'package:practice/domain/usecases/signup/add_account.dart';
 
-import '../../../mocks/mocks.dart';
+import '../../../domain/mocks/mocks.dart';
+import '../../../infra/mocks/mocks.dart';
 
 class HttpClientSpy extends Mock implements HttpClient {}
 
 void main() {
 
-  String url;
-  HttpClient httpClient;
-  RemoteAddAccount sut;
-  AddAccountParams params;
-  Map apiResult;
+  late String url;
+  late HttpClient httpClient;
+  late RemoteAddAccount sut;
+  late AddAccountParams params;
+  late Map apiResult;
 
-  PostExpectation mockHttpCall() => when(httpClient.request(url: anyNamed('url'), method: anyNamed('method'), body: anyNamed('body')));
+  When mockHttpCall() => when(() => (httpClient.request(url: any(named: 'url'), method: any(named: 'method'), body: any(named: 'body'))));
 
   void mockHttpError(HttpError error) => mockHttpCall().thenThrow(error);
 
@@ -36,9 +37,9 @@ void main() {
     url = faker.internet.httpUrl();
     sut = RemoteAddAccount(httpClient: httpClient, url: url);
 
-    params = FakeParamsFactory.makeAddAccountParams();
+    params = ParamsFactory.makeAddAccountParams();
 
-    mockHttpData(FakeAccountFactory.makeApiJson());
+    mockHttpData(ApiFactory.makeAccountJson());
 
   });
 
@@ -53,7 +54,7 @@ void main() {
 
     await sut.add(params: params);
 
-    verify(httpClient.request(url: url, method: 'post', body: body)).called(1);
+    verify(() => (httpClient.request(url: url, method: 'post', body: body))).called(1);
   });
 
   test('Should throw UnexpetedError if HttpClient returns 400', () async {

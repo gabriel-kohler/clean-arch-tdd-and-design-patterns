@@ -1,5 +1,5 @@
 import 'package:faker/faker.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 import 'package:practice/domain/entities/entities.dart';
@@ -7,17 +7,17 @@ import 'package:practice/domain/helpers/helpers.dart';
 import 'package:practice/data/usecases/usecases.dart';
 import 'package:practice/data/http/http.dart';
 
-import '../../../mocks/mocks.dart';
+import '../../../infra/mocks/mocks.dart';
 
 class HttpClientSpy extends Mock implements HttpClient {}
 
 void main() {
 
-  HttpClient httpClient;
-  String url;
-  RemoteSaveSurveyResult sut;
-  String answer;
-  Map surveyResult;
+  late HttpClient httpClient;
+  late String url;
+  late RemoteSaveSurveyResult sut;
+  late String answer;
+  late Map surveyResult;
 
   setUp(() {
     httpClient = HttpClientSpy();
@@ -26,7 +26,7 @@ void main() {
     answer = faker.lorem.sentence();
   });
 
-  PostExpectation mockRequest() => when(httpClient.request(url: anyNamed('url'), method: anyNamed('method'), body: anyNamed('body')));
+  When mockRequest() => when(() => (httpClient.request(url: any(named: 'url'), method: any(named: 'method'), body: any(named: 'body'))));
   void mockHttpError(HttpError error) => mockRequest().thenThrow(error);
 
   void mockHttpData(Map data) {
@@ -36,11 +36,11 @@ void main() {
 
   test('Should call HttpClient with correct values', () async {
 
-    mockHttpData(FakeSurveyResultFactory.makeApiJson()); 
+    mockHttpData(ApiFactory.makeSurveyResultJson()); 
 
     await sut.save(answer: answer);
 
-    verify(httpClient.request(url: url, method: 'put', body: {'answer' : answer})).called(1);
+    verify(() => (httpClient.request(url: url, method: 'put', body: {'answer' : answer}))).called(1);
 
   });
 
@@ -74,7 +74,7 @@ void main() {
 
     test('Should return surveyResult on 200', () async {
 
-    mockHttpData(FakeSurveyResultFactory.makeApiJson()); 
+    mockHttpData(ApiFactory.makeSurveyResultJson()); 
 
     final result = await sut.save(answer: answer);
 
@@ -98,7 +98,7 @@ void main() {
 
   test('Should throw UnexpectedError if HttpClient returns 200 with invalid data', () async {
 
-    mockHttpData(FakeSurveyResultFactory.makeInvalidApiJson());
+    mockHttpData(ApiFactory.makeInvalidApiJson());
 
     final future = sut.save(answer: answer);
 

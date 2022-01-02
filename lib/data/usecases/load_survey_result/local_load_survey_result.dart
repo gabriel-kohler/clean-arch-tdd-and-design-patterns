@@ -1,4 +1,4 @@
-import 'package:meta/meta.dart';
+
 import 'package:practice/data/models/local_survey_result_model.dart';
 
 import '/domain/usecases/usecases.dart';
@@ -11,9 +11,9 @@ import '/data/cache/cache.dart';
 class LocalLoadSurveyResult implements LoadSurveyResult {
   final CacheStorage cacheStorage;
 
-  LocalLoadSurveyResult({@required this.cacheStorage});
+  LocalLoadSurveyResult({required this.cacheStorage});
 
-  Future<SurveyResultEntity> loadBySurvey({String surveyId}) async {
+  Future<SurveyResultEntity> loadBySurvey({required String surveyId}) async {
 
     try {
       final json = await cacheStorage.fetch(key: 'survey_result/$surveyId');
@@ -27,7 +27,7 @@ class LocalLoadSurveyResult implements LoadSurveyResult {
 
   }
 
-  Future<void> validate({@required String surveyId}) async {
+  Future<void> validate({required String surveyId}) async {
     try {
       final json = await cacheStorage.fetch(key: 'survey_result/$surveyId');
       LocalSurveyResultModel.fromJson(json).toSurveyResultEntity();
@@ -36,7 +36,7 @@ class LocalLoadSurveyResult implements LoadSurveyResult {
     }
   }
 
-  Future<void> save({@required SurveyResultEntity surveyResult}) async {
+  Future<void> save({required SurveyResultEntity surveyResult}) async {
     try {
       final json = LocalSurveyResultModel.fromSurveyResultEntity(surveyResult).toJson();
       await cacheStorage.save(key: 'survey_result/${surveyResult.surveyId}', value: json);

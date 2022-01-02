@@ -1,5 +1,5 @@
 import 'package:faker/faker.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:practice/utils/app_routes.dart';
 import 'package:test/test.dart';
 
@@ -11,22 +11,22 @@ import 'package:practice/presentation/dependencies/dependencies.dart';
 import 'package:practice/presentation/presenters/presenters.dart';
 import 'package:practice/ui/helpers/errors/errors.dart';
 
-import '../../mocks/fake_account_factory.dart';
+import '../../domain/mocks/mocks.dart';
 
 class ValidationSpy extends Mock implements Validation {}
 class AddAccountSpy extends Mock implements AddAccount {}
 class SaveCurrentAccountSpy extends Mock implements SaveCurrentAccount {}
 void main() {
 
-  Validation validationSpy;
-  AddAccount addAccountSpy;
-  SaveCurrentAccount saveCurrentAccountSpy;
-  GetxSignUpPresenter sut;
+  late Validation validationSpy;
+  late AddAccount addAccountSpy;
+  late SaveCurrentAccount saveCurrentAccountSpy;
+  late GetxSignUpPresenter sut;
 
-  String email;
-  String name;
-  String password;
-  AccountEntity account;
+  late String email;
+  late String name;
+  late String password;
+  late AccountEntity account;
 
   setUp(() {
     validationSpy = ValidationSpy();
@@ -39,11 +39,13 @@ void main() {
     password = faker.internet.password();
   });
 
-  PostExpectation mockValidationCall() => when(validationSpy.validate(field: anyNamed('field'), inputFormData: anyNamed('inputFormData')));
-  mockValidation() => mockValidationCall().thenReturn(null);
-  mockValidationError({ValidationError errorReturn}) => mockValidationCall().thenReturn(errorReturn);
+  When mockValidationCall() => when(() => (validationSpy.validate(field: any(named: 'field'), inputFormData: any(named: 'inputFormData'))));
 
-  PostExpectation mockAddAccountCall() => when(addAccountSpy.add(params: anyNamed('params')));
+  mockValidation() => mockValidationCall().thenReturn(null);
+
+  mockValidationError({ValidationError? errorReturn}) => mockValidationCall().thenReturn(errorReturn);
+
+  When mockAddAccountCall() => when(() => (addAccountSpy.add(params: any(named: 'params'))));
 
   void mockAddAccount(AccountEntity data) {
     account = data;
@@ -63,7 +65,7 @@ void main() {
 
     sut.validateEmail(email);
 
-    verify(validationSpy.validate(field: 'email', inputFormData: formData)).called(1);
+    verify(() => (validationSpy.validate(field: 'email', inputFormData: formData))).called(1);
   });
 
   test('Should emit invalidFieldError if email is invalid', () {
@@ -138,7 +140,7 @@ void main() {
 
     sut.validateName(name);
 
-    verify(validationSpy.validate(field: 'name', inputFormData: formData)).called(1);
+    verify(() => (validationSpy.validate(field: 'name', inputFormData: formData))).called(1);
   });
 
   test('Should emit invalidFieldError if name is invalid', () {
@@ -213,7 +215,7 @@ void main() {
 
     sut.validatePassword(password);
 
-    verify(validationSpy.validate(field: 'password', inputFormData: formData)).called(1);
+    verify(() => (validationSpy.validate(field: 'password', inputFormData: formData))).called(1);
   });
 
   test('Should emit invalidFieldError if password is invalid', () {
@@ -288,7 +290,7 @@ void main() {
 
     sut.validateConfirmPassword(password);
 
-    verify(validationSpy.validate(field: 'confirmPassword', inputFormData: formData)).called(1);
+    verify(() => (validationSpy.validate(field: 'confirmPassword', inputFormData: formData))).called(1);
   });
 
   test('Should emit invalidFieldError if confirmPassword is invalid', () {
@@ -355,10 +357,10 @@ void main() {
 
   test('Should emits form invalid event if any field is invalid', () {
 
-    when(validationSpy.validate(field: 'email', inputFormData: anyNamed('inputFormData'))).thenReturn(ValidationError.invalidField);
-    when(validationSpy.validate(field: 'name', inputFormData: anyNamed('inputFormData'))).thenReturn(ValidationError.invalidField);
-    when(validationSpy.validate(field: 'password', inputFormData: anyNamed('inputFormData'))).thenReturn(ValidationError.invalidField);
-    when(validationSpy.validate(field: 'confirmPassword', inputFormData: anyNamed('inputFormData'))).thenReturn(ValidationError.invalidField);
+    when(() => (validationSpy.validate(field: 'email', inputFormData: any(named: 'inputFormData').thenReturn(ValidationError.invalidField))));
+    when(() => (validationSpy.validate(field: 'name', inputFormData: any(named: 'inputFormData').thenReturn(ValidationError.invalidField))));
+    when(() => (validationSpy.validate(field: 'password', inputFormData: any(named: 'inputFormData').thenReturn(ValidationError.invalidField))));
+    when(() => (validationSpy.validate(field: 'confirmPassword', inputFormData: any(named: 'inputFormData').thenReturn(ValidationError.invalidField))));
 
     sut.emailErrorStream.listen(
       expectAsync1((error) {
@@ -428,7 +430,7 @@ void main() {
 
     await sut.signUp();
 
-    verify(addAccountSpy.add(params: params)).called(1);
+    verify(() => (addAccountSpy.add(params: params))).called(1);
   });
 
   test('Should emit correct events on SignUp success', () async {
@@ -480,16 +482,16 @@ void main() {
 
   test('Should call LocalSaveCurrentAccount with correct values', () async {
 
-    mockAddAccount(FakeAccountFactory.makeAccountEntity());
+    mockAddAccount(EntityFactory.makeAccountEntity());
 
     await sut.signUp();
 
-    verify(saveCurrentAccountSpy.save(account: account)).called(1);
+    verify(() => (saveCurrentAccountSpy.save(account: account))).called(1);
   });
 
   test('Should emit UnexpectedError if LocalSaveCurrentAccount fails', () async {
 
-    when(saveCurrentAccountSpy.save(account: anyNamed('account'))).thenThrow(DomainError.unexpected);
+    when(() => (saveCurrentAccountSpy.save(account: any(named: 'account').thenThrow(DomainError.unexpected))));
     
     expectLater(sut.mainErrorStream, emitsInOrder([null, UIError.unexpected]));
 

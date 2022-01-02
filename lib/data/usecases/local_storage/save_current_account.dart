@@ -1,4 +1,4 @@
-import 'package:meta/meta.dart';
+
 
 import '/domain/entities/entities.dart';
 import '/domain/helpers/helpers.dart';
@@ -10,10 +10,10 @@ class SaveCurrentAccount implements AddCurrentAccount {
 
   final SaveSecureCurrentAccount saveSecureCurrentAccount;
 
-  SaveCurrentAccount({@required this.saveSecureCurrentAccount});
+  SaveCurrentAccount({required this.saveSecureCurrentAccount});
 
   @override
-  Future<void> save({@required AccountEntity account}) async {
+  Future<void> save({required AccountEntity account}) async {
     try {
       saveSecureCurrentAccount.saveSecure(key: 'token', value: account.token);      
     } catch (error) {

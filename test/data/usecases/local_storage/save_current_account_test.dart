@@ -1,5 +1,5 @@
 import 'package:faker/faker.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 
 import 'package:test/test.dart';
 
@@ -12,9 +12,9 @@ class SaveSecureCurrentAccountSpy extends Mock implements SaveSecureCurrentAccou
 
 void main() {
 
-  SaveSecureCurrentAccount saveSecureCurrentAccountSpy;
-  SaveCurrentAccount sut;
-  AccountEntity account;
+  late SaveSecureCurrentAccount saveSecureCurrentAccountSpy;
+  late SaveCurrentAccount sut;
+  late AccountEntity account;
 
   setUp(() {
     saveSecureCurrentAccountSpy = SaveSecureCurrentAccountSpy();
@@ -27,12 +27,12 @@ void main() {
 
     await sut.save(account: account);
 
-    verify(saveSecureCurrentAccountSpy.saveSecure(key: 'token', value: account.token)).called(1);
+    verify(() => (saveSecureCurrentAccountSpy.saveSecure(key: 'token', value: account.token))).called(1);
   });
   
   test('ensure SaveCurrentAccount throw UnexpectedError if SaveSecureCurrentAccount throws', () async {
 
-    when(saveSecureCurrentAccountSpy.saveSecure(key: anyNamed('key'), value: anyNamed('value'))).thenThrow(Exception());
+    when(() => (saveSecureCurrentAccountSpy.saveSecure(key: any(named: 'key'), value: any(named: 'value')))).thenThrow(Exception());
 
     final future = sut.save(account: account);
 

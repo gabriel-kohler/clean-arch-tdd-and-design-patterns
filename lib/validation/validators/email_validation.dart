@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
+
 
 import '/presentation/dependencies/dependencies.dart';
 
@@ -11,7 +11,7 @@ class EmailValidation extends Equatable implements FieldValidation {
   EmailValidation(this.field);
 
   @override
-  ValidationError validate({@required Map inputFormData}) {
+  ValidationError? validate({required Map inputFormData}) {
     final value = inputFormData[field];
 
     final regex = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");

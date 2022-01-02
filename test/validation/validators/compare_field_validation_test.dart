@@ -4,7 +4,7 @@ import 'package:practice/presentation/dependencies/dependencies.dart';
 import 'package:practice/validation/validators/validators.dart';
 void main() {
 
-  CompareFieldValidation sut;
+  late CompareFieldValidation sut;
 
   setUp((){
     sut = CompareFieldValidation(field: 'any_field', fieldToCompare: 'other_field');

@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 
 import 'package:practice/ui/pages/pages.dart';
 import 'package:practice/utils/app_routes.dart';
@@ -14,9 +14,9 @@ class SplashPresenterSpy extends Mock implements SplashPresenter {}
 
 void main() {
 
-  SplashPresenter splashPresenterSpy;
+  late SplashPresenter splashPresenterSpy;
   
-  StreamController<String> navigationToController;
+  late StreamController<String> navigationToController;
 
   Future<void> loadPage(WidgetTester tester) async {
 
@@ -24,7 +24,7 @@ void main() {
 
     navigationToController = StreamController<String>();
 
-    when(splashPresenterSpy.navigateToStream).thenAnswer((_) => navigationToController.stream);
+    when(() => (splashPresenterSpy.navigateToStream)).thenAnswer((_) => navigationToController.stream);
 
     await tester.pumpWidget(
       makePage(
@@ -47,7 +47,7 @@ void main() {
   testWidgets('Should SplashPage call CheckAccount', (WidgetTester tester) async {
     await loadPage(tester);
 
-    verify(splashPresenterSpy.checkAccount()).called(1);
+    verify(() => (splashPresenterSpy.checkAccount())).called(1);
   });
 
   testWidgets('Should change page', (WidgetTester tester) async {
@@ -67,10 +67,6 @@ void main() {
 
     expect(currentRoute, AppRoute.SplashPage);
 
-    navigationToController.add(null);
-    await tester.pump();
-
-    expect(currentRoute, AppRoute.SplashPage);
   });
 
 }

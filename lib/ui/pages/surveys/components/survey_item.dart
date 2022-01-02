@@ -7,7 +7,7 @@ class SurveyItem extends StatelessWidget {
 
   final SurveyViewModel surveyViewModel;
 
-  const SurveyItem({@required this.surveyViewModel});
+  const SurveyItem({required this.surveyViewModel});
 
   @override
   Widget build(BuildContext context) {

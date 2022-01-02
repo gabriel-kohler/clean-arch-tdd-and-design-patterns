@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:practice/ui/helpers/errors/errors.dart';
 
 import 'package:practice/ui/pages/pages.dart';
@@ -10,17 +10,17 @@ import 'package:practice/utils/app_routes.dart';
 import 'package:practice/utils/utils.dart';
 
 import '../helpers/helpers.dart';
-import '../../mocks/mocks.dart';
+import '../mocks/mocks.dart';
 
 class SurveysPresenterSpy extends Mock implements SurveysPresenter {}
 
 void main() {
 
-  SurveysPresenter surveysPresenterSpy;
+  late SurveysPresenter surveysPresenterSpy;
 
-  StreamController<List<SurveyViewModel>> surveysController;
-  StreamController<String> navigateToController;
-  StreamController<bool> isSessionExpiredController;
+  late StreamController<List<SurveyViewModel>> surveysController;
+  late StreamController<String> navigateToController;
+  late StreamController<bool> isSessionExpiredController;
 
   Future<void> loadPage(WidgetTester tester) async {
 
@@ -30,9 +30,9 @@ void main() {
 
     surveysPresenterSpy = SurveysPresenterSpy();
 
-    when(surveysPresenterSpy.surveysStream).thenAnswer((_) => surveysController.stream);
-    when(surveysPresenterSpy.navigateToStream).thenAnswer((_) => navigateToController.stream);
-    when(surveysPresenterSpy.isSessionExpiredStream).thenAnswer((_) => isSessionExpiredController.stream);
+    when(() => (surveysPresenterSpy.surveysStream)).thenAnswer((_) => surveysController.stream);
+    when(() => (surveysPresenterSpy.navigateToStream)).thenAnswer((_) => navigateToController.stream);
+    when(() => (surveysPresenterSpy.isSessionExpiredStream)).thenAnswer((_) => isSessionExpiredController.stream);
 
     await tester.pumpWidget(
       makePage(
@@ -52,7 +52,7 @@ void main() {
 
     await loadPage(tester);
 
-    verify(surveysPresenterSpy.loadData()).called(1);
+    verify(() => (surveysPresenterSpy.loadData())).called(1);
 
   });
 
@@ -64,7 +64,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.pageBack();
 
-    verify(surveysPresenterSpy.loadData()).called(2);
+    verify(() => (surveysPresenterSpy.loadData())).called(2);
 
   });
 
@@ -88,7 +88,7 @@ void main() {
     await loadPage(tester);
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
-    surveysController.add(FakeSurveysFactory.makeSurveysViewModel());
+    surveysController.add(ViewModelFactory.makeSurveysViewModel());
     await tester.pump();
 
     expect(find.text('Ocorreu um erro. Tente novamente em breve'), findsNothing);
@@ -111,7 +111,7 @@ void main() {
 
     await tester.tap(find.text('Recarregar'));
 
-    verify(surveysPresenterSpy.loadData()).called(2);
+    verify(() => (surveysPresenterSpy.loadData())).called(2);
 
   });
 
@@ -119,13 +119,13 @@ void main() {
 
     await loadPage(tester);
 
-    surveysController.add(FakeSurveysFactory.makeSurveysViewModel());
+    surveysController.add(ViewModelFactory.makeSurveysViewModel());
     await tester.pump();
 
     await tester.tap(find.text('Question 1'));
     await tester.pump();
   
-    verify(surveysPresenterSpy.goToSurveyResult('1')).called(1);
+    verify(() => (surveysPresenterSpy.goToSurveyResult('1'))).called(1);
 
   });
 
@@ -146,9 +146,6 @@ void main() {
     await tester.pump();
     expect(currentRoute, AppRoute.SurveysPage);
 
-    navigateToController.add(null);
-    await tester.pump();
-    expect(currentRoute, AppRoute.SurveysPage);
   });
   testWidgets('Should logout', (WidgetTester tester) async {
     await loadPage(tester);

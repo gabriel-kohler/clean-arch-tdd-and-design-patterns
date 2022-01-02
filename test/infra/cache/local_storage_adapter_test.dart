@@ -1,5 +1,5 @@
 import 'package:faker/faker.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 import 'package:localstorage/localstorage.dart';
@@ -10,11 +10,11 @@ class LocalStorageSpy extends Mock implements LocalStorage {}
 
 void main() {
 
-  String key;
-  dynamic value;
+  late String key;
+  late dynamic value;
 
-  LocalStorageAdapter sut;
-  LocalStorage localStorageSpy;
+  late LocalStorageAdapter sut;
+  late LocalStorage localStorageSpy;
 
   setUp(() {
     key = faker.randomGenerator.string(4);
@@ -24,9 +24,9 @@ void main() {
     sut = LocalStorageAdapter(localStorage: localStorageSpy);
   });
 
-  void mockDeleteItemError() => when(localStorageSpy.deleteItem(any)).thenThrow(Exception());
+  void mockDeleteItemError() => when(() => (localStorageSpy.deleteItem(any()))).thenThrow(Exception());
 
-  void mockSaveItemError() => when(localStorageSpy.setItem(any, any)).thenThrow(Exception());
+  void mockSaveItemError() => when(() => (localStorageSpy.setItem(any(), any))).thenThrow(Exception());
 
   
 
@@ -35,8 +35,8 @@ void main() {
     
       await sut.save(key: key, value: value);
 
-      verify(localStorageSpy.deleteItem(key)).called(1);
-      verify(localStorageSpy.setItem(key, value)).called(1);
+      verify(() => (localStorageSpy.deleteItem(key))).called(1);
+      verify(() => (localStorageSpy.setItem(key, value))).called(1);
 
     });
 
@@ -67,7 +67,7 @@ void main() {
     test('Should LocalStorageAdapter calls delete cache with correct key', () async {
        await sut.delete(key: key);
 
-      verify(localStorageSpy.deleteItem(key)).called(1);
+      verify(() => (localStorageSpy.deleteItem(key))).called(1);
     });
 
     test('Should throw if delete throws', () async {
@@ -84,9 +84,9 @@ void main() {
 
   group('fetch', () {
 
-    String result;
+    late String result;
 
-    PostExpectation mockFetchCall() => when(localStorageSpy.getItem(any));
+    When mockFetchCall() => when(() => (localStorageSpy.getItem(any())));
 
     void mockFetch() => mockFetchCall().thenAnswer((_) async => result);
     void mockFetchError() => mockFetchCall().thenThrow(Exception());
@@ -98,7 +98,7 @@ void main() {
     test('Should LocalStorageAdapter calls fetch with correct key', () async {
        await sut.fetch(key: key);
 
-      verify(localStorageSpy.getItem(key)).called(1);
+      verify(() => (localStorageSpy.getItem(key))).called(1);
     });
 
     test('Should return same as localStorage ', () async {

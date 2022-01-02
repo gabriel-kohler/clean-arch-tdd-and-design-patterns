@@ -1,4 +1,4 @@
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:practice/domain/helpers/domain_error.dart';
 import 'package:practice/ui/helpers/errors/errors.dart';
 import 'package:practice/ui/pages/pages.dart';
@@ -9,18 +9,18 @@ import 'package:practice/domain/usecases/survey/survey.dart';
 
 import 'package:practice/presentation/presenters/presenters.dart';
 
-import '../../mocks/fake_surveys_factory.dart';
+import '../../domain/mocks/mocks.dart';
 
 class LoadSurveysSpy extends Mock implements LoadSurveys {}
 
 void main() {
-  LoadSurveys loadSurveysSpy;
-  GetxSurveysPresenter sut;
-  List<SurveyEntity> surveys;
+  late LoadSurveys loadSurveysSpy;
+  late GetxSurveysPresenter sut;
+  late List<SurveyEntity> surveys;
 
-  PostExpectation mockLoadSurveysCall() => when(loadSurveysSpy.load());
+  When mockLoadSurveysCall() => when(() => (loadSurveysSpy.load()));
 
-  void mockLoadSurveys({List<SurveyEntity> data}) {
+  void mockLoadSurveys(List<SurveyEntity> data) {
     surveys = data;
     mockLoadSurveysCall().thenAnswer((_) async => surveys);
   }
@@ -35,17 +35,17 @@ void main() {
 
   test('Should call LoadSurveys with correct values', () async {
 
-    mockLoadSurveys(data: FakeSurveysFactory.makeSurveyEntity());
+    mockLoadSurveys(EntityFactory.makeSurveysList());
 
     await sut.loadData();
 
-    verify(loadSurveysSpy.load()).called(1);
+    verify(() => (loadSurveysSpy.load())).called(1);
 
   });
 
   test('Should emit correct events on success', () async {
 
-    mockLoadSurveys(data:FakeSurveysFactory.makeSurveyEntity());
+    mockLoadSurveys(EntityFactory.makeSurveysList());
 
 
     sut.surveysStream.listen(

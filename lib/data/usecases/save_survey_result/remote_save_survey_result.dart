@@ -1,4 +1,4 @@
-import 'package:meta/meta.dart';
+
 
 import '/domain/helpers/helpers.dart';
 import '/domain/entities/entities.dart';
@@ -11,9 +11,9 @@ class RemoteSaveSurveyResult implements SaveSurveyResult {
   final HttpClient httpClient;
   final String url;
 
-  RemoteSaveSurveyResult({@required this.httpClient, @required this.url});
+  RemoteSaveSurveyResult({required this.httpClient, required this.url});
 
-  Future<SurveyResultEntity> save({String answer}) async {
+  Future<SurveyResultEntity> save({required String answer}) async {
 
     try {
       final json = await httpClient.request(url: url, method: 'put', body: {'answer': answer});

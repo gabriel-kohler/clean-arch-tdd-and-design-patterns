@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:meta/meta.dart';
+
 import 'package:intl/intl.dart';
 
 import '/utils/utils.dart';
@@ -16,7 +16,7 @@ class GetxSurveysPresenter extends GetxController with SessionManager, Navigatio
 
   final LoadSurveys loadSurveys;
 
-  GetxSurveysPresenter({@required this.loadSurveys});
+  GetxSurveysPresenter({required this.loadSurveys});
 
   var _surveys = Rx<List<SurveyViewModel>>([]);
 

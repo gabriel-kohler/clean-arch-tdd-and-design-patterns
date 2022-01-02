@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:meta/meta.dart';
+
 
 import '/utils/utils.dart';
 
@@ -25,29 +25,29 @@ implements SignUpPresenter {
   final AddAccount addAccount;
   final SaveCurrentAccount saveCurrentAccount;
 
-  GetxSignUpPresenter({@required this.validation, @required this.addAccount, @required this.saveCurrentAccount});
+  GetxSignUpPresenter({required this.validation, required this.addAccount, required this.saveCurrentAccount});
 
-  String _name;
-  String _email;
-  String _password;
-  String _confirmPassword;
+  String? _name;
+  String? _email;
+  String? _password;
+  String? _confirmPassword;
 
-  var _nameError = Rx<UIError>(null);
-  var _emailError = Rx<UIError>(null);
-  var _passwordError = Rx<UIError>(null);
-  var _confirmPasswordError = Rx<UIError>(null);
-
-  @override
-  Stream<UIError> get nameErrorStream => _nameError.stream;
+  var _nameError = Rx<UIError?>(null);
+  var _emailError = Rx<UIError?>(null);
+  var _passwordError = Rx<UIError?>(null);
+  var _confirmPasswordError = Rx<UIError?>(null);
 
   @override
-  Stream<UIError> get emailErrorStream => _emailError.stream;
+  Stream<UIError?> get nameErrorStream => _nameError.stream;
 
   @override
-  Stream<UIError> get passwordErrorStream => _passwordError.stream;
+  Stream<UIError?> get emailErrorStream => _emailError.stream;
 
   @override
-  Stream<UIError> get confirmPasswordErrorStream => _confirmPasswordError.stream;
+  Stream<UIError?> get passwordErrorStream => _passwordError.stream;
+
+  @override
+  Stream<UIError?> get confirmPasswordErrorStream => _confirmPasswordError.stream;
 
   void _validateForm() {
    isFormValid = _emailError.value == null 
@@ -60,7 +60,7 @@ implements SignUpPresenter {
     && _password != null ? true : false;
 }
 
-  UIError _validateField(String field) {
+  UIError? _validateField(String field) {
     final formData = {
       'name' : _name,
       'email' : _email,
@@ -110,10 +110,10 @@ implements SignUpPresenter {
   Future<void> signUp() async {
 
     final params = AddAccountParams(
-      name: _name,
-      email: _email,
-      password: _password,
-      confirmPassowrd: _confirmPassword,
+      name: _name!,
+      email: _email!,
+      password: _password!,
+      confirmPassowrd: _confirmPassword!,
     );
 
     try {
