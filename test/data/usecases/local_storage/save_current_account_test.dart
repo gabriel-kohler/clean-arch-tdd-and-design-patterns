@@ -5,25 +5,26 @@ import 'package:test/test.dart';
 
 import 'package:practice/domain/entities/account_entity.dart';
 import 'package:practice/domain/helpers/domain_error.dart';
-import 'package:practice/data/cache/cache.dart';
 import 'package:practice/data/usecases/usecases.dart';
 
-class SaveSecureCurrentAccountSpy extends Mock implements SaveSecureCurrentAccount {}
+import '../../mocks/mocks.dart';
 
 void main() {
 
-  late SaveSecureCurrentAccount saveSecureCurrentAccountSpy;
+  late SecureCacheStorageSpy saveSecureCurrentAccountSpy;
   late SaveCurrentAccount sut;
   late AccountEntity account;
 
   setUp(() {
-    saveSecureCurrentAccountSpy = SaveSecureCurrentAccountSpy();
+    saveSecureCurrentAccountSpy = SecureCacheStorageSpy();
     sut = SaveCurrentAccount(saveSecureCurrentAccount: saveSecureCurrentAccountSpy);
 
     account = AccountEntity(faker.guid.guid());
   });
 
   test('ensure SaveCurrentAccount call SaveSecureCurrentAccount with correct values', () async {
+
+    saveSecureCurrentAccountSpy.mockSaveSecure();
 
     await sut.save(account: account);
 
@@ -32,7 +33,7 @@ void main() {
   
   test('ensure SaveCurrentAccount throw UnexpectedError if SaveSecureCurrentAccount throws', () async {
 
-    when(() => (saveSecureCurrentAccountSpy.saveSecure(key: any(named: 'key'), value: any(named: 'value')))).thenThrow(Exception());
+    saveSecureCurrentAccountSpy.mockSaveSecureError();
 
     final future = sut.save(account: account);
 

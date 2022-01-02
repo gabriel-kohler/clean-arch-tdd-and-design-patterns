@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -10,60 +9,15 @@ import 'package:practice/ui/pages/signup/signup.dart';
 import 'package:practice/utils/app_routes.dart';
 
 import '../helpers/helpers.dart';
+import '../mocks/mocks.dart';
 
-class SignUpPresenterSpy extends Mock implements SignUpPresenter {}
 void main() {
 
-  late SignUpPresenter signUpPresenterSpy;
-
-  late StreamController<UIError?> nameErrorController;
-  late StreamController<UIError?> emailErrorController;
-  late StreamController<UIError?> passwordErrorController;
-  late StreamController<UIError?> confirmPasswordErrorController;
-  late StreamController<UIError?> mainErrorController;
-  late StreamController<String> navigateToController;
-  late StreamController<bool> isFormValidController;
-  late StreamController<bool> isLoadingController;
-  
-  void initStreams() {
-    nameErrorController = StreamController<UIError?>();
-    emailErrorController = StreamController<UIError?>();
-    passwordErrorController = StreamController<UIError?>();
-    confirmPasswordErrorController = StreamController<UIError?>();
-    mainErrorController = StreamController<UIError?>();
-    isFormValidController = StreamController<bool>();
-    isLoadingController = StreamController<bool>();
-    navigateToController = StreamController<String>();
-  }
-
-  void mockStreams() {
-    when(() => (signUpPresenterSpy.nameErrorStream)).thenAnswer((_) => nameErrorController.stream);  
-    when(() => (signUpPresenterSpy.emailErrorStream)).thenAnswer((_) => emailErrorController.stream);    
-    when(() => (signUpPresenterSpy.passwordErrorStream)).thenAnswer((_) => passwordErrorController.stream);
-    when(() => (signUpPresenterSpy.confirmPasswordErrorStream)).thenAnswer((_) => confirmPasswordErrorController.stream);
-    when(() => (signUpPresenterSpy.isFormValidStream)).thenAnswer((_) => isFormValidController.stream);    
-    when(() => (signUpPresenterSpy.isLoadingStream)).thenAnswer((_) => isLoadingController.stream);    
-    when(() => (signUpPresenterSpy.mainErrorStream)).thenAnswer((_) => mainErrorController.stream);
-    when(() => (signUpPresenterSpy.navigateToStream)).thenAnswer((_) => navigateToController.stream);
-  }
-
-  void closeStreams() {
-    nameErrorController.close();
-    emailErrorController.close();
-    passwordErrorController.close();
-    confirmPasswordErrorController.close();
-    isFormValidController.close();
-    isLoadingController.close();
-    mainErrorController.close();
-    navigateToController.close();
-  }
+  late SignUpPresenterSpy signUpPresenterSpy;
 
   Future<void> loadPage(WidgetTester tester) async {
 
     signUpPresenterSpy = SignUpPresenterSpy();
-
-    initStreams();
-    mockStreams();
 
     await tester.pumpWidget(
       makePage(
@@ -75,7 +29,7 @@ void main() {
   }
 
   tearDown(() {
-    closeStreams();
+    signUpPresenterSpy.dispose();
   });
 
   testWidgets('Should call validate with correct values', (WidgetTester tester) async {
@@ -106,7 +60,7 @@ void main() {
 
     await loadPage(tester);
 
-    nameErrorController.add(UIError.invalidField);
+    signUpPresenterSpy.emitNameError(UIError.invalidField);
 
     await tester.pump();
     
@@ -118,7 +72,7 @@ void main() {
 
     await loadPage(tester);
 
-    nameErrorController.add(null);
+    signUpPresenterSpy.emitNameValid();
 
     await tester.pump();
 
@@ -132,7 +86,7 @@ void main() {
 
     await loadPage(tester);
 
-    emailErrorController.add(UIError.invalidField);
+    signUpPresenterSpy.emitEmailError(UIError.invalidField);
 
     await tester.pump();
     
@@ -144,7 +98,7 @@ void main() {
 
     await loadPage(tester);
 
-    emailErrorController.add(UIError.requiredField);
+    signUpPresenterSpy.emitEmailError(UIError.requiredField);
 
     await tester.pump();
     
@@ -156,7 +110,7 @@ void main() {
 
     await loadPage(tester);
 
-    emailErrorController.add(null);
+    signUpPresenterSpy.emitEmailValid();
 
     await tester.pump();
 
@@ -170,7 +124,7 @@ void main() {
 
     await loadPage(tester);
 
-    passwordErrorController.add(UIError.requiredField);
+    signUpPresenterSpy.emitPasswordError(UIError.requiredField);
 
     await tester.pump();
     
@@ -182,7 +136,7 @@ void main() {
 
     await loadPage(tester);
 
-    passwordErrorController.add(null);
+    signUpPresenterSpy.emitPasswordValid();
 
     await tester.pump();
 
@@ -196,7 +150,7 @@ void main() {
 
     await loadPage(tester);
 
-    confirmPasswordErrorController.add(UIError.requiredField);
+    signUpPresenterSpy.emitConfirmPasswordError(UIError.requiredField);
 
     await tester.pump();
     
@@ -208,7 +162,7 @@ void main() {
 
     await loadPage(tester);
 
-    confirmPasswordErrorController.add(null);
+    signUpPresenterSpy.emitConfirmPasswordValid();
 
     await tester.pump();
 
@@ -222,7 +176,7 @@ void main() {
 
     await loadPage(tester);
 
-    isFormValidController.add(true);
+    signUpPresenterSpy.emitFormValid();
 
     await tester.pump();
 
@@ -236,7 +190,7 @@ void main() {
 
     await loadPage(tester);
 
-    isFormValidController.add(false);
+    signUpPresenterSpy.emitFormError();
 
     await tester.pump();
 
@@ -250,7 +204,7 @@ void main() {
 
     await loadPage(tester);
 
-    isFormValidController.add(true);
+    signUpPresenterSpy.emitFormValid();
 
     await tester.pump();
   
@@ -268,15 +222,15 @@ void main() {
 
     await loadPage(tester);
 
-    isLoadingController.add(true);
+    signUpPresenterSpy.emitLoading();
     await tester.pump();
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
-    isLoadingController.add(false);
+    signUpPresenterSpy.emitLoading(false);
     await tester.pump();
     expect(find.byType(CircularProgressIndicator), findsNothing);
 
-    isLoadingController.add(true);
+    signUpPresenterSpy.emitLoading();
     await tester.pump();
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
@@ -286,7 +240,7 @@ void main() {
     
     await loadPage(tester);
     
-    mainErrorController.add(UIError.emailInUse);
+    signUpPresenterSpy.emitMainError(UIError.emailInUse);
     
     await tester.pump();
 
@@ -298,7 +252,7 @@ void main() {
     
     await loadPage(tester);
     
-    mainErrorController.add(UIError.unexpected);
+    signUpPresenterSpy.emitMainError(UIError.unexpected);
     
     await tester.pump();
 
@@ -309,7 +263,7 @@ void main() {
   testWidgets('Should change page', (WidgetTester tester) async {
     await loadPage(tester);
 
-    navigateToController.add('/any_route');
+    signUpPresenterSpy.emitNavigateTo('/any_route');
     await tester.pumpAndSettle();
 
     expect(currentRoute, '/any_route');
@@ -319,15 +273,11 @@ void main() {
   testWidgets('Should not change page', (WidgetTester tester) async {
     await loadPage(tester);
 
-    navigateToController.add('');
+    signUpPresenterSpy.emitNavigateTo('');
     await tester.pumpAndSettle();
 
     expect(currentRoute, AppRoute.SignUpPage);
 
-    navigateToController.add('');
-    await tester.pumpAndSettle();
-
-    expect(currentRoute, AppRoute.SignUpPage);
   });
 
   testWidgets('Should go to login on link click', (WidgetTester tester) async {

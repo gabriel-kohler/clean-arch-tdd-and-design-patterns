@@ -11,28 +11,14 @@ import 'package:practice/data/http/http.dart';
 
 import '../../../domain/mocks/mocks.dart';
 import '../../../infra/mocks/mocks.dart';
-
-
-class HttpClientSpy extends Mock implements HttpClient {}
+import '../../mocks/mocks.dart';
 
 void main() {
-  late HttpClient httpClient;
+  late HttpClientSpy httpClient;
   late String url;
   late RemoteAuthentication sut;
   late AuthenticationParams params;
   late Map apiResult;
-
-  When mockRequest() => when(() => (httpClient.request(url: any(named: 'url'), method: any(named: 'method'), body: any(named: 'body'))));
-  
-
-  void mockHttpError(HttpError error) {
-    mockRequest().thenThrow(error);
-  }
-
-  void mockHttpData(Map data) {
-    apiResult = data;
-    mockRequest().thenAnswer((_) async => data);
-  }
 
   setUp(() {
     httpClient = HttpClientSpy();
@@ -40,8 +26,9 @@ void main() {
     sut = RemoteAuthentication(httpClient: httpClient, url: url);
 
     params = ParamsFactory.makeAuthenticationParams();
+    apiResult = ApiFactory.makeAccountJson();
 
-    mockHttpData((ApiFactory.makeAccountJson()));
+    httpClient.mockHttpData(apiResult);
   });
 
   test('Should call httpClient with correct values', () async {
@@ -62,7 +49,7 @@ void main() {
 
   test('Should throw UnexpectedError if HttpClient returns 400', () async {
 
-    mockHttpError(HttpError.badRequest);
+    httpClient.mockHttpError(HttpError.badRequest);
 
     final future = sut.auth(params: params);
 
@@ -71,7 +58,7 @@ void main() {
 
   test('Should throw UnexpectedError if HttpClient returns 404', () {
 
-    mockHttpError(HttpError.notFound);
+    httpClient.mockHttpError(HttpError.notFound);
 
     final future = sut.auth(params: params);
 
@@ -80,7 +67,7 @@ void main() {
 
   test('Should throw UnexpectedError if HttpClient returns 500', () async {
 
-    mockHttpError(HttpError.serverError);
+    httpClient.mockHttpError(HttpError.serverError);
 
     final future = sut.auth(params: params);
 
@@ -89,7 +76,7 @@ void main() {
 
   test('Should throw InvalidCredentialsError if HttpClient returns 401', () async {
 
-    mockHttpError(HttpError.unauthorized);
+    httpClient.mockHttpError(HttpError.unauthorized);
 
     final future = sut.auth(params: params);
 
@@ -107,7 +94,7 @@ void main() {
 
    test('Should return an UnexpectedError if HttpClient returns 200 with invalid data', () async {
 
-    mockHttpData({'invalid_key': 'invalid_value'});
+    httpClient.mockHttpData({'invalid_key': 'invalid_value'});
 
     final future  = sut.auth(params: params);
 

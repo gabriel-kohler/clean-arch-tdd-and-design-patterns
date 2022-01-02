@@ -3,54 +3,35 @@ import 'package:test/test.dart';
 
 import 'package:practice/main/composites/composites.dart';
 
-import 'package:practice/data/usecases/load_surveys/load_surveys.dart';
-
 import 'package:practice/domain/helpers/helpers.dart';
 import 'package:practice/domain/entities/entities.dart';
 
+import '../../data/mocks/mocks.dart';
 import '../../domain/mocks/mocks.dart';
-
-
-class RemoteLoadSurveysSpy extends Mock implements RemoteLoadSurveys {}
-
-class LocalLoadSurveysSpy extends Mock implements LocalLoadSurveys {}
 
 void main() {
 
-  late RemoteLoadSurveys remoteLoadSurveysSpy;
-  late LocalLoadSurveys localLoadSurveysSpy;
+  late RemoteLoadSurveysSpy remoteLoadSurveysSpy;
+  late LocalLoadSurveysSpy localLoadSurveysSpy;
   late RemoteLoadSurveysWithLocalFallback sut;
 
   late List<SurveyEntity> remoteSurveys;
   late List<SurveyEntity> localSurveys;
-
-  When mockRemoteLoadCall() => when(() => (remoteLoadSurveysSpy.load()));
-
-  When mockLocalLoadCall() => when(() => (localLoadSurveysSpy.load()));
-
-  void mockRemoteLoad() {
-    remoteSurveys = EntityFactory.makeSurveysList();
-    mockRemoteLoadCall().thenAnswer((_) async => remoteSurveys);
-  }
-
-  void mockLocalLoad() {
-    localSurveys = EntityFactory.makeSurveysList();
-    mockLocalLoadCall().thenAnswer((_) async => localSurveys);
-  }
-
-  void mockRemoteLoadError(DomainError error) => mockRemoteLoadCall().thenThrow(error);
-
-  void mockLocalLoadError() => mockLocalLoadCall().thenThrow(DomainError.unexpected);
 
   setUp(() {
     remoteLoadSurveysSpy = RemoteLoadSurveysSpy();
     localLoadSurveysSpy = LocalLoadSurveysSpy();
     sut = RemoteLoadSurveysWithLocalFallback(remoteLoad: remoteLoadSurveysSpy, localLoad: localLoadSurveysSpy);
 
+    remoteSurveys = EntityFactory.makeSurveysList();
+    localSurveys = EntityFactory.makeSurveysList();
+
   });
 
   test('Should call remote load surveys', () async {
     
+    remoteLoadSurveysSpy.mockLoad(remoteSurveys);
+
     await sut.load();
 
     verify(() => (remoteLoadSurveysSpy.load())).called(1);
@@ -58,7 +39,7 @@ void main() {
 
   test('Should call local save with remote data', () async {
 
-    mockRemoteLoad();
+    remoteLoadSurveysSpy.mockLoad(remoteSurveys);
 
     await sut.load();
 
@@ -67,7 +48,7 @@ void main() {
 
   test('Should return remote data', () async {
 
-    mockRemoteLoad();
+    remoteLoadSurveysSpy.mockLoad(remoteSurveys);
 
     final surveys = await sut.load();
 
@@ -76,7 +57,7 @@ void main() {
 
   test('Should rethrow if remote load throws AccessDeniedError', () async {
 
-    mockRemoteLoadError(DomainError.accessDenied);
+    remoteLoadSurveysSpy.mockLoadError(DomainError.accessDenied);
 
     final future = sut.load();
 
@@ -85,7 +66,8 @@ void main() {
 
   test('Should call local fetch on remote error', () async {
 
-    mockRemoteLoadError(DomainError.unexpected);
+    localLoadSurveysSpy.mockLoad(localSurveys);
+    remoteLoadSurveysSpy.mockLoadError(DomainError.unexpected);
 
     await sut.load();
 
@@ -95,9 +77,8 @@ void main() {
 
   test('Should return local data on remote error', () async {
 
-    mockLocalLoad();
-
-    mockRemoteLoadError(DomainError.unexpected);
+    localLoadSurveysSpy.mockLoad(localSurveys);
+    remoteLoadSurveysSpy.mockLoadError(DomainError.unexpected);
 
     final surveys = await sut.load();
 
@@ -106,8 +87,8 @@ void main() {
 
   test('Should throw UnexpectedError if remote and local throws', () async {
 
-    mockRemoteLoadError(DomainError.unexpected);
-    mockLocalLoadError();
+    localLoadSurveysSpy.mockLoadError();
+    remoteLoadSurveysSpy.mockLoadError(DomainError.unexpected);
 
     final future = sut.load();
 

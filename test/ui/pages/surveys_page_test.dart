@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -12,27 +10,13 @@ import 'package:practice/utils/utils.dart';
 import '../helpers/helpers.dart';
 import '../mocks/mocks.dart';
 
-class SurveysPresenterSpy extends Mock implements SurveysPresenter {}
-
 void main() {
 
-  late SurveysPresenter surveysPresenterSpy;
-
-  late StreamController<List<SurveyViewModel>> surveysController;
-  late StreamController<String> navigateToController;
-  late StreamController<bool> isSessionExpiredController;
+  late SurveysPresenterSpy surveysPresenterSpy;
 
   Future<void> loadPage(WidgetTester tester) async {
 
-    surveysController = StreamController<List<SurveyViewModel>>();
-    navigateToController = StreamController<String>();
-    isSessionExpiredController = StreamController<bool>();
-
     surveysPresenterSpy = SurveysPresenterSpy();
-
-    when(() => (surveysPresenterSpy.surveysStream)).thenAnswer((_) => surveysController.stream);
-    when(() => (surveysPresenterSpy.navigateToStream)).thenAnswer((_) => navigateToController.stream);
-    when(() => (surveysPresenterSpy.isSessionExpiredStream)).thenAnswer((_) => isSessionExpiredController.stream);
 
     await tester.pumpWidget(
       makePage(
@@ -43,9 +27,7 @@ void main() {
   }
 
   tearDown(() {
-    surveysController.close();
-    navigateToController.close();
-    isSessionExpiredController.close();
+    surveysPresenterSpy.dispose();
   });
 
   testWidgets('Should SurveysPage call loadData on page load', (WidgetTester tester) async {
@@ -60,7 +42,7 @@ void main() {
 
     await loadPage(tester);
 
-    navigateToController.add('/any_route');
+    surveysPresenterSpy.emitNavigateTo('/any_route');
     await tester.pumpAndSettle();
     await tester.pageBack();
 
@@ -73,7 +55,7 @@ void main() {
     await loadPage(tester);
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
-    surveysController.addError(UIError.unexpected.description);
+    surveysPresenterSpy.emitSurveysError(UIError.unexpected.description);
     await tester.pump();
 
     expect(find.text('Ocorreu um erro. Tente novamente em breve'), findsOneWidget);
@@ -88,7 +70,7 @@ void main() {
     await loadPage(tester);
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
-    surveysController.add(ViewModelFactory.makeSurveysViewModel());
+    surveysPresenterSpy.emitSurveysValid();
     await tester.pump();
 
     expect(find.text('Ocorreu um erro. Tente novamente em breve'), findsNothing);
@@ -106,7 +88,7 @@ void main() {
 
     await loadPage(tester);
 
-    surveysController.addError(UIError.unexpected.description);
+    surveysPresenterSpy.emitSurveysError(UIError.unexpected.description);
     await tester.pump();
 
     await tester.tap(find.text('Recarregar'));
@@ -119,7 +101,7 @@ void main() {
 
     await loadPage(tester);
 
-    surveysController.add(ViewModelFactory.makeSurveysViewModel());
+    surveysPresenterSpy.emitSurveysValid();
     await tester.pump();
 
     await tester.tap(find.text('Question 1'));
@@ -132,7 +114,7 @@ void main() {
   testWidgets('Should change page', (WidgetTester tester) async {
     await loadPage(tester);
 
-    navigateToController.add('/any_route');
+    surveysPresenterSpy.emitNavigateTo('/any_route');
     await tester.pumpAndSettle();
 
     expect(currentRoute, '/any_route');
@@ -142,7 +124,7 @@ void main() {
   testWidgets('Should not change page', (WidgetTester tester) async {
     await loadPage(tester);
 
-    navigateToController.add('');
+    surveysPresenterSpy.emitNavigateTo('');
     await tester.pump();
     expect(currentRoute, AppRoute.SurveysPage);
 
@@ -150,7 +132,7 @@ void main() {
   testWidgets('Should logout', (WidgetTester tester) async {
     await loadPage(tester);
 
-    isSessionExpiredController.add(true);
+    surveysPresenterSpy.emitSessionExpired(true);
     await tester.pumpAndSettle();
 
     expect(currentRoute, AppRoute.LoginPage);
@@ -160,7 +142,7 @@ void main() {
   testWidgets('Should not logout', (WidgetTester tester) async {
     await loadPage(tester);
 
-    isSessionExpiredController.add(false);
+    surveysPresenterSpy.emitSessionExpired(false);
     await tester.pump();
     expect(currentRoute, AppRoute.SurveysPage);
   });

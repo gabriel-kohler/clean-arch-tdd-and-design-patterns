@@ -14,49 +14,37 @@ import 'package:practice/presentation/presenters/presenters.dart';
 import 'package:practice/ui/helpers/errors/errors.dart';
 
 import '../../domain/mocks/mocks.dart';
-
-class ValidationSpy extends Mock implements Validation {}
-class AuthenticationSpy extends Mock implements Authentication {}
-class AddCurrentAccountSpy extends Mock implements AddCurrentAccount {}
+import '../mocks/mocks.dart';
 
 void main() {
   late AuthenticationSpy authentication;
   late ValidationSpy validation;
-  late AddCurrentAccount localSaveCurrentAccountSpy;
+  late AddCurrentAccountSpy localSaveCurrentAccountSpy;
   late GetxLoginPresenter sut;
   late String email;
   late String password;
   late AccountEntity account;
-
-  When mockValidationCall(String? field) => when(() => (validation.validate(
-      field: field == null ? any(named: 'field') : field,
-      inputFormData: any(named: 'inputFormData'))));
-
-  void mockValidation({String? field, ValidationError? value}) {
-    mockValidationCall(field).thenReturn(value);
-  }
-
-  When mockAuthenticationCall() => when(() => (authentication.auth(params: any(named: 'params'))));
-
-  void mockAuthentication(AccountEntity data) {
-    account = data;
-    mockAuthenticationCall().thenAnswer((_) async => data);
-  }
-
-  void mockAuthenticationError(DomainError error) {
-    mockAuthenticationCall().thenThrow(error);
-  }
 
   setUp(() {
     authentication = AuthenticationSpy();
     validation = ValidationSpy();
     localSaveCurrentAccountSpy = AddCurrentAccountSpy();
     sut = GetxLoginPresenter(validation: validation, authentication: authentication, localSaveCurrentAccount: localSaveCurrentAccountSpy);
+    
     email = faker.internet.email();
     password = faker.internet.password();
 
-    mockValidation();
-    mockAuthentication(EntityFactory.makeAccountEntity());
+    account = EntityFactory.makeAccountEntity();
+
+    validation.mockValidationError();
+    authentication.mockAuthentication(account);
+    localSaveCurrentAccountSpy.mockSaveCurrentAccount();
+
+  });
+
+  setUpAll(() {
+    registerFallbackValue(ParamsFactory.makeAuthenticationParams());
+    registerFallbackValue(EntityFactory.makeAccountEntity());
   });
 
   test('Should call validation with correct email', () {
@@ -72,7 +60,7 @@ void main() {
   });
 
   test('Should emit invalidFieldError if email is invalid', () {
-    mockValidation(value: ValidationError.invalidField);
+    validation.mockValidationError(value: ValidationError.invalidField);
 
     sut.emailErrorStream.listen(
       expectAsync1((error) {
@@ -92,7 +80,7 @@ void main() {
   });
 
   test('Should emit requiredFieldError if email is empty', () {
-    mockValidation(value: ValidationError.requiredField);
+    validation.mockValidationError(value: ValidationError.requiredField);
 
     sut.emailErrorStream.listen(
       expectAsync1((error) {
@@ -143,7 +131,7 @@ void main() {
   });
 
   test('Should emit requiredFieldError if password is empty', () {
-    mockValidation(value: ValidationError.requiredField);
+    validation.mockValidationError(value: ValidationError.requiredField);
 
     sut.passwordErrorStream.listen(
       expectAsync1((error) {
@@ -182,7 +170,7 @@ void main() {
 
   test('Should emits form invalid event if any field is invalid', () {
 
-    mockValidation(field: 'email', value: ValidationError.invalidField);
+    validation.mockValidationError(field: 'email', value: ValidationError.invalidField);
 
     //if password field is valid but email field is invalid, test must fail
 
@@ -232,6 +220,8 @@ void main() {
   });
 
   test('Should call Authentication with correct values', () async {
+  
+
     sut.validateEmail(email);
     sut.validatePassword(password);
 
@@ -261,7 +251,7 @@ void main() {
 
   test('Should emit correct events on InvalidCredentialError', () async {
 
-    mockAuthenticationError(DomainError.invalidCredentials);
+    authentication.mockAuthenticationError(DomainError.invalidCredentials);
 
     sut.validateEmail(email);
     sut.validatePassword(password);
@@ -275,7 +265,7 @@ void main() {
 
   test('Should emit correct events on UnexpectedError', () async {
 
-    mockAuthenticationError(DomainError.unexpected);
+    authentication.mockAuthenticationError(DomainError.unexpected);
 
     sut.validateEmail(email);
     sut.validatePassword(password);
@@ -289,6 +279,9 @@ void main() {
 
   test('Should call LocalSaveCurrentAccount with correct values', () async {
 
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+
     await sut.auth();
 
     verify(() => (localSaveCurrentAccountSpy.save(account: account))).called(1);
@@ -296,7 +289,10 @@ void main() {
 
   test('Should emit UnexpectedError if LocalSaveCurrentAccount fails', () async {
 
-    when(() => (localSaveCurrentAccountSpy.save(account: any(named: 'account').thenThrow(DomainError.unexpected))));
+    localSaveCurrentAccountSpy.mockSaveCurrentAccountError();
+
+    sut.validateEmail(email);
+    sut.validatePassword(password);
 
     expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
     expectLater(sut.mainErrorStream, emitsInOrder([null, UIError.unexpected]));

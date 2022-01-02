@@ -25,14 +25,13 @@ void main() {
     sut = LocalLoadSurveyResult(cacheStorage: cacheStorageSpy);
     surveyId = faker.guid.guid();
     listData = CacheFactory.makeCacheJson();
+    cacheStorageSpy.mockFetchData(listData);
     surveyResult = EntityFactory.makeSurveyResultEntity();
   });
   group('loadBySurvey', () {
 
     test('Should call FetchCacheStorage with correct key', () async {
     
-    cacheStorageSpy.mockFetchData(CacheFactory.makeCacheJson());
-
     await sut.loadBySurvey(surveyId: surveyId);
 
     verify(() => (cacheStorageSpy.fetch(key: 'survey_result/$surveyId'))).called(1);
@@ -41,8 +40,6 @@ void main() {
 
     test('Should return a list of surveyResult on success', () async {
       
-      cacheStorageSpy.mockFetchData(CacheFactory.makeCacheJson());
-
       final surveys = await sut.loadBySurvey(surveyId: surveyId);
 
       final mockSurvers = SurveyResultEntity(

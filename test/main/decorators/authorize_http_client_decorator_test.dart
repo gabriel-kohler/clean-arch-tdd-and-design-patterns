@@ -3,19 +3,15 @@ import 'package:test/test.dart';
 import 'package:mocktail/mocktail.dart';
 
 import 'package:practice/data/http/http.dart';
-import 'package:practice/data/cache/cache.dart';
 
 import 'package:practice/main/decorators/decorators.dart';
 
-class FetchSecureCacheSpy extends Mock implements FetchSecureCacheStorage {}
-class DeleteSecureCacheSpy extends Mock implements DeleteSecureCacheStorage {}
+import '../../data/mocks/mocks.dart';
 
-class HttpClientSpy extends Mock implements HttpClient {}
 
 void main() {
-  late FetchSecureCacheStorage fetchSecureCacheSpy;
-  late DeleteSecureCacheStorage deleteSecureCacheSpy;
-  late HttpClient httpClient;
+  late SecureCacheStorageSpy secureCacheStorageSpy;
+  late HttpClientSpy httpClient;
   late AuthorizeHttpClientDecorator sut;
 
   late String url;
@@ -25,52 +21,37 @@ void main() {
   late String httpResponse;
 
   setUp(() {
-    fetchSecureCacheSpy = FetchSecureCacheSpy();
-    deleteSecureCacheSpy = DeleteSecureCacheSpy();
+    secureCacheStorageSpy = SecureCacheStorageSpy();
     httpClient = HttpClientSpy();
-    sut = AuthorizeHttpClientDecorator(fetchSecureCacheStorage: fetchSecureCacheSpy, decoratee: httpClient, deleteSecureCacheStorage: deleteSecureCacheSpy);
+
+    sut = AuthorizeHttpClientDecorator(
+      fetchSecureCacheStorage: secureCacheStorageSpy, 
+      decoratee: httpClient, 
+      deleteSecureCacheStorage: secureCacheStorageSpy,
+    );
 
     url = faker.internet.httpUrl();
     method = faker.randomGenerator.string(10);
     body = {'any_key' : 'any_value'};
 
-  });
-
-  void mockToken() {
     token = faker.guid.guid();
-    when(() => (fetchSecureCacheSpy.fetchSecure(key: any(named: 'key').thenAnswer((_) async => token))));
-  }
+    httpResponse = faker.randomGenerator.string(50);
 
-  When mockHttpResponseCall() => when(() => (httpClient.request(
-      url: any(named: 'url'), 
-      method: any(named: 'method'), 
-      body: any(named: 'body'), 
-      headers: any(named: 'headers'))));
+    httpClient.mockHttpData(httpResponse);
+    secureCacheStorageSpy.mockFetchSecure(token);
 
-  void mockHttpResponse() {
-    httpResponse = 'any_response';
-
-    mockHttpResponseCall().thenAnswer((_) async => httpResponse);
-  }
-
-  void mockHttpResponseError(HttpError error) => mockHttpResponseCall().thenThrow(error);
-
-  When mockFetchSecureCall() => when(() => (fetchSecureCacheSpy.fetchSecure(key: any(named: 'key'))));
-
-  void mockFetchSecureError() => mockFetchSecureCall().thenThrow(Exception());
+  });
 
   test('Should call FetchSecureCacheStorage with correct key', () async {
     
     await sut.request(url: url, method: method, body: body);
 
-    verify(() => (fetchSecureCacheSpy.fetchSecure(key: 'token'))).called(1);
+    verify(() => (secureCacheStorageSpy.fetchSecure(key: 'token'))).called(1);
 
   });
  
   test('Should call decoratee with access token on header', () async {
 
-    mockToken();
-    
     await sut.request(url: url, method: method, body: body);
     verify(() => (httpClient.request(url: url, method: method, body: body, headers: {'x-access-token' : token}))).called(1);
 
@@ -81,8 +62,6 @@ void main() {
 
   test('Should return same result as decoratee', () async {
     
-    mockHttpResponse();
-
     final response = await sut.request(url: url, method: method, body: body);
 
     expect(response, httpResponse);
@@ -91,18 +70,18 @@ void main() {
 
   test('Should throw ForbbidenError if FetchSecureCacheStorage throws', () async {
     
-    mockFetchSecureError();
+    secureCacheStorageSpy.mockFetchSecureError();
 
     final future =  sut.request(url: url, method: method, body: body);
 
     expect(future, throwsA(HttpError.forbidden));
-    verify(() => (deleteSecureCacheSpy.deleteSecure(key: 'token'))).called(1);
+    verify(() => (secureCacheStorageSpy.deleteSecure(key: 'token'))).called(1);
 
   });
 
   test('Should rethrow if decoratee throws', () async {
     
-    mockHttpResponseError(HttpError.badRequest);
+    httpClient.mockHttpError(HttpError.badRequest);
 
     final future =  sut.request(url: url, method: method, body: body);
 
@@ -112,13 +91,13 @@ void main() {
 
   test('Should delete cache if request throws ForbiddenError', () async {
     
-    mockHttpResponseError(HttpError.forbidden);
+    httpClient.mockHttpError(HttpError.forbidden);
 
     final future =  sut.request(url: url, method: method, body: body);
-    await untilCalled(() => deleteSecureCacheSpy.deleteSecure(key: 'token'));
+    await untilCalled(() => secureCacheStorageSpy.deleteSecure(key: 'token'));
 
     expect(future, throwsA(HttpError.forbidden));
-    verify(() => (deleteSecureCacheSpy.deleteSecure(key: 'token'))).called(1);
+    verify(() => (secureCacheStorageSpy.deleteSecure(key: 'token'))).called(1);
 
   });
 

@@ -3,8 +3,6 @@ import 'package:get/get.dart';
 
 import '/utils/utils.dart';
 
-import '/data/usecases/usecases.dart';
-
 import '/domain/helpers/helpers.dart';
 import '/domain/usecases/usecases.dart';
 
@@ -23,7 +21,7 @@ implements SignUpPresenter {
 
   final Validation validation;
   final AddAccount addAccount;
-  final SaveCurrentAccount saveCurrentAccount;
+  final AddCurrentAccount saveCurrentAccount;
 
   GetxSignUpPresenter({required this.validation, required this.addAccount, required this.saveCurrentAccount});
 

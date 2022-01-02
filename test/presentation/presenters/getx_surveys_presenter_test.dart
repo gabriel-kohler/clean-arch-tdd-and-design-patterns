@@ -5,37 +5,28 @@ import 'package:practice/ui/pages/pages.dart';
 import 'package:test/test.dart';
 
 import 'package:practice/domain/entities/entities.dart';
-import 'package:practice/domain/usecases/survey/survey.dart';
 
 import 'package:practice/presentation/presenters/presenters.dart';
 
+import '../../data/mocks/mocks.dart';
 import '../../domain/mocks/mocks.dart';
 
-class LoadSurveysSpy extends Mock implements LoadSurveys {}
-
 void main() {
-  late LoadSurveys loadSurveysSpy;
+  late LoadSurveysSpy loadSurveysSpy;
   late GetxSurveysPresenter sut;
   late List<SurveyEntity> surveys;
 
-  When mockLoadSurveysCall() => when(() => (loadSurveysSpy.load()));
-
-  void mockLoadSurveys(List<SurveyEntity> data) {
-    surveys = data;
-    mockLoadSurveysCall().thenAnswer((_) async => surveys);
-  }
-
-  void mockLoadSurveysError() => mockLoadSurveysCall().thenThrow(DomainError.unexpected);
-  void mockLoadAccessDeniedError() => mockLoadSurveysCall().thenThrow(DomainError.accessDenied);
 
   setUp(() {
     loadSurveysSpy = LoadSurveysSpy();
     sut = GetxSurveysPresenter(loadSurveys: loadSurveysSpy);
+
+    surveys = EntityFactory.makeSurveysList();
+
+    loadSurveysSpy.mockLoad(surveys);
   });
 
   test('Should call LoadSurveys with correct values', () async {
-
-    mockLoadSurveys(EntityFactory.makeSurveysList());
 
     await sut.loadData();
 
@@ -44,9 +35,6 @@ void main() {
   });
 
   test('Should emit correct events on success', () async {
-
-    mockLoadSurveys(EntityFactory.makeSurveysList());
-
 
     sut.surveysStream.listen(
       expectAsync1((surveys) {
@@ -63,8 +51,7 @@ void main() {
 
   test('Should emit correct events on failure', () async {
 
-    mockLoadSurveysError();
-
+    loadSurveysSpy.mockLoadError(DomainError.unexpected);
 
     sut.surveysStream.listen(
     null, 
@@ -79,7 +66,7 @@ void main() {
 
   test('Should emit correct events on access denied', () async {
 
-    mockLoadAccessDeniedError();
+    loadSurveysSpy.mockLoadError(DomainError.accessDenied);
 
     expectLater(sut.isSessionExpiredStream, emits(true));
     

@@ -8,11 +8,12 @@ import 'package:practice/data/usecases/usecases.dart';
 import 'package:practice/data/http/http.dart';
 
 import '../../../infra/mocks/mocks.dart';
+import '../../mocks/mocks.dart';
 
-class HttpClientSpy extends Mock implements HttpClient {}
+
 void main() {
 
-  late HttpClient httpClient;
+  late HttpClientSpy httpClient;
   late String url;
   late RemoteLoadSurveys sut;
   late List<Map> listData;
@@ -21,21 +22,14 @@ void main() {
     httpClient = HttpClientSpy();
     url = faker.internet.httpUrl();
     sut = RemoteLoadSurveys(httpClient: httpClient, url: url);
+    listData = ApiFactory.makeSurveyList();
+
+    httpClient.mockHttpData(listData); 
   });
-
-  When mockRequest() => when(() => (httpClient.request(url: any(named: 'url'), method: any(named: 'method'))));
-
-  void mockHttpError(HttpError error) => mockRequest().thenThrow(error);
-
-  void mockHttpData(List<Map> data) {
-    listData = data;
-    mockRequest().thenAnswer((_) async => data);
-  }
-
 
   test('Should call HttpClient with correct values', () async {
 
-    mockHttpData(ApiFactory.makeSurveyList());
+    httpClient.mockHttpData(listData);
     
     await sut.load();
 
@@ -44,8 +38,6 @@ void main() {
   });
 
   test('Should return surveys on 200', () async {
-
-    mockHttpData(ApiFactory.makeSurveyList()); 
 
     final listSurveys = await sut.load();
 
@@ -59,7 +51,7 @@ void main() {
 
   test('Should throw UnexpectedError if HttpClient returns 200 with invalid data', () async {
 
-    mockHttpData(ApiFactory.makeInvalidList());
+    httpClient.mockHttpData(ApiFactory.makeInvalidList());
 
     final future = sut.load();
 
@@ -68,7 +60,7 @@ void main() {
 
   test('Should throw AccessDeniedError if HttpClient returns 403', () async {
 
-    mockHttpError(HttpError.forbidden);
+    httpClient.mockHttpError(HttpError.forbidden);
 
     final future = sut.load();
 
@@ -78,7 +70,7 @@ void main() {
   test('Should throw UnexpectedError if HttpClient returns 404', () async {
 
 
-    mockHttpError(HttpError.notFound);
+    httpClient.mockHttpError(HttpError.notFound);
 
     final future = sut.load();
 
@@ -87,7 +79,7 @@ void main() {
   
   test('Should throw UnexpectedError if HttpClient returns 500', () async {
 
-    mockHttpError(HttpError.serverError);
+    httpClient.mockHttpError(HttpError.serverError);
 
     final future = sut.load();
 

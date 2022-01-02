@@ -4,7 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '/data/cache/cache.dart';
 
-class SecureStorageAdapter implements SaveSecureCurrentAccount, FetchSecureCacheStorage, DeleteSecureCacheStorage {
+class SecureStorageAdapter implements SaveSecureCacheStorage, FetchSecureCacheStorage, DeleteSecureCacheStorage {
   final FlutterSecureStorage flutterSecureStorage;
 
   SecureStorageAdapter({required this.flutterSecureStorage});

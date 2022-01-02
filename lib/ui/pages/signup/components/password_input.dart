@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '/ui/helpers/errors/errors.dart';
 import '/ui/pages/pages.dart';
 
 import '/ui/helpers/helpers.dart';

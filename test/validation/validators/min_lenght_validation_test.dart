@@ -18,9 +18,10 @@ void main() {
   });
 
   test('Should return error if value is null', () {
-    final error = sut.validate(inputFormData: {'any_field' : null});
-
-    expect(error, ValidationError.invalidField);
+    
+    expect(sut.validate(inputFormData: {}), ValidationError.invalidField);
+    expect(sut.validate(inputFormData: {'any_field': null}), ValidationError.invalidField);
+    
   });
 
   test('Should return error if value is smaller than minLengthCaracters', () {
